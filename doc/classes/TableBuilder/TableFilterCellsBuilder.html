@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: TableBuilder::TableFilterCellsBuilder</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">TableBuilder::TableFilterCellsBuilder</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/table_builder_rb.html">
+                table_builder.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="TableAbstractBuilder.html">
+                TableAbstractBuilder
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+builder class to define the filter cells of a table
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000009">column</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+          <a href="TableFilterCellsBuilder.src/M000009.html" target="Code" class="method-signature"
+            onclick="popupCode('TableFilterCellsBuilder.src/M000009.html');return false;">
+          <span class="method-name">column</span><span class="method-args">(name, opts={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+the method used to actually define the filters of the columns, taking the
+name of the attribute and a hash of options.
+</p>
+<p>
+The following options are evaluated here:
+</p>
+<table>
+<tr><td valign="top"><tt>:filter_html</tt>:</td><td>a hash with html-attributes added to the &lt;ts&gt;s created
+
+</td></tr>
+<tr><td valign="top"><tt>:filter</tt>:</td><td>may take different values:
+
+<table>
+<tr><td valign="top"><tt>false</tt>:</td><td>no filter is output for this <a
+href="TableFilterCellsBuilder.html#M000009">column</a>
+
+</td></tr>
+<tr><td valign="top">a Hash:</td><td>the keys of the hash are used to define a <tt>select</tt> where the values
+are the <tt>value</tt> of the <tt>options</tt>.
+
+</td></tr>
+<tr><td valign="top">an Array:</td><td>the elements of that array are used to define a <tt>select</tt>
+
+</td></tr>
+<tr><td valign="top">a subclass of <tt>ActiveRecord::Base</tt>:</td><td>a <tt>select</tt> is created with all instances
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

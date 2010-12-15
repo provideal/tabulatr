@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>build_table (TableBuilder)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File table_builder.rb, line 154</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">build_table</span>(<span class="ruby-identifier">records</span>, <span class="ruby-identifier">opts</span>={}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-identifier">opts</span> = <span class="ruby-constant">TABLE_OPTIONS</span>.<span class="ruby-identifier">merge</span> <span class="ruby-identifier">opts</span>
+    <span class="ruby-identifier">val</span> = [<span class="ruby-identifier">make_tag</span>(<span class="ruby-identifier">:table</span>, <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:table_html</span>])]
+    <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">make_tag</span>(<span class="ruby-identifier">:thead</span>)
+
+    <span class="ruby-comment cmt"># Header</span>
+    <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;!-- Header --&gt;&quot;</span>
+    <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">make_tag</span>(<span class="ruby-identifier">:tr</span>, <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:header_html</span>])
+    <span class="ruby-identifier">header_builder</span> = <span class="ruby-constant">TableHeaderCellsBuilder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">header_builder</span>)
+    <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">header_builder</span>.<span class="ruby-identifier">get_value</span>
+    <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;/tr&gt;&quot;</span>
+
+    <span class="ruby-comment cmt"># Filter</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:filter</span>]
+      <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;!-- Filter --&gt;&quot;</span>
+      <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">make_tag</span>(<span class="ruby-identifier">:tr</span>, <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:filter_html</span>])
+      <span class="ruby-identifier">filter_builder</span> = <span class="ruby-constant">TableFilterCellsBuilder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">nil</span>)
+      <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">filter_builder</span>)
+      <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">filter_builder</span>.<span class="ruby-identifier">get_value</span>
+      <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'&lt;/tr&gt;'</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;/thead&gt;\n&lt;!-- Body --&gt;\n&lt;tbody&gt;&quot;</span>
+
+    <span class="ruby-comment cmt"># Data Rows</span>
+    <span class="ruby-identifier">tr</span> = <span class="ruby-identifier">make_tag</span>(<span class="ruby-identifier">:tr</span>, <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:row_html</span>])
+    <span class="ruby-identifier">records</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">record</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;&lt;!-- Row #{i} --&gt;&quot;</span>
+      <span class="ruby-identifier">row_builder</span> = <span class="ruby-constant">TableDataCellsBuilder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">record</span>)
+      <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">row_builder</span>)
+      <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">tr</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">row_builder</span>.<span class="ruby-identifier">get_value</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;/tr&gt;&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">val</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;&lt;/tbody&gt;&lt;/table&gt;&quot;</span>
+    <span class="ruby-identifier">val</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+ <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
