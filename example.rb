@@ -15,6 +15,9 @@ s = TableBuilder.build_table @products, :table_html => {:class => 'datagrid'} do
   t.column :happy,        :filter => {"yes" => 1, "no" => 2}
   t.column :category_id,  :filter => false
   t.column :ping,         :header => 'Ping or Pong', :filter => ['ping', 'pong']
+  t.column :action,       :header => "Action", :filter => false do |p|
+    "link_to edit for '#{p.title}'"
+  end
 end
 
 print s
