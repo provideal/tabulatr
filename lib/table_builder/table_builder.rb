@@ -11,6 +11,8 @@
 # License::   MIT, APACHE, Ruby, whatever, something free, ya know?
 class TableBuilder
 
+  include ActionView::Helpers::TagHelper
+
   TABLE_DESIGN_OPTIONS = {
     :sortable_class => 'sortable',
     :sorting_asc => 'sort-asc',
@@ -67,7 +69,7 @@ class TableBuilder
   # <tt>records</tt>:: the 'row' data of the table
   # <tt>view</tt>:: the current instance of ActionView
   # <tt>opts</tt>:: a hash of options specific for this table
-  def initialize(records, view, opts={}) 
+  def initialize(records, view=nil, opts={}) 
     @records = records
     @view = view
     @opts = TABLE_OPTIONS.merge opts
@@ -88,93 +90,103 @@ class TableBuilder
   # <tt>:filter</tt>:: if set to false, no filter row is output
   def build_table(&block)
     @val = []
-    @val << "<div id=\"#{TABLE_OPTIONS[:action_div_id]}\">"
+    concat("<div id=\"#{TABLE_OPTIONS[:action_div_id]}\">")
     # FIXME: table options and stuff
-    @val << "<form method=\"get\">" if @opts[:make_form] 
+    concat("<form method=\"get\">" if @opts[:make_form] )
     render_sort_field if @opts[:sortable] 
     render_paginator if @opts[:paginate]
     render_batch_actions if @opts[:batch_actions]
-    @val << '</div>'
+    concat('</div>')
     
-    @val << make_tag(:table, @opts[:table_html])
-    @val << make_tag(:thead)
+    concat(make_tag(:table, @opts[:table_html]))
+    concat(make_tag(:thead))
 
     render_table_header
     render_table_filters if @opts[:filter]
 
-    @val << "</thead>\n<!-- Body -->\n<tbody>"
+    concat("</thead>\n<!-- Body -->\n<tbody>")
 
     # Data Rows
     render_table_rows
     
-    @val << "</tbody></table>"
-    @val << '</form>' if @opts[:make_form] 
+    concat("</tbody></table>")
+    concat('</form>' if @opts[:make_form] )
     @val.join("\n")
   end
   
 private
+  # either append to the internal string buffer or use 
+  # ActionView#concat to output if an instance is available.
+  def concat(s)
+    if @view  
+      @view.concat(s)
+    else
+      @val << s
+    end
+  end
+
   # render the hidden input field that containing the current sort key
   def render_sort_field
-    @val << '<!-- Sort Field begin -->'
+    concat('<!-- Sort Field begin -->')
     # FIXME take 'current' value
-    @val << "<input type=\"hidden\" name=\"#{TABLE_DESIGN_OPTIONS[:sort_by_name]}\" value=\"\" />"
-    @val << '<!-- Sort Field end -->'
+    concat("<input type=\"hidden\" name=\"#{TABLE_DESIGN_OPTIONS[:sort_by_name]}\" value=\"\" />")
+    concat('<!-- Sort Field end -->')
   end
 
   #render the paginator controls, inputs etc.
   def render_paginator
-    @val << "\n<div id=\"#{TABLE_DESIGN_OPTIONS[:paginator_div_id]}\">"
-    @val << "<a href=\"\#\" id= \"page-left\" class=\"#{TABLE_DESIGN_OPTIONS[:page_left]}\">&laquo;</a>"
+    concat("\n<div id=\"#{TABLE_DESIGN_OPTIONS[:paginator_div_id]}\">")
+    concat("<a href=\"\#\" id= \"page-left\" class=\"#{TABLE_DESIGN_OPTIONS[:page_left]}\">&laquo;</a>")
     # FIXME find current page number
-    @val << "<input type=\"text\" id=\"page-nr\" class=\"#{TABLE_DESIGN_OPTIONS[:page_nr]}\" value=\"\" />"
+    concat("<input type=\"text\" id=\"page-nr\" class=\"#{TABLE_DESIGN_OPTIONS[:page_nr]}\" value=\"\" />")
     # FIXME find total number of pages
-    @val << "/..."
-    @val << "<a href=\"\#\" id= \"page-right\" class=\"#{TABLE_DESIGN_OPTIONS[:page_left]}\">&raquo;</a>"
+    concat("/...")
+    concat("<a href=\"\#\" id= \"page-right\" class=\"#{TABLE_DESIGN_OPTIONS[:page_left]}\">&raquo;</a>")
     # FIXME attach js actions to pager controls
-    @val << "</div>\n"
+    concat("</div>\n")
   end
 
   # render the select tag for batch actions
   def render_batch_actions
-    @val << "\n<div id=\"#{TABLE_OPTIONS[:batch_actions_div_id]}\">"
-    @val << "<select name=\"#{TABLE_OPTIONS[:batch_actions_name]}\" id=\"#{TABLE_OPTIONS[:batch_actions_name]}\">"
+    concat("\n<div id=\"#{TABLE_OPTIONS[:batch_actions_div_id]}\">")
+    concat("<select name=\"#{TABLE_OPTIONS[:batch_actions_name]}\" id=\"#{TABLE_OPTIONS[:batch_actions_name]}\">")
     @opts[:batch_actions].each do |n,v|
-      @val << "<option value=\"#{v}\">#{h}</option>"
+      concat("<option value=\"#{v}\">#{h}</option>")
     end
-    @val << "</select>"
+    concat("</select>")
     # FIXME add js trigger stuff if appropriate
-    @val << "</div>\n"
+    concat("</div>\n")
   end
   
   # render the header row
   def render_table_header
-    @val << "<!-- Header -->"
-    @val << make_tag(:tr, @opts[:header_html])
+    concat("<!-- Header -->")
+    concat(make_tag(:tr, @opts[:header_html]))
     header_builder = TableHeaderCellsBuilder.new(nil, @opts)
     yield(header_builder)
-    @val << header_builder.value
-    @val << "</tr>"
+    concat(header_builder.value)
+    concat("</tr>")
   end
   
   # render the filte row
   def render_table_filters
-    @val << "<!-- Filter -->"
-    @val << make_tag(:tr, @opts[:filter_html])
+    concat("<!-- Filter -->")
+    concat(make_tag(:tr, @opts[:filter_html]))
     filter_builder = TableFilterCellsBuilder.new(nil, @opts)
     yield(filter_builder)
-    @val << filter_builder.value
-    @val << '</tr>'
+    concat(filter_builder.value)
+    concat('</tr>')
   end
   
   # render the table rows
   def render_table_rows
     tr = make_tag(:tr, @opts[:row_html])
     @records.each_with_index do |record, i|
-      @val << "<!-- Row #{i} -->"
+      concat("<!-- Row #{i} -->")
       row_builder = TableDataCellsBuilder.new(record, @opts)
       row_builder.set_action_view(@view)
       yield(row_builder)
-      @val << tr << row_builder.value << "</tr>"
+      concat(tr << row_builder.value << "</tr>")
     end
   end
   
