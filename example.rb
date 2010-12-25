@@ -9,12 +9,16 @@ require "table_builder"
 ]
 
 
-s = TableBuilder.build_table @products, :table_html => {:class => 'datagrid'} do |t|
+build_table @products, :table_html => {:class => 'datagrid'} do |t|
+  h = {:idd => {:header => 'Id', :type => 'integer'}, ...}
+  h.each do |k,v| t.column k, v end
+    
   t.column :idd,          :header => 'Id', :type => 'integer'
-  t.column :title,        :filter_match  => :like
+  t.column :title,        :filter_match  => :like, :method => :full_title
   t.column :happy,        :filter => {"yes" => 1, "no" => 2}
   t.column :category_id,  :filter => false
   t.column :ping,         :header => 'Ping or Pong', :filter => ['ping', 'pong']
+  t.column :price,        :format => proc {|x| ... }
   t.column :action,       :header => "Action", :filter => false do |p|
     "link_to edit for '#{p.title}'"
   end
