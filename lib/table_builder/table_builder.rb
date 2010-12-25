@@ -108,21 +108,21 @@ class TableBuilder
   # <tt>:filter</tt>:: if set to false, no filter row is output
   def build_table(&block)
     @val = []
-    make_tag(@opts[:make_form] ? :form : nil, :method => :get) do
+    make_tag(@table_options[:make_form] ? :form : nil, :method => :get) do
       make_tag(:div,  :id=> TABLE_OPTIONS[:action_div_id]) do
         # FIXME: table options and stuff
-        render_sort_field if @opts[:sortable] 
-        render_paginator if @opts[:paginate]
-        render_batch_actions if @opts[:batch_actions]
+        render_sort_field if @table_options[:sortable] 
+        render_paginator if @table_options[:paginate]
+        render_batch_actions if @table_options[:batch_actions]
       end # </div>'
     
-      make_tag(:table, @opts[:table_html]) do
+      make_tag(:table, @table_options[:table_html]) do
         make_tag(:thead) do
-          render_table_header
-          render_table_filters if @opts[:filter]
+          render_table_header(&block)
+          render_table_filters(&block) if @table_options[:filter]
         end # </thead>
         make_tag(:tbody) do 
-          render_table_rows
+          render_table_rows(&block)
         end # </tbody>
       end # </table>
     end # </form>
@@ -133,11 +133,9 @@ private
   # either append to the internal string buffer or use
   # ActionView#concat to output if an instance is available.
   def concat(s)
-    if @view
-      @view.concat(s)
-    else
-      @val << s
-    end
+    @view.concat(s) if @view
+    puts "\# '#{s}'" 
+    @val << s
   end
 
   # render the hidden input field that containing the current sort key
@@ -177,21 +175,21 @@ private
   end
 
   # render the header row
-  def render_table_header
+  def render_table_header(&block)
     make_tag(:tr, @table_options[:header_html]) do
       yield(header_row_builder)
     end # </tr>"
   end
 
   # render the filter row
-  def render_table_filters
+  def render_table_filters(&block)
     make_tag(:tr, @table_options[:filter_html]) do
       yield(filter_row_builder)
     end # </tr>
   end
 
   # render the table rows
-  def render_table_rows
+  def render_table_rows(&block)
     @records.each_with_index do |record, i|
       concat("<!-- Row #{i} -->")
       make_tag(:tr, @table_options[:row_html]) do
@@ -201,7 +199,7 @@ private
   end
 
   # stringly produce a tag w/ some options
-  def self.make_tag(name, hash={}, &block)
+  def make_tag(name, hash={}, &block)
     attrs = hash ? tag_options(hash) : ''
     v = if block_given?
       if name
@@ -251,9 +249,9 @@ class TableBuilder
   # or filter building methods depending on the current mode
   def column(name, opts={}, &block)
     case @row_mode
-    when :data   then data_column(name, opts, block)
-    when :header then header_column(name, opts, block)
-    when :filter then filter_column(name, opts, block)
+    when :data   then data_column(name, opts, &block)
+    when :header then header_column(name, opts, &block)
+    when :filter then filter_column(name, opts, &block)
     else raise "Wrong row mode '#{@row_mode}'"
     end # case
   end
@@ -350,16 +348,16 @@ private
         make_tag(:select, :name => "filter[#{name}]") do 
           # TODO: make this nicer
           concat("<option></option>") 
-          of.each do |s,p|
-            make_tag(:option, :value => p[1]) do
-              concat p[0]
+          of.each do |t,v|
+            make_tag(:option, :value => v) do
+              concat t
             end # </option>
           end # each
         end # </select>
       elsif opts[:filter].class == Array
         # TODO: make this nicer
         concat("<option></option>") 
-        of.each do |s,p|
+        of.each do |p|
           make_tag(:option, :value => p) do
             concat p
           end # </option>

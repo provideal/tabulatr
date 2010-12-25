@@ -2,11 +2,14 @@
 # Monkey Patching...
 #--
 
+
+require 'table_builder/table_builder'
+
 class ActionView::Base
   # render the table in a view
   def table_for(records, opts={}, &block)
     table_builder = TableBuilder.new(records, self, opts)
-    concat(table_builder.build_table(&block), block.binding)
+    table_builder.build_table(&block)# von concat , block.binding
   end
 end
 
