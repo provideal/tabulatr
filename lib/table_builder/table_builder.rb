@@ -90,27 +90,24 @@ class TableBuilder
   # <tt>:filter</tt>:: if set to false, no filter row is output
   def build_table(&block)
     @val = []
-    concat("<div id=\"#{TABLE_OPTIONS[:action_div_id]}\">")
-    # FIXME: table options and stuff
-    concat("<form method=\"get\">" if @opts[:make_form] )
-    render_sort_field if @opts[:sortable] 
-    render_paginator if @opts[:paginate]
-    render_batch_actions if @opts[:batch_actions]
-    concat('</div>')
+    make_tag(@opts[:make_form] ? :form : nil, :method => :get) do
+      make_tag(:div,  :id=> TABLE_OPTIONS[:action_div_id]) do
+        # FIXME: table options and stuff
+        render_sort_field if @opts[:sortable] 
+        render_paginator if @opts[:paginate]
+        render_batch_actions if @opts[:batch_actions]
+      end # </div>'
     
-    concat(make_tag(:table, @opts[:table_html]))
-    concat(make_tag(:thead))
-
-    render_table_header
-    render_table_filters if @opts[:filter]
-
-    concat("</thead>\n<!-- Body -->\n<tbody>")
-
-    # Data Rows
-    render_table_rows
-    
-    concat("</tbody></table>")
-    concat('</form>' if @opts[:make_form] )
+      make_tag(:table, @opts[:table_html]) do
+        make_tag(:thead) do
+          render_table_header
+          render_table_filters if @opts[:filter]
+        end # </thead>
+        make_tag(:tbody) do 
+          render_table_rows
+        end # </tbody>
+      end # </table>
+    end # </form>
     @val.join("\n")
   end
   
@@ -127,17 +124,17 @@ private
 
   # render the hidden input field that containing the current sort key
   def render_sort_field
-    concat('<!-- Sort Field begin -->')
     # FIXME take 'current' value
-    concat("<input type=\"hidden\" name=\"#{TABLE_DESIGN_OPTIONS[:sort_by_name]}\" value=\"\" />")
-    concat('<!-- Sort Field end -->')
+    make_tag(:input, :type => :hidden, :name => TABLE_DESIGN_OPTIONS[:sort_by_name], :value => '')
   end
 
   #render the paginator controls, inputs etc.
   def render_paginator
-    concat("\n<div id=\"#{TABLE_DESIGN_OPTIONS[:paginator_div_id]}\">")
-    concat("<a href=\"\#\" id= \"page-left\" class=\"#{TABLE_DESIGN_OPTIONS[:page_left]}\">&laquo;</a>")
-    # FIXME find current page number
+    make_tag(:div, :id => TABLE_DESIGN_OPTIONS[:paginator_div_id]) do
+      make_tag(:a, :href => '#', :id => "page-left", :class => TABLE_DESIGN_OPTIONS[:page_left]) do
+        concat "&lt;"
+      end # </a>
+      # FIXME find current page number
     concat("<input type=\"text\" id=\"page-nr\" class=\"#{TABLE_DESIGN_OPTIONS[:page_nr]}\" value=\"\" />")
     # FIXME find total number of pages
     concat("/...")
@@ -191,11 +188,20 @@ private
   end
   
   # stringly produce a tag w/ some options
-  def self.make_tag(tag, hash={})
-    hash ||= {}
-    hash.inject("<#{tag}") do |s,h|
-      s << " #{h[0]}=\"#{h[1]}\""
-    end << ">"
+  def self.make_tag(name, hash={}, &block)
+    attrs = hash ? tag_options(hash) : ''
+    v = if block_given?
+      if name
+        concat("<#{name}#{attrs}>")
+        yield
+        concat("</#{name}>")
+      else
+        yield
+      end
+    else
+      concat("<#{name}#{attrs} />")
+    end
+    nil;
   end
 end
 
