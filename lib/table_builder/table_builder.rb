@@ -23,9 +23,9 @@ class TableBuilder
     :sortable => 'sortable',                    # class for the header of a sortable column
     :sorting_asc => 'sort-asc',                 # class for the currently asc sorting column
     :sorting_desc => 'sorting-desc',            # class for the currently desc sorting column
-    :page_left => 'page-left',                  # class for the page left <a>
-    :page_right => 'page-right',                # class for the page right <a>
-    :page_no => 'page-no',                      # class for the page no <input>
+    :page_left_id => 'page-left',               # id for the page left <a>
+    :page_right_id => 'page-right',             # id for the page right <a>
+    :page_no_id => 'page-no',                   # id for the page no <input>
     :control_div_id => 'table-controls',        # id of the div containing the paging and batch action controls
     :paginator_div_id => 'paginator',           # id of the div containing the paging controls
     :batch_actions_div_id => 'batch-actions',   # id of the dic containing the batch action controls
@@ -149,55 +149,54 @@ private
   #render the paginator controls, inputs etc.
   def render_paginator
     make_tag(:div, :id => TABLE_DESIGN_OPTIONS[:paginator_div_id]) do
-      make_tag(:a, :href => '#', :id => "page-left", :class => TABLE_DESIGN_OPTIONS[:page_left]) do
+      make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_left_id]) do
         concat "&lt;"
       end # </a>
       # FIXME find current page number
-    concat("<input type=\"text\" id=\"page-nr\" class=\"#{TABLE_DESIGN_OPTIONS[:page_nr]}\" value=\"\" />")
-    # FIXME find total number of pages
-    concat("/...")
-    concat("<a href=\"\#\" id= \"page-right\" class=\"#{TABLE_DESIGN_OPTIONS[:page_left]}\">&raquo;</a>")
-    # FIXME attach js actions to pager controls
-    concat("</div>\n")
+      make_tag(:input, :type => :hidden, :name => TABLE_DESIGN_OPTIONS[:page_nr], :value => '')
+      concat("/...")
+      make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_right_id]) do
+        concat "&gt;"
+      end # </a>      
+      # FIXME attach js actions to pager controls
+    end # </div>
   end
 
   # render the select tag for batch actions
   def render_batch_actions
-    concat("\n<div id=\"#{TABLE_OPTIONS[:batch_actions_div_id]}\">")
-    concat("<select name=\"#{TABLE_OPTIONS[:batch_actions_name]}\" id=\"#{TABLE_OPTIONS[:batch_actions_name]}\">")
-    @table_options[:batch_actions].each do |n,v|
-      concat("<option value=\"#{v}\">#{h}</option>")
-    end
-    concat("</select>")
-    # FIXME add js trigger stuff if appropriate
-    concat("</div>\n")
+    make_tag(:div, :id => TABLE_OPTIONS[:batch_actions_div_id]) do
+      make_tag(:select, :name => TABLE_OPTIONS[:batch_actions_name], :id => TABLE_OPTIONS[:batch_actions_name]) do
+        @table_options[:batch_actions].each do |n,v|
+          make_tag(:option, :value => n) do
+            concat(v)
+          end # </option>
+        end # each
+      end # </select>
+      # FIXME add js trigger stuff if appropriate
+    end # </div>
   end
 
   # render the header row
   def render_table_header
-    concat("<!-- Header -->")
-    concat(make_tag(:tr, @table_options[:header_html]))
-    yield(header_row_builder)
-    concat(header_builder.value)
-    concat("</tr>")
+    make_tag(:tr, @table_options[:header_html]) do
+      yield(header_row_builder)
+    end # </tr>"
   end
 
-  # render the filte row
+  # render the filter row
   def render_table_filters
-    concat("<!-- Filter -->")
-    concat(make_tag(:tr, @table_options[:filter_html]))
-    yield(filter_rw_builder)
-    concat(filter_builder.value)
-    concat('</tr>')
+    make_tag(:tr, @table_options[:filter_html]) do
+      yield(filter_row_builder)
+    end # </tr>
   end
 
   # render the table rows
   def render_table_rows
-    tr = make_tag(:tr, @table_options[:row_html])
     @records.each_with_index do |record, i|
       concat("<!-- Row #{i} -->")
-      yield(data_row_builder(record))
-      concat(tr << row_builder.value << "</tr>")
+      make_tag(:tr, @table_options[:row_html]) do
+        yield(data_row_builder(record))
+      end # </tr>
     end
   end
 
@@ -213,9 +212,9 @@ private
         yield
       end
     else
-      concat("<#{name}#{attrs} />")
+      concat("<#{name}#{attrs}>/")
     end
-    nil;
+    nil
   end
 end
 
@@ -230,6 +229,7 @@ class TableBuilder
     val[:filter] = params[FILTER_NAME].inject(["(1=1) ", []]) do |c, t|
       n, v = t
       # FIXME n = name_escaping(n)
+      raise "SECURITY violation, field name is '#{n}'" unless /^[\d\w]+$/.match n 
       if (params["#{FILTER_NAME}_matcher".to_sym] || {})[n]=='like'
         m = 'like'
         v = "%#{v}%"
@@ -255,6 +255,7 @@ class TableBuilder
     when :header then header_column(name, opts, block)
     when :filter then filter_column(name, opts, block)
     else raise "Wrong row mode '#{@row_mode}'"
+    end # case
   end
 
 private
@@ -295,14 +296,16 @@ private
   def data_column(name, opts={}, &block)
     raise "Not in data mode!" if @row_mode != :data
     opts = normalize_column_options opts
-    if block_given?
-      val = yield(@record)
-    else
-      val = @record.send(opts[:method] || name)
-      val = opts[:format].call(val) if opts[:format].class == Proc
-      val = (opts[:format] % val)   if opts[:format].class == String
-    end
-    concat(make_tag(:td, opts[:td_html]) << val << "</td>")
+    make_tag(:td, opts[:td_html]) do
+      if block_given?
+        yield(@record)
+      else
+        val = @record.send(opts[:method] || name)
+        val = opts[:format].call(val) if opts[:format].class == Proc
+        val = (opts[:format] % val)   if opts[:format].class == String
+        concat(val)
+      end # block_given?
+    end # </td>
   end
 
   # the method used to actually define the headers of the columns,
@@ -318,11 +321,9 @@ private
     if opts[:sortable] and @table_options[:sort]
       # change classes accordingly
     end
-    if @table_options[:batch_actions]
-      concat(make_tag(:th, opts[:th_html]) << "</th>")
-    end
-    concat(make_tag(:th, opts[:th_html]) << (opts[:header] || name.to_s.capitalize))
-    concat("</th>")
+    make_tag(:th, opts[:th_html]) do
+      concat(opts[:header] || name.to_s.capitalize)
+    end # </th>
   end
 
   # the method used to actually define the filters of the columns,
@@ -341,26 +342,36 @@ private
   def filter_column(name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(opts)
-    concat(make_tag(:td, opts[:filter_html]))
-    v = if !opts[:filter]
-      ""
-    elsif opts[:filter].class == Hash
-      opts[:filter].inject("<select name=\"filter[#{name}]\"><option value=""></option>") do |s,p|
-        s << "<option value=\"#{p[1]}\">#{p[0]}</option>"
-      end << "</select>"
-    elsif opts[:filter].class == Array
-      opts[:filter].inject("<select name=\"filter[#{name}]\">") do |s,p|
-        s << "<option value=\"#{p}\">#{p}</option>"
-      end << "</select>"
-    elsif opts[:filter].class == Class
-      # FIXME implement opts[:filter].all ...
-      raise "Implement me: '#{opts[:filter]}'"
-    else
-      make_tag(:input, :type => :text, :name => "filter[#{name}]", :style => "width:98%") << "</input>"
-    end
-    concat(v)
-    concat("%<input type=\"hidden\" name=\"filter_matcher[#{name}]\" value=\"like\" />") if opts[:filter_like]
-    concat("</td>")
+    make_tag(:td, opts[:filter_html]) do
+      of = opts[:filter]
+      if !of
+        ""
+      elsif of.class == Hash
+        make_tag(:select, :name => "filter[#{name}]") do 
+          # TODO: make this nicer
+          concat("<option></option>") 
+          of.each do |s,p|
+            make_tag(:option, :value => p[1]) do
+              concat p[0]
+            end # </option>
+          end # each
+        end # </select>
+      elsif opts[:filter].class == Array
+        # TODO: make this nicer
+        concat("<option></option>") 
+        of.each do |s,p|
+          make_tag(:option, :value => p) do
+            concat p
+          end # </option>
+        end # each
+      elsif opts[:filter].class == Class
+        # FIXME implement opts[:filter].all ...
+        raise "Implement me: '#{opts[:filter]}'"
+      else
+        make_tag(:input, :type => :text, :name => "filter[#{name}]", :style => "width:98%")
+      end # if
+      make_tag(:input, :type => hidden, :name => "filter_matcher[#{name}]", :value => "like") if opts[:filter_like]
+    end # </td>
   end
 
   # some preprocessing of the options
