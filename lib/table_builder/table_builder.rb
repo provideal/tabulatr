@@ -134,8 +134,8 @@ private
   # either append to the internal string buffer or use
   # ActionView#concat to output if an instance is available.
   def concat(s)
-    @view.concat(s) if @view
-    puts "\# '#{s}'" 
+    @view.concat(s) if (Rails.version.to_f < 3.0 && @view)
+    puts "\##{Rails.version.to_f} '#{s}'" 
     @val << s
   end
 

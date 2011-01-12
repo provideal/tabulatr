@@ -51,7 +51,7 @@ private
 
   # some preprocessing of the options
   def normalize_column_options(opts)
-    opts = COLUMN_OPTIONS.merge(opts)
+    opts = TableBuilder::COLUMN_OPTIONS.merge(opts)
     {:width => 'width', :align => 'text-align', :valign => 'vertical-align'}.each do |key,css|
       if opts[key]
         [:th_html, :filter_html, :td_html].each do |set|
