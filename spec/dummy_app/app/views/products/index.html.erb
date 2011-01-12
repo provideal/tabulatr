@@ -1,0 +1,41 @@
+<h1>Listing products</h1>
+
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Title</th>
+    <th>Price</th>
+    <th>Active</th>
+    <th>Description</th>
+    <th>Vendor</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+
+<%= table_for @products do |t| 
+  t.column :id
+  t.column :title
+  t.column :price
+  t.association :vendor, :name
+end.html_safe.html_safe %>
+
+<% @products.each do |product| %>
+  <tr>
+    <td><%= product.id %></td>
+    <td><%= product.title %></td>
+    <td><%= product.price %></td>
+    <td><%= product.active %></td>
+    <td><%= product.description %></td>
+    <td><%= product.vendor.name %></td>
+    <td><%= link_to 'Show', product %></td>
+    <td><%= link_to 'Edit', edit_product_path(product) %></td>
+    <td><%= link_to 'Destroy', product, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Product', new_product_path %>
