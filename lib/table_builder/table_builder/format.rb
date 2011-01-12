@@ -10,7 +10,7 @@ module TableBuilder::Format
   end
   
   def percent(x)
-    ("%.2f&thinspace;%%" % x).gsub(".", ",")
+    ("%.2f&thinspace;%%" % 100.0*x).gsub(".", ",")
   end
   
   def self.lamp(x)

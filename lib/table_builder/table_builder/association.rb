@@ -18,7 +18,7 @@ module TableBuilder::Association
     assoc = @record.class.reflect_on_association(relation)
     make_tag(:td, opts[:td_html]) do
       concat(if [:has_many, :has_and_belongs_to_many].member? assoc.macro
-        @record.send :relation
+        @record.send relation
       else
         [ @record.send relation.to_sym ]
       end.map do |r|
@@ -26,7 +26,7 @@ module TableBuilder::Association
         val = opts[:format].call(val) if opts[:format].class == Proc
         val = (opts[:format] % val)   if opts[:format].class == String
         val
-      end.join(@table_options[:join_symbol]))
+      end.join(opts[:join_symbol]))
     end # </td>
   end
 
