@@ -20,7 +20,7 @@ module TableBuilder::Association
       concat(if [:has_many, :has_and_belongs_to_many].member? assoc.macro
         @record.send relation
       else
-        [ @record.send relation.to_sym ]
+        [ @record.send(relation.to_sym) ]
       end.map do |r|
         val = r.send(opts[:method] || name)
         val = opts[:format].call(val) if opts[:format].class == Proc
