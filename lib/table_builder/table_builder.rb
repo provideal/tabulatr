@@ -32,7 +32,8 @@ class TableBuilder
     :batch_action_name => 'batch_action',       # name of the batch action param
     :sort_by_key => 'sort_by_key',              # name of key which to search, format is 'id asc'
     :paginate_name => 'pagination',             # name of the param w/ the pagination infos
-    :per_page => 20                             # default page length
+    :per_page => 20,                            # default page length
+    :filter_postfix => '_filter'                # name of the filter in the params hash: xxx_filter
     #...
   }
   
@@ -72,8 +73,11 @@ class TableBuilder
     :th_html => false,       # a hash with html attributes for the header cell
     :filter_html => false,   # a hash with html attributes for the filter cell
     :filter_html => false,   # a hash with html attributes for the filter cell
-    :filter => true,         # false for no filter field, array-of-names, hash-of-names-values for select, ClassName for foreign keys
-    :filter_like => false,   # true to filter w/ like %?%
+    :filter => true,         # false for no filter field, 
+                             # array-of-names, hash-of-names-values for select
+                             # String from options_from_collection_for_select
+                             # :from_to for range spec
+                             # :check for a 0/1 valued checkbox
     :format => false,        # a sprintf-string or a proc to do special formatting
     :method => false,        # if you want to get the column by a different method than its name
     :sortable => false       # if set, sorting-stuff is added to the header cell
@@ -93,6 +97,7 @@ class TableBuilder
     @val = []
     @record = nil
     @row_mode = false
+    @record_name = records.
   end
 
   # the actual table definition method. It takes an Array of records, a hash of

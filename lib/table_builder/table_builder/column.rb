@@ -85,7 +85,7 @@ module TableBuilder::Column
         # FIXME implement opts[:filter].all ...
         raise "Implement me: '#{opts[:filter]}'"
       else
-        make_tag(:input, :type => :text, :name => "filter[#{name}]", :style => "width:98%")
+        make_tag(:input, :type => :text, :name => "#{}_#{TABLE_DESIGN_OPTIONS[:filter_postfix]}[#{name}]", :style => "width:98%")
       end # if
       make_tag(:input, :type => :hidden, :name => "filter_matcher[#{name}]", :value => "like") if opts[:filter_like]
     end # </td>
