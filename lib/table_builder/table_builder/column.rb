@@ -65,10 +65,11 @@ module TableBuilder::Column
       elsif of.class == Hash
         make_tag(:select, :name => "filter[#{name}]") do 
           # TODO: make this nicer
+          option_
           concat("<option></option>") 
           of.each do |t,v|
-            make_tag(:option, :value => v) do
-              concat t
+            make_tag(:option, :value => t) do
+              concat v
             end # </option>
           end # each
         end # </select>
