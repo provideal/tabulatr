@@ -2,7 +2,6 @@
 # Monkey Patching...
 #--
 
-
 require 'table_builder/table_builder'
 
 class ActionView::Base

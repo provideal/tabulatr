@@ -26,7 +26,6 @@ class TableBuilder
     @val = []
     @record = nil
     @row_mode = false
-    @record_name = records.
   end
 
   # the actual table definition method. It takes an Array of records, a hash of
@@ -136,7 +135,7 @@ private
   # stringly produce a tag w/ some options
   def make_tag(name, hash={}, &block)
     attrs = hash ? tag_options(hash) : ''
-    v = if block_given?
+    if block_given?
       if name
         concat("<#{name}#{attrs}>")
         yield
@@ -152,5 +151,6 @@ private
 end
 
 Dir[File.dirname(__FILE__) + "/table_builder/*.rb"].each do |file| 
+  puts file
   require file
 end
