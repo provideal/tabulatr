@@ -1,11 +1,11 @@
 <h1>Listing products</h1>
 
-<%= table_for @products do |t| 
-  t.column :id
-  t.column :title
-  t.column :price
+<%= table_for @products do |t|
+  t.column :id, :filter => false
+  t.column :title, :filter => {1=>"ha",2=>"ho",3=>"hu"}
+  t.column :price, :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
   t.association :vendor, :id, :method => :name
-end.html_safe.html_safe %>
+end.html_safe %>
 
 
 <%= link_to 'New Product', new_product_path %>

@@ -63,8 +63,9 @@ module TableBuilder::Association
   #                                                                with all instances
   def filter_association(relation, name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
-    opts = normalize_column_options(opts)
-    make_tag(:td, opts[:filter_html]) do
+    filter_column(relation, opts, &block)
+    # opts = normalize_column_options(opts)
+    # make_tag(:td, opts[:filter_html]) do
       # of = opts[:filter]
       # if !of
       #   ""
@@ -93,7 +94,7 @@ module TableBuilder::Association
       #   make_tag(:input, :type => :text, :name => "filter[#{name}]", :style => "width:98%")
       # end # if
       # make_tag(:input, :type => hidden, :name => "filter_matcher[#{name}]", :value => "like") if opts[:filter_like]
-    end # </td>
+    # end # </td>
   end
 end
 

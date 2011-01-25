@@ -46,24 +46,27 @@ class TableBuilder #::Settings
 
   # Hash keeping the defaults for the column options
   COLUMN_OPTIONS = {
-    :header => false,        # a string to write into the header cell
-    :width => false,         # the width of the cell
-    :align => false,         # horizontal alignment
-    :valign => false,        # vertical alignment
-    :wrap => true,           # wraps
-    :type => :string,        # :integer, :date
-    :td_html => false,       # a hash with html attributes for the cells
-    :th_html => false,       # a hash with html attributes for the header cell
-    :filter_html => false,   # a hash with html attributes for the filter cell
-    :filter_html => false,   # a hash with html attributes for the filter cell
-    :filter => true,         # false for no filter field, 
-                             # array-of-names, hash-of-names-values for select
-                             # String from options_from_collection_for_select
-                             # :from_to for range spec
-                             # :check for a 0/1 valued checkbox
-    :format => false,        # a sprintf-string or a proc to do special formatting
-    :method => false,        # if you want to get the column by a different method than its name
-    :sortable => false       # if set, sorting-stuff is added to the header cell
+    :header => false,                   # a string to write into the header cell
+    :width => false,                    # the width of the cell
+    :align => false,                    # horizontal alignment
+    :valign => false,                   # vertical alignment
+    :wrap => true,                      # wraps
+    :type => :string,                   # :integer, :date
+    :td_html => false,                  # a hash with html attributes for the cells
+    :th_html => false,                  # a hash with html attributes for the header cell
+    :filter_html => false,              # a hash with html attributes for the filter cell
+    :filter_html => false,              # a hash with html attributes for the filter cell
+    :filter => true,                    # false for no filter field,
+
+                                        # array-of-names, hash-of-names-values for select
+                                        # String from options_from_collection_for_select
+                                        # :from_to for range spec
+                                        # :check for a 0/1 valued checkbox
+    :filter_width => '97%',             # width of the filter <input>
+    :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
+    :format => false,                   # a sprintf-string or a proc to do special formatting
+    :method => false,                   # if you want to get the column by a different method than its name
+    :sortable => false                  # if set, sorting-stuff is added to the header cell
   }
 
 end

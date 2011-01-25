@@ -45,17 +45,17 @@ class TableBuilder
     make_tag(@table_options[:make_form] ? :form : nil, :method => :get) do
       make_tag(:div,  :id=> TABLE_OPTIONS[:action_div_id]) do
         # FIXME: table options and stuff
-        render_sort_field if @table_options[:sortable] 
+        render_sort_field if @table_options[:sortable]
         render_paginator if @table_options[:paginate]
         render_batch_actions if @table_options[:batch_actions]
       end # </div>'
-    
+
       make_tag(:table, @table_options[:table_html]) do
         make_tag(:thead) do
           render_table_header(&block)
           render_table_filters(&block) if @table_options[:filter]
         end # </thead>
-        make_tag(:tbody) do 
+        make_tag(:tbody) do
           render_table_rows(&block)
         end # </tbody>
       end # </table>
@@ -68,7 +68,7 @@ private
   # ActionView#concat to output if an instance is available.
   def concat(s)
     @view.concat(s) if (Rails.version.to_f < 3.0 && @view)
-    puts "\##{Rails.version.to_f} '#{s}'" 
+    puts "\##{Rails.version.to_f} '#{s}'"
     @val << s
   end
 
@@ -89,7 +89,7 @@ private
       concat("/...")
       make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_right_id]) do
         concat "&gt;"
-      end # </a>      
+      end # </a>
       # FIXME attach js actions to pager controls
     end # </div>
   end
@@ -150,7 +150,7 @@ private
   end
 end
 
-Dir[File.dirname(__FILE__) + "/table_builder/*.rb"].each do |file| 
+Dir[File.dirname(__FILE__) + "/table_builder/*.rb"].each do |file|
   puts file
   require file
 end

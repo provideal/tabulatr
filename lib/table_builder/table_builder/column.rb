@@ -63,10 +63,10 @@ module TableBuilder::Column
       if !of
         ""
       elsif of.class == Hash
-        make_tag(:select, :name => "filter[#{name}]") do 
+        make_tag(:select, :name => "filter[#{name}]") do
           # TODO: make this nicer
-          option_
-          concat("<option></option>") 
+          #option_
+          concat("<option></option>")
           of.each do |t,v|
             make_tag(:option, :value => t) do
               concat v
@@ -75,7 +75,7 @@ module TableBuilder::Column
         end # </select>
       elsif opts[:filter].class == Array
         # TODO: make this nicer
-        concat("<option></option>") 
+        concat("<option></option>")
         of.each do |p|
           make_tag(:option, :value => p) do
             concat p
@@ -84,8 +84,12 @@ module TableBuilder::Column
       elsif opts[:filter].class == Class
         # FIXME implement opts[:filter].all ...
         raise "Implement me: '#{opts[:filter]}'"
+      elsif opts[:filter] == :range
+        make_tag(:input, :type => :text, :name => "#{TableBuilder::TABLE_FORM_OPTIONS[:filter_name]}[#{name}][from]", :style => "width:#{opts[:filter_width]}")
+        concat(opts[:range_filter_symbol])
+        make_tag(:input, :type => :text, :name => "#{TableBuilder::TABLE_FORM_OPTIONS[:filter_name]}[#{name}][to]", :style => "width:#{opts[:filter_width]}")
       else
-        make_tag(:input, :type => :text, :name => "#{}_#{TABLE_DESIGN_OPTIONS[:filter_postfix]}[#{name}]", :style => "width:98%")
+        make_tag(:input, :type => :text, :name => "#{TableBuilder::TABLE_FORM_OPTIONS[:filter_name]}[#{name}]", :style => "width:#{opts[:filter_width]}")
       end # if
       make_tag(:input, :type => :hidden, :name => "filter_matcher[#{name}]", :value => "like") if opts[:filter_like]
     end # </td>
