@@ -18,7 +18,7 @@ class ActionController::Base
   def get_table_options(opts={})
     val = TableBuilder.get_table_options(opts, params)
     @page = val[:paginate][:page]
-    @per_page = val[:paginate][:per_page]
+    @pagesize = val[:paginate][:pagesize]
     @filter = val[:filter]
     @sort_by = val[:sort_by]
   end

@@ -5,12 +5,12 @@ module TableBuilder::TableOptions
 
   def self.get_table_options(params, opts={})
     val = {}
-    val[:paginate] = PAGINATE_OPTIONS.merge(opts).merge(params[PAGINATE_NAME] || {})
-    val[:filter] = params[FILTER_NAME].inject(["(1=1) ", []]) do |c, t|
+    val[:paginate] = PAGINATE_OPTIONS.merge(opts).merge(params[TABLE_FORM_OPTIONS[:paginate_name]] || {})
+    val[:filter] = params[TABLE_FILTER_OPTIONS[:filter_name]].inject(["(1=1) ", []]) do |c, t|
       n, v = t
       # FIXME n = name_escaping(n)
       raise "SECURITY violation, field name is '#{n}'" unless /^[\d\w]+$/.match n 
-      if (params["#{FILTER_NAME}_matcher".to_sym] || {})[n]=='like'
+      if (params["#{TABLE_FILTER_OPTIONS[:filter_name]}_matcher".to_sym] || {})[n]=='like'
         m = 'like'
         v = "%#{v}%"
       else m = '=' end
