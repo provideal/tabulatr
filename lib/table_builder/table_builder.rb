@@ -12,6 +12,8 @@
 class TableBuilder
 
   include ActionView::Helpers::TagHelper
+  include ActionView::Helpers::FormTagHelper
+  include ActionView::Helpers::FormOptionsHelper
 
   # Constructor of TableBuilder
   #
@@ -68,7 +70,7 @@ private
   # ActionView#concat to output if an instance is available.
   def concat(s)
     @view.concat(s) if (Rails.version.to_f < 3.0 && @view)
-    puts "\##{Rails.version.to_f} '#{s}'"
+    #puts "\##{Rails.version.to_f} '#{s}'"
     @val << s
   end
 

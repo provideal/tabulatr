@@ -1,10 +1,20 @@
 <h1>Listing products</h1>
 
+<style type="text/css" media="screen">
+  table { border-collapse: collapse; }
+  td, th { border: 1px solid gray; padding:5px; }
+  th { background-color: #ccc;}
+</style>
+
 <%= table_for @products do |t|
-  t.column :id, :filter => false
-  t.column :title, :filter => {1=>"ha",2=>"ho",3=>"hu"}
-  t.column :price, :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
-  t.association :vendor, :id, :method => :name
+  t.column :id, :filter => false, :align => :right
+  t.column :title
+  t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;", 
+    :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
+  t.column :active, :filter => :checkbox, 
+    :checkbox_value => "Jawoll", :checkbox_label => 'ja?'
+  t.association :vendor, :id, :method => :name, :header => "Vendor", 
+    :filter => Vendor.all.map{|v| [v.name, v.id] }
 end.html_safe %>
 
 

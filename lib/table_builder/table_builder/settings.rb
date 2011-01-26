@@ -57,11 +57,12 @@ class TableBuilder #::Settings
     :filter_html => false,              # a hash with html attributes for the filter cell
     :filter_html => false,              # a hash with html attributes for the filter cell
     :filter => true,                    # false for no filter field,
-
-                                        # array-of-names, hash-of-names-values for select
-                                        # String from options_from_collection_for_select
-                                        # :from_to for range spec
-                                        # :check for a 0/1 valued checkbox
+                                        # container for options_for_select
+                                        # String from options_from_collection_for_select or the like
+                                        # :range for range spec
+                                        # :checkbox for a 0/1 valued checkbox
+    :checkbox_value => '1',             # value if checkbox is checked
+    :checkbox_label => '',              # text behind the checkbox
     :filter_width => '97%',             # width of the filter <input>
     :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
     :format => false,                   # a sprintf-string or a proc to do special formatting
