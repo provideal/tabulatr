@@ -69,7 +69,10 @@ class TableBuilder #::Settings
     :method => false,                   # if you want to get the column by a different method than its name
     :sortable => false                  # if set, sorting-stuff is added to the header cell
   }
+  
+  FINDER_INJECT_OPTIONS = {
+    :pagination => :__pagination,
+    :filters => :__filters
+  }
 
 end
-
-#TableBuilder.send :extend, TableBuilder::Settings

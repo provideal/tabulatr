@@ -22,3 +22,9 @@ class ActionController::Base
     @sort_by = val[:sort_by]
   end
 end
+
+class ActiveRecord::Base
+  def self.find_for_table(params, opts={})
+    TableBuilder.find_for_table(self, params, opts)
+  end
+end

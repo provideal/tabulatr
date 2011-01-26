@@ -82,16 +82,38 @@ private
 
   #render the paginator controls, inputs etc.
   def render_paginator
+    # get the current pagination state
+    pparams = PAGINATE_OPTIONS.merge(@view.params[TABLE_FORM_OPTIONS[:pagination]] || {})
+    page = pparams[:page].to_i
+    pagesize = pparams[:pagesize].to_i
+    pagesizes = pparams[:pagesizes].map &:to_i
+    # render the 'wrapping' div
     make_tag(:div, :id => TABLE_DESIGN_OPTIONS[:paginator_div_id]) do
+      # < 
       make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_left_id]) do
         concat "&lt;"
-      end # </a>
-      # FIXME find current page number
-      make_tag(:input, :type => :hidden, :name => TABLE_DESIGN_OPTIONS[:page_nr], :value => '')
+      end if page > 0 # </a>
+      # current page number
+      concat(make_tag(:input, 
+        :type => :hidden, 
+        :name => "#{TABLE_FORM_OPTIONS[:pagination_name]}[current_page]", 
+        :value => page))
+      concat(make_tag(:input, 
+        :type => :text,
+        :size => 3,
+        :name => "#{TABLE_FORM_OPTIONS[:pagination_name]}[page]", 
+        :value => page))
       concat("/...")
       make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_right_id]) do
         concat "&gt;"
-      end # </a>
+      end if true # </a>
+      make_tag(:select, :name => TABLE_FORM_OPTIONS[:pagination_name][:pagesize], :id => TABLE_DESIGN_OPTIONS[:batch_actions_name]) do
+        @table_options[:batch_actions].each do |n,v|
+          make_tag(:option, :value => n) do
+            concat(v)
+          end # </option>
+        end # each
+      end # </select>
       # FIXME attach js actions to pager controls
     end # </div>
   end
