@@ -6,14 +6,14 @@
   th { background-color: #ccc;}
 </style>
 
-<%= table_for @products, :paginate => true do |t|
+<%= table_for @products, :paginate => true, :pagesizes => [10] do |t|
   t.column :id, :filter => false, :align => :right
   t.column :title
-  t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;", 
+  t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;",
     :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
-  t.column :active, :filter => :checkbox, 
+  t.column :active, :filter => :checkbox,
     :checkbox_value => "Jawoll", :checkbox_label => 'ja?'
-  t.association :vendor, :id, :method => :name, :header => "Vendor", 
+  t.association :vendor, :id, :method => :name, :header => "Vendor",
     :filter => Vendor.all.map{|v| [v.name, v.id] }
 end.html_safe %>
 

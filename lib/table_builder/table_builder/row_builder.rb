@@ -5,6 +5,7 @@ module TableBuilder::RowBuilder
   # called inside the build_table block, branches into data, header,
   # or filter building methods depending on the current mode
   def column(name, opts={}, &block)
+    #puts "column: '#{name}'"
     case @row_mode
     when :data   then data_column(name, opts, &block)
     when :header then header_column(name, opts, &block)
@@ -16,6 +17,7 @@ module TableBuilder::RowBuilder
   # called inside the build_table block, branches into data, header,
   # or filter building methods depending on the current mode
   def association(relation, name, opts={}, &block)
+    #puts "assoc: '#{relation}.#{name}'"
     case @row_mode
     when :data   then data_association(relation, name, opts, &block)
     when :header then header_association(relation, name, opts, &block)

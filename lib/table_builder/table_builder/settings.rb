@@ -18,7 +18,7 @@ class TableBuilder #::Settings
     :make_form => true,                         # whether or not to wrap the whole table (incl. controls) in a form
     :batch_action_name => 'batch_action',       # name of the batch action param
     :sort_by_key => 'sort_by_key',              # name of key which to search, format is 'id asc'
-    :paginate_name => 'pagination',             # name of the param w/ the pagination infos
+    :pagination_name => 'pagination',           # name of the param w/ the pagination infos
     :filter_name => 'filter',                   # name of the filter in the params hash: xxx_filter
     :method => 'post'                           # http method for that form if applicable
   }
@@ -69,7 +69,7 @@ class TableBuilder #::Settings
     :method => false,                   # if you want to get the column by a different method than its name
     :sortable => false                  # if set, sorting-stuff is added to the header cell
   }
-  
+
   FINDER_INJECT_OPTIONS = {
     :pagination => :__pagination,
     :filters => :__filters

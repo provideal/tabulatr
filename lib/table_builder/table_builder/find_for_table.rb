@@ -44,6 +44,7 @@ class TableBuilder
       :limit => pagesize, :offset => (page-1)*pagesize, 
       :order  => order_by
     # finally, inject a method to retrieve the current 'settings'
+
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:pagination]) do 
       {:page => page, :pagesize => pagesize, :count => c, :pages => pages} 
     end
