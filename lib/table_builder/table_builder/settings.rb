@@ -1,8 +1,10 @@
+require "active_support/hash_with_indifferent_access"
+
 class TableBuilder #::Settings
 
   # these settings are considered constant for the whole application, can not be overridden
   # on a per-table basis
-  TABLE_DESIGN_OPTIONS = {
+  TABLE_DESIGN_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :sortable => 'sortable',                    # class for the header of a sortable column
     :sorting_asc => 'sort-asc',                 # class for the currently asc sorting column
     :sorting_desc => 'sorting-desc',            # class for the currently desc sorting column
@@ -12,26 +14,26 @@ class TableBuilder #::Settings
     :control_div_id => 'table-controls',        # id of the div containing the paging and batch action controls
     :paginator_div_id => 'paginator',           # id of the div containing the paging controls
     :batch_actions_div_id => 'batch-actions'    # id of the dic containing the batch action controls
-  }
+  })
 
-  TABLE_FORM_OPTIONS = {
+  TABLE_FORM_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :make_form => true,                         # whether or not to wrap the whole table (incl. controls) in a form
     :batch_action_name => 'batch_action',       # name of the batch action param
     :sort_by_key => 'sort_by_key',              # name of key which to search, format is 'id asc'
-    :pagination_name => 'pagination',           # name of the param w/ the pagination infos
-    :filter_name => 'filter',                   # name of the filter in the params hash: xxx_filter
+    :pagination_postfix => '_pagination',       # name of the param w/ the pagination infos
+    :filter_postfix => '_filter',               # postfix for name of the filter in the params hash: xxx_filter
     :method => 'post'                           # http method for that form if applicable
-  }
+  })
 
-  PAGINATE_OPTIONS = {
+  PAGINATE_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :page => 1,
     :pagesize => 10,
     :pagesizes => [10, 20, 50]
-  }
+  })
 
   # Hash keeping the defaults for the table options, may be overriden in the
   # table_for call
-  TABLE_OPTIONS = {
+  TABLE_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :table_html => false,        # a hash with html attributes for the table
     :row_html => false,          # a hash with html attributes for the normal trs
     :header_html => false,       # a hash with html attributes for the header trs
@@ -42,10 +44,10 @@ class TableBuilder #::Settings
     :action => nil,              # target action of the wrapping form if applicable
     :batch_actions => false,     # name => value hash of batch action stuff
     :join_symbol => ', '         # symbol used to join the elements of 'many' associations
-  }
+  })
 
   # Hash keeping the defaults for the column options
-  COLUMN_OPTIONS = {
+  COLUMN_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :header => false,                   # a string to write into the header cell
     :width => false,                    # the width of the cell
     :align => false,                    # horizontal alignment
@@ -68,11 +70,12 @@ class TableBuilder #::Settings
     :format => false,                   # a sprintf-string or a proc to do special formatting
     :method => false,                   # if you want to get the column by a different method than its name
     :sortable => false                  # if set, sorting-stuff is added to the header cell
-  }
+  })
 
-  FINDER_INJECT_OPTIONS = {
+  FINDER_INJECT_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :pagination => :__pagination,
-    :filters => :__filters
-  }
+    :filters => :__filters,
+    :classname => :__classname
+  })
 
 end

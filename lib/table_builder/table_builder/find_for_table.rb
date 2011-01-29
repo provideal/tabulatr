@@ -5,7 +5,9 @@ class TableBuilder
 
   def self.find_for_table(klaz, params, opts={})
     # firstly, get the conditions from the filters
-    filter_param = ({} || params[TABLE_FORM_OPTIONS[:filter_name]])
+    debugger
+    cname = klaz.to_s.downcase
+    filter_param = ({} || params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"])
     conditions = filter_param.inject(["(1=1) ", []]) do |c, t|
       n, v = t
       # FIXME n = name_escaping(n)
@@ -32,8 +34,8 @@ class TableBuilder
 
     # thirdly, get the pagination data
     paginate_options = PAGINATE_OPTIONS.merge(opts).
-      merge(params[TABLE_FORM_OPTIONS[:paginate_name]] || {})
-    page = paginate_options[:page]
+      merge(params["#{cname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"] || {})
+    page = paginate_options[:page].to_i
     pagesize = paginate_options[:pagesize].to_f
     c = klaz.count :conditions => conditions
     pages = (c/pagesize).ceil
@@ -46,15 +48,16 @@ class TableBuilder
     # finally, inject a method to retrieve the current 'settings'
 
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:pagination]) do 
-      {:page => page, :pagesize => pagesize, :count => c, :pages => pages} 
+      {:page => page, :pagesize => pagesize, :count => c, :pages => pages, :pagesizes => paginate_options[:pagesizes]} 
     end
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do 
       filter_param
+    end
+    found.define_singleton_method(FINDER_INJECT_OPTIONS[:classname]) do 
+      cname
     end
     
     found
   end
 
 end
-
-#TableBuilder.send :include, TableBuilder::TableOptions

@@ -28,6 +28,7 @@ class TableBuilder
     @val = []
     @record = nil
     @row_mode = false
+    @classname = @records.send(FINDER_INJECT_OPTIONS[:classname])
   end
 
   # the actual table definition method. It takes an Array of records, a hash of
@@ -70,7 +71,7 @@ private
   # ActionView#concat to output if an instance is available.
   def concat(s)
     @view.concat(s) if (Rails.version.to_f < 3.0 && @view)
-    #puts "\##{Rails.version.to_f} '#{s}'"
+    puts "\##{Rails.version.to_f} '#{s}'"
     @val << s
   end
 
@@ -83,13 +84,14 @@ private
   #render the paginator controls, inputs etc.
   def render_paginator
     # get the current pagination state
-    pparams = PAGINATE_OPTIONS.merge(@table_options).merge(@view.params[TABLE_FORM_OPTIONS[:pagination]] || {})
+    puts "pagination_name"
+    pagination_name = "#{@classname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"
+    pparams = @records.send(FINDER_INJECT_OPTIONS[:pagination])
     page = pparams[:page].to_i
     pagesize = pparams[:pagesize].to_i
     pagesizes = pparams[:pagesizes].map &:to_i
     # render the 'wrapping' div
     make_tag(:div, :id => TABLE_DESIGN_OPTIONS[:paginator_div_id]) do
-      debugger
       # <
       make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_left_id]) do
         concat "&lt;"
@@ -97,19 +99,19 @@ private
       # current page number
       concat(make_tag(:input,
         :type => :hidden,
-        :name => "#{TABLE_FORM_OPTIONS[:pagination_name]}[current_page]",
+        :name => "#{pagination_name}[current_page]",
         :value => page))
       concat(make_tag(:input,
         :type => :text,
         :size => 3,
-        :name => "#{TABLE_FORM_OPTIONS[:pagination_name]}[page]",
+        :name => "#{pagination_name}[page]",
         :value => page))
-      concat("/...")
+      concat("/#{pparams[:pages]}")
       make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_right_id]) do
         concat "&gt;"
       end if true # </a>
       if pagesizes.length > 1
-        make_tag(:select, :name => "#{TABLE_FORM_OPTIONS[:pagination_name]}[pagesize]", :id => "muff") do
+        make_tag(:select, :name => "#{pagination_name}[pagesize]", :id => "muff") do
           pagesizes.each do |n|
             make_tag(:option, :value => n) do
               concat(n.to_s)
@@ -119,7 +121,7 @@ private
       else # just one pagesize
         concat(make_tag(:input,
           :type => :hidden,
-          :name => "#{TABLE_FORM_OPTIONS[:pagination_name]}[pagesize]",
+          :name => "#{pagination_name}[pagesize]",
           :value => pagesizes.first))
       end
       # FIXME attach js actions to pager controls
@@ -183,6 +185,6 @@ private
 end
 
 Dir[File.dirname(__FILE__) + "/table_builder/*.rb"].each do |file|
-  puts file
+  #puts file
   require file
 end

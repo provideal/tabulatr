@@ -2,9 +2,8 @@ class ProductsController < ApplicationController
   # GET /products
   # GET /products.xml
   def index
-    #@products = Product.find_for_table(params)
-    #debugger
-    @products = Product.all
+    @products = Product.find_for_table(params)
+    #@products = Product.all
 
     respond_to do |format|
       format.html # index.html.erb

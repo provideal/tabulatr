@@ -18,7 +18,7 @@ module TableBuilder::FilterCell
     opts = normalize_column_options(opts)
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
-      iname = "#{TableBuilder::TABLE_FORM_OPTIONS[:filter_name]}[#{name}]"
+      iname = "#{@classname}#{TableBuilder::TABLE_FORM_OPTIONS[:filter_postfix]}[#{name}]"
       if !of
         ""
       elsif of.class == Hash or of.class == Array or of.class == String
