@@ -5,28 +5,33 @@ class TableBuilder
 
   def self.find_for_table(klaz, params, opts={})
     # firstly, get the conditions from the filters
-    debugger
     cname = klaz.to_s.downcase
-    filter_param = ({} || params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"])
+    filter_param = (params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"] || {})
     conditions = filter_param.inject(["(1=1) ", []]) do |c, t|
       n, v = t
+      nc = c
       # FIXME n = name_escaping(n)
       raise "SECURITY violation, field name is '#{n}'" unless /^[\d\w]+$/.match n 
       if v.class == String
-        [c[0] << "AND (`#{n}` = ?) ", c[1] << v]
-      elsif v.class == Hash
-        if v[:like]
-          [c[0] << "AND (`#{n}` LIKE ?) ", c[1] << "%#{v[:like]}%"]
-        elsif v[:from]
-          [c[0] << "AND (`#{n}` > ? AND `#{n}` < ?) ", 
-            c[1] << "#{v[:from]}" << "#{v[:to]}"]
-        else 
-          raise "whatsup? #{v.keys.to_s}"
+        if v.present?
+          nc = [c[0] << "AND (`#{n}` = ?) ", c[1] << v]
+        end
+      elsif v.is_a?(Hash)
+        if v[:like] 
+          if v[:like].present?
+            nc = [c[0] << "AND (`#{n}` LIKE ?) ", c[1] << "%#{v[:like]}%"]
+          end
+        else
+          nc = [c[0] << "AND (`#{n}` > ?) ", c[1] << "#{v[:from]}"] if v[:from].present?
+          nc = [nc[0] << "AND (`#{n}` < ?) ", nc[1] << "#{v[:to]}"] if v[:to].present?
         end
       else
-        raise "Wrong filter type: #{w.class}"
+        raise "Wrong filter type: #{v.class}"
       end
+      nc
     end
+    conditions = [conditions.first] + conditions.last
+    debugger
 
     # secondly, find the order_by stuff
     # FIXME: Implement me! PLEEEZE!

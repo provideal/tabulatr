@@ -8,11 +8,11 @@
 
 <%= table_for @products, :paginate => true do |t|
   t.column :id, :filter => false, :align => :right
-  t.column :title
+  t.column :title, :filter => :like
   t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;",
     :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
   t.column :active, :filter => :checkbox,
-    :checkbox_value => "Jawoll", :checkbox_label => 'ja?'
+    :checkbox_value => "1", :checkbox_label => 'ja?'
   t.association :vendor, :id, :method => :name, :header => "Vendor",
     :filter => Vendor.all.map{|v| [v.name, v.id] }
 end.html_safe %>
