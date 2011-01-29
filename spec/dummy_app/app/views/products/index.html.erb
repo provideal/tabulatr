@@ -6,7 +6,7 @@
   th { background-color: #ccc;}
 </style>
 
-<%= table_for @products, :paginate => true, :pagesizes => [10] do |t|
+<%= table_for @products, :paginate => true do |t|
   t.column :id, :filter => false, :align => :right
   t.column :title
   t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;",

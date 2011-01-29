@@ -51,6 +51,11 @@ class TableBuilder
         render_sort_field if @table_options[:sortable]
         render_paginator if @table_options[:paginate]
         render_batch_actions if @table_options[:batch_actions]
+        if @table_options[:make_form]
+          make_tag(:input, :type => 'submit', 
+            :class => TABLE_DESIGN_OPTIONS[:submit_class], 
+            :value => TABLE_DESIGN_OPTIONS[:submit_label])
+        end
       end # </div>'
 
       make_tag(:table, @table_options[:table_html]) do
@@ -113,7 +118,7 @@ private
       if pagesizes.length > 1
         make_tag(:select, :name => "#{pagination_name}[pagesize]", :id => "muff") do
           pagesizes.each do |n|
-            make_tag(:option, :value => n) do
+            make_tag(:option, (n.to_i==pagesize ? {:selected  => :selected} : {}).merge(:value => n)) do
               concat(n.to_s)
             end # </option>
           end # each
@@ -130,6 +135,7 @@ private
 
   # render the select tag for batch actions
   def render_batch_actions
+    return
     make_tag(:div, :id => TABLE_OPTIONS[:batch_actions_div_id]) do
       make_tag(:select, :name => TABLE_OPTIONS[:batch_actions_name], :id => TABLE_OPTIONS[:batch_actions_name]) do
         @table_options[:batch_actions].each do |n,v|

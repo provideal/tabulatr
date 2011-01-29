@@ -13,11 +13,12 @@ class TableBuilder #::Settings
     :page_no_id => 'page-no',                   # id for the page no <input>
     :control_div_id => 'table-controls',        # id of the div containing the paging and batch action controls
     :paginator_div_id => 'paginator',           # id of the div containing the paging controls
-    :batch_actions_div_id => 'batch-actions'    # id of the dic containing the batch action controls
+    :batch_actions_div_id => 'batch-actions',   # id of the dic containing the batch action controls
+    :submit_class => 'submit-table',            # class of submit button
+    :submit_label => 'Apply'                    # Text on the submit button
   })
 
   TABLE_FORM_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
-    :make_form => true,                         # whether or not to wrap the whole table (incl. controls) in a form
     :batch_action_name => 'batch_action',       # name of the batch action param
     :sort_by_key => 'sort_by_key',              # name of key which to search, format is 'id asc'
     :pagination_postfix => '_pagination',       # name of the param w/ the pagination infos
@@ -34,6 +35,7 @@ class TableBuilder #::Settings
   # Hash keeping the defaults for the table options, may be overriden in the
   # table_for call
   TABLE_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
+    :make_form => true,          # whether or not to wrap the whole table (incl. controls) in a form
     :table_html => false,        # a hash with html attributes for the table
     :row_html => false,          # a hash with html attributes for the normal trs
     :header_html => false,       # a hash with html attributes for the header trs
