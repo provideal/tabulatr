@@ -50,7 +50,7 @@ class TableBuilder
     
     # Now, actually find the stuff
     found = klaz.find :all, :conditions => conditions, 
-      :limit => pagesize, :offset => (page-1)*pagesize, 
+      :limit => pagesize.to_i, :offset => ((page-1)*pagesize).to_i, 
       :order  => order_by
     # finally, inject a method to retrieve the current 'settings'
 

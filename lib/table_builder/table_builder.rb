@@ -29,6 +29,8 @@ class TableBuilder
     @record = nil
     @row_mode = false
     @classname = @records.send(FINDER_INJECT_OPTIONS[:classname])
+    @pagination = @records.send(FINDER_INJECT_OPTIONS[:pagination])
+    @filters = @records.send(FINDER_INJECT_OPTIONS[:filters])
   end
 
   # the actual table definition method. It takes an Array of records, a hash of

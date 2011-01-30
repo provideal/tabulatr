@@ -16,6 +16,7 @@ module TableBuilder::FilterCell
   def filter_column(name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(opts)
+    value = @filters[name]
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
       iname = "#{@classname}#{TableBuilder::TABLE_FORM_OPTIONS[:filter_postfix]}[#{name}]"
@@ -31,18 +32,25 @@ module TableBuilder::FilterCell
           end
         end # </select>
       elsif opts[:filter] == :range
-        make_tag(:input, :type => :text, :name => "#{iname}[from]", :style => "width:#{opts[:filter_width]}")
+        make_tag(:input, :type => :text, :name => "#{iname}[from]", 
+          :style => "width:#{opts[:filter_width]}",
+          :value => value ? value[:from] : '')
         concat(opts[:range_filter_symbol])
-        make_tag(:input, :type => :text, :name => "#{iname}[to]", :style => "width:#{opts[:filter_width]}")
+        make_tag(:input, :type => :text, :name => "#{iname}[to]", 
+          :style => "width:#{opts[:filter_width]}",
+          :value => value ? value[:to] : '')
       elsif opts[:filter] == :checkbox
         checkbox_value = opts[:checkbox_value]
         checkbox_label = opts[:checkbox_label]
         concat(check_box_tag(iname, checkbox_value, false, {}))
         concat(checkbox_label)
       elsif opts[:filter] == :like
-        make_tag(:input, :type => :text, :name => "#{iname}[like]", :style => "width:#{opts[:filter_width]}")
+        make_tag(:input, :type => :text, :name => "#{iname}[like]", 
+          :style => "width:#{opts[:filter_width]}",
+          :value => value ? value[:like] : '')
       else
-        make_tag(:input, :type => :text, :name => "#{iname}", :style => "width:#{opts[:filter_width]}")
+        make_tag(:input, :type => :text, :name => "#{iname}", :style => "width:#{opts[:filter_width]}",
+          :value => value)
       end # if
     end # </td>
   end
