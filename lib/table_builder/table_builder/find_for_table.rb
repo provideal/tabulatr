@@ -41,10 +41,12 @@ class TableBuilder
     paginate_options = PAGINATE_OPTIONS.merge(opts).
       merge(params["#{cname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"] || {})
     page = paginate_options[:page].to_i
+    page += 1 if paginate_options[:page_right]
+    page -= 1 if paginate_options[:page_left]
     pagesize = paginate_options[:pagesize].to_f
     c = klaz.count :conditions => conditions
     pages = (c/pagesize).ceil
-    page = [page, pages].min
+    page = [1, [page, pages].min].max
     
     # Now, actually find the stuff
     found = klaz.find :all, :conditions => conditions, 

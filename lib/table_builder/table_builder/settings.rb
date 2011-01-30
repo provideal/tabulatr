@@ -15,7 +15,11 @@ class TableBuilder #::Settings
     :paginator_div_id => 'paginator',           # id of the div containing the paging controls
     :batch_actions_div_id => 'batch-actions',   # id of the dic containing the batch action controls
     :submit_class => 'submit-table',            # class of submit button
-    :submit_label => 'Apply'                    # Text on the submit button
+    :submit_label => 'Apply',                   # Text on the submit button
+    :pager_left_button => '/images/table_builder/pager_arrow_left.gif',
+    :pager_left_button_inactive => '/images/table_builder/pager_arrow_left_off.gif',
+    :pager_right_button => '/images/table_builder/pager_arrow_right.gif',
+    :pager_right_button_inactive => '/images/table_builder/pager_arrow_right_off.gif'
   })
 
   TABLE_FORM_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({

@@ -93,14 +93,20 @@ private
     pagination_name = "#{@classname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"
     pparams = @records.send(FINDER_INJECT_OPTIONS[:pagination])
     page = pparams[:page].to_i
+    pages = pparams[:pages].to_i
     pagesize = pparams[:pagesize].to_i
     pagesizes = pparams[:pagesizes].map &:to_i
     # render the 'wrapping' div
     make_tag(:div, :id => TABLE_DESIGN_OPTIONS[:paginator_div_id]) do
-      # <
-      make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_left_id]) do
-        concat "&lt;"
-      end if page > 0 # </a>
+      # << Page Left
+      if page > 1
+        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_left_button], 
+          :id => TABLE_DESIGN_OPTIONS[:page_left_id],
+          :name => "#{pagination_name}[page_left]")
+      else
+        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_left_button_inactive], 
+          :id => TABLE_DESIGN_OPTIONS[:page_left_id])
+      end  # page > 1
       # current page number
       concat(make_tag(:input,
         :type => :hidden,
@@ -108,13 +114,19 @@ private
         :value => page))
       concat(make_tag(:input,
         :type => :text,
-        :size => 3,
+        :size => pages.to_s.length,
         :name => "#{pagination_name}[page]",
         :value => page))
-      concat("/#{pparams[:pages]}")
-      make_tag(:a, :href => '#', :id => TABLE_DESIGN_OPTIONS[:page_right_id]) do
-        concat "&gt;"
-      end if true # </a>
+      concat("/#{pages}")
+      # >> Page Right
+      if page < pages
+        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_right_button], 
+          :id => TABLE_DESIGN_OPTIONS[:page_right_id],
+          :name => "#{pagination_name}[page_right]")
+      else
+        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_right_button_inactive], 
+          :id => TABLE_DESIGN_OPTIONS[:page_right_id])
+      end  # page < pages
       if pagesizes.length > 1
         make_tag(:select, :name => "#{pagination_name}[pagesize]", :id => "muff") do
           pagesizes.each do |n|
