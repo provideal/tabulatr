@@ -10,12 +10,26 @@ module TableBuilder::HeaderCell
   #                    otherwise, the capitalized name is used
   def header_column(name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
+    sortparam = "#{@classname}#{TableBuilder::TABLE_FORM_OPTIONS[:sort_postfix]}"
     opts = normalize_column_options opts
-    if opts[:sortable] and @table_options[:sort]
-      # change classes accordingly
-    end
     make_tag(:th, opts[:th_html]) do
       concat(opts[:header] || name.to_s.capitalize)
+      if opts[:sortable] and @table_options[:sortable]
+        if @sorting and @sorting[:by].to_s == name.to_s
+          pname = "#{sortparam}[_resort][#{name}][#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}]" 
+          psrc = TableBuilder::TABLE_DESIGN_OPTIONS[@sorting[:direction] == 'desc' ? 
+            :sort_down_button : :sort_up_button]
+          make_tag(:input, :type => :hidden, 
+            :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]", 
+            :value => "#{@sorting[:direction]}")
+        else
+          pname = "#{sortparam}[_resort][#{name}][desc]"
+          psrc = TableBuilder::TABLE_DESIGN_OPTIONS[:sort_down_button_inactive]
+        end
+        make_tag(:input, :type => 'image', 
+          :src => psrc,
+          :name => pname)
+      end
     end # </th>
   end
 

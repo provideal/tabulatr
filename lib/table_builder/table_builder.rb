@@ -31,6 +31,7 @@ class TableBuilder
     @classname = @records.send(FINDER_INJECT_OPTIONS[:classname])
     @pagination = @records.send(FINDER_INJECT_OPTIONS[:pagination])
     @filters = @records.send(FINDER_INJECT_OPTIONS[:filters])
+    @sorting = @records.send(FINDER_INJECT_OPTIONS[:sorting])
   end
 
   # the actual table definition method. It takes an Array of records, a hash of
@@ -50,7 +51,7 @@ class TableBuilder
     make_tag(@table_options[:make_form] ? :form : nil, :method => :get) do
       make_tag(:div,  :id=> TABLE_OPTIONS[:action_div_id]) do
         # FIXME: table options and stuff
-        render_sort_field if @table_options[:sortable]
+        #render_sort_field if @table_options[:sortable]
         render_paginator if @table_options[:paginate]
         render_batch_actions if @table_options[:batch_actions]
         if @table_options[:make_form]
@@ -78,14 +79,8 @@ private
   # ActionView#concat to output if an instance is available.
   def concat(s)
     @view.concat(s) if (Rails.version.to_f < 3.0 && @view)
-    puts "\##{Rails.version.to_f} '#{s}'"
+    #puts "\##{Rails.version.to_f} '#{s}'"
     @val << s
-  end
-
-  # render the hidden input field that containing the current sort key
-  def render_sort_field
-    # FIXME take 'current' value
-    make_tag(:input, :type => :hidden, :name => TABLE_DESIGN_OPTIONS[:sort_by_name], :value => '')
   end
 
   #render the paginator controls, inputs etc.

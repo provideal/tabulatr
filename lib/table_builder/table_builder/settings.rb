@@ -19,7 +19,11 @@ class TableBuilder #::Settings
     :pager_left_button => '/images/table_builder/pager_arrow_left.gif',
     :pager_left_button_inactive => '/images/table_builder/pager_arrow_left_off.gif',
     :pager_right_button => '/images/table_builder/pager_arrow_right.gif',
-    :pager_right_button_inactive => '/images/table_builder/pager_arrow_right_off.gif'
+    :pager_right_button_inactive => '/images/table_builder/pager_arrow_right_off.gif',
+    :sort_up_button => '/images/table_builder/sort_arrow_up.gif',
+    :sort_up_button_inactive => '/images/table_builder/sort_arrow_up_off.gif',
+    :sort_down_button => '/images/table_builder/sort_arrow_down.gif',
+    :sort_down_button_inactive => '/images/table_builder/sort_arrow_down_off.gif'
   })
 
   TABLE_FORM_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
@@ -27,6 +31,7 @@ class TableBuilder #::Settings
     :sort_by_key => 'sort_by_key',              # name of key which to search, format is 'id asc'
     :pagination_postfix => '_pagination',       # name of the param w/ the pagination infos
     :filter_postfix => '_filter',               # postfix for name of the filter in the params hash: xxx_filter
+    :sort_postfix => '_sort',                   # postfix for name of the filter in the params hash: xxx_filter
     :method => 'post'                           # http method for that form if applicable
   })
 
@@ -46,7 +51,7 @@ class TableBuilder #::Settings
     :filter_html => false,       # a hash with html attributes for the filter trs
     :filter => true,             # false for no filter row at all
     :paginate => false,          # true to show paginator
-    :sortable => false,          # true to allow sorting (can be specified for every sortable column)
+    :sortable => true,           # true to allow sorting (can be specified for every sortable column)
     :action => nil,              # target action of the wrapping form if applicable
     :batch_actions => false,     # name => value hash of batch action stuff
     :join_symbol => ', '         # symbol used to join the elements of 'many' associations
@@ -75,13 +80,14 @@ class TableBuilder #::Settings
     :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
     :format => false,                   # a sprintf-string or a proc to do special formatting
     :method => false,                   # if you want to get the column by a different method than its name
-    :sortable => false                  # if set, sorting-stuff is added to the header cell
+    :sortable => true                   # if set, sorting-stuff is added to the header cell
   })
 
   FINDER_INJECT_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :pagination => :__pagination,
     :filters => :__filters,
-    :classname => :__classname
+    :classname => :__classname,
+    :sorting => :__sorting
   })
 
 end

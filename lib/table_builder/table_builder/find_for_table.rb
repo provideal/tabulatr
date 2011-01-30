@@ -31,11 +31,24 @@ class TableBuilder
       nc
     end
     conditions = [conditions.first] + conditions.last
-    debugger
 
     # secondly, find the order_by stuff
     # FIXME: Implement me! PLEEEZE!
-    order_by = "id asc"
+    sortparam = params["#{cname}#{TableBuilder::TABLE_FORM_OPTIONS[:sort_postfix]}"]
+    if sortparam
+      if sortparam[:_resort]
+        order_by = sortparam[:_resort].first.first
+        order_direction = sortparam[:_resort].first.last.first.first
+      else
+        order_by = sortparam.first.first
+        order_direction = sortparam.first.last.first.first
+      end
+      raise "SECURITY violation, sort field name is '#{n}'" unless /^[\w]+$/.match order_direction
+      raise "SECURITY violation, sort field name is '#{n}'" unless /^[\d\w]+$/.match order_by
+      order = "#{order_by} #{order_direction}"
+    else
+      order = order_by = order_direction = nil
+    end
 
     # thirdly, get the pagination data
     paginate_options = PAGINATE_OPTIONS.merge(opts).
@@ -51,17 +64,17 @@ class TableBuilder
     # Now, actually find the stuff
     found = klaz.find :all, :conditions => conditions, 
       :limit => pagesize.to_i, :offset => ((page-1)*pagesize).to_i, 
-      :order  => order_by
-    # finally, inject a method to retrieve the current 'settings'
+      :order  => order
 
+    # finally, inject methods to retrieve the current 'settings'
+    found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do filter_param end
+    found.define_singleton_method(FINDER_INJECT_OPTIONS[:classname]) do cname end
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:pagination]) do 
-      {:page => page, :pagesize => pagesize, :count => c, :pages => pages, :pagesizes => paginate_options[:pagesizes]} 
+      {:page => page, :pagesize => pagesize, :count => c, :pages => pages, 
+        :pagesizes => paginate_options[:pagesizes]} 
     end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do 
-      filter_param
-    end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:classname]) do 
-      cname
+    found.define_singleton_method(FINDER_INJECT_OPTIONS[:sorting]) do 
+      order ? { :by => order_by, :direction => order_direction } : nil
     end
     
     found
