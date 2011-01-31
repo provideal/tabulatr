@@ -32,9 +32,11 @@ if Object.const_defined? "ActiveRecord"
 end
 
 if Object.const_defined? "Mongoid"
-  class Mongoid::Document
-    def self.find_for_table(params, opts={})
-      Tabulatr.find_for_mongoid_table(self, params, opts)
+  module Mongoid::Document
+    module ClassMethods
+      def find_for_table(params, opts={})
+        Tabulatr.find_for_mongoid_table(self, params, opts)
+      end
     end
   end
 end

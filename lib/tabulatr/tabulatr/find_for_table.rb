@@ -145,9 +145,9 @@ class Tabulatr
     page = [1, [page, pages].min].max
 
     # Now, actually find the stuff
-    found = klaz.find :all, :conditions => conditions,
-      :limit => pagesize.to_i, :offset => ((page-1)*pagesize).to_i,
-      :order  => order
+    found = klaz.find(:conditions => conditions).paginate(:page => page, :per_page => pagesize)
+
+#      :order  => order
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do filter_param end
