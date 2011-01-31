@@ -103,11 +103,11 @@ class Tabulatr
       elsif v.is_a?(Hash)
         if v[:like]
           if v[:like].present?
-            nc[n.to_sym] = "/#{v[:like]}/"
+            nc[n.to_sym] = Regexp.new("#{v[:like]}")
           end
         else
-          nc[n.to_sym.lte] = "#{v[:from]}" if v[:from].present?
-          nc[n.to_sym.gte] = "#{v[:to]}" if v[:to].present?
+          nc[n.to_sym.gte] = "#{v[:from]}" if v[:from].present?
+          nc[n.to_sym.lte] = "#{v[:to]}" if v[:to].present?
         end
       else
         raise "Wrong filter type: #{v.class}"
@@ -128,9 +128,9 @@ class Tabulatr
       end
       raise "SECURITY violation, sort field name is '#{n}'" unless /^[\w]+$/.match order_direction
       raise "SECURITY violation, sort field name is '#{n}'" unless /^[\d\w]+$/.match order_by
-      order = "#{order_by} #{order_direction}"
+      order = [order_by, order_direction]
     else
-      order = order_by = order_direction = nil
+      order = nil
     end
 
     # thirdly, get the pagination data
@@ -145,9 +145,9 @@ class Tabulatr
     page = [1, [page, pages].min].max
 
     # Now, actually find the stuff
-    found = klaz.find(:conditions => conditions).paginate(:page => page, :per_page => pagesize)
-
-#      :order  => order
+    found = klaz.find(:conditions => conditions)
+    found = found.order_by([order]) if order
+    found = found.paginate(:page => page, :per_page => pagesize)
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do filter_param end
