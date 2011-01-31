@@ -1,4 +1,4 @@
-module TableBuilder::FilterCell
+module Tabulatr::FilterCell
 
   # the method used to actually define the filters of the columns,
   # taking the name of the attribute and a hash of options.
@@ -19,7 +19,7 @@ module TableBuilder::FilterCell
     value = @filters[name]
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
-      iname = "#{@classname}#{TableBuilder::TABLE_FORM_OPTIONS[:filter_postfix]}[#{name}]"
+      iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:filter_postfix]}[#{name}]"
       if !of
         ""
       elsif of.class == Hash or of.class == Array or of.class == String
@@ -106,4 +106,4 @@ module TableBuilder::FilterCell
 
 end
 
-TableBuilder.send :include, TableBuilder::FilterCell
+Tabulatr.send :include, Tabulatr::FilterCell

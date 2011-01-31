@@ -1,6 +1,6 @@
 require "active_support/hash_with_indifferent_access"
 
-class TableBuilder #::Settings
+class Tabulatr #::Settings
 
   # these settings are considered constant for the whole application, can not be overridden
   # on a per-table basis
@@ -16,14 +16,14 @@ class TableBuilder #::Settings
     :batch_actions_div_id => 'batch-actions',   # id of the dic containing the batch action controls
     :submit_class => 'submit-table',            # class of submit button
     :submit_label => 'Apply',                   # Text on the submit button
-    :pager_left_button => '/images/table_builder/pager_arrow_left.gif',
-    :pager_left_button_inactive => '/images/table_builder/pager_arrow_left_off.gif',
-    :pager_right_button => '/images/table_builder/pager_arrow_right.gif',
-    :pager_right_button_inactive => '/images/table_builder/pager_arrow_right_off.gif',
-    :sort_up_button => '/images/table_builder/sort_arrow_up.gif',
-    :sort_up_button_inactive => '/images/table_builder/sort_arrow_up_off.gif',
-    :sort_down_button => '/images/table_builder/sort_arrow_down.gif',
-    :sort_down_button_inactive => '/images/table_builder/sort_arrow_down_off.gif'
+    :pager_left_button => '/images/tabulatr/pager_arrow_left.gif',
+    :pager_left_button_inactive => '/images/tabulatr/pager_arrow_left_off.gif',
+    :pager_right_button => '/images/tabulatr/pager_arrow_right.gif',
+    :pager_right_button_inactive => '/images/tabulatr/pager_arrow_right_off.gif',
+    :sort_up_button => '/images/tabulatr/sort_arrow_up.gif',
+    :sort_up_button_inactive => '/images/tabulatr/sort_arrow_up_off.gif',
+    :sort_down_button => '/images/tabulatr/sort_arrow_down.gif',
+    :sort_down_button_inactive => '/images/tabulatr/sort_arrow_down_off.gif'
   })
 
   TABLE_FORM_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({

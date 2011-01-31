@@ -1,7 +1,7 @@
 PATH
-  remote: /Users/hornp/Development/table_builder
+  remote: /Users/hornp/Development/tabulatr
   specs:
-    table_builder (0.0.1)
+    tabulatr (0.0.1)
       rails (~> 3.0.3)
 
 GEM
@@ -92,4 +92,4 @@ DEPENDENCIES
   rails (= 3.0.3)
   ruby-debug19
   sqlite3-ruby
-  table_builder!
+  tabulatr!

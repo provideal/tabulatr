@@ -1,6 +1,6 @@
-require "lib/table_builder/table_builder"
+require "lib/tabulatr/tabulatr"
 
-describe TableBuilder do
+describe Tabulatr do
   
   
   

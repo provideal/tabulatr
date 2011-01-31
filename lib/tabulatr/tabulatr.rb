@@ -1,4 +1,4 @@
-# TableBuilder is a class to allow easy creation of data tables as you
+# Tabulatr is a class to allow easy creation of data tables as you
 # frequently find them on 'index' pages in rails. The 'table convention'
 # here is that we consider every table to consist of three parts:
 # * a header containing the names of the attribute of the column
@@ -9,13 +9,13 @@
 # Author::    Peter Horn, (mailto:peter.horn@provideal.net)
 # Copyright:: Copyright (c) 2010 by Provideal Systems GmbH (http://www.provideal.net)
 # License::   MIT, APACHE, Ruby, whatever, something free, ya know?
-class TableBuilder
+class Tabulatr
 
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::FormTagHelper
   include ActionView::Helpers::FormOptionsHelper
 
-  # Constructor of TableBuilder
+  # Constructor of Tabulatr
   #
   # Parameters:
   # <tt>records</tt>:: the 'row' data of the table
@@ -199,7 +199,7 @@ private
   end
 end
 
-Dir[File.dirname(__FILE__) + "/table_builder/*.rb"].each do |file|
+Dir[File.dirname(__FILE__) + "/tabulatr/*.rb"].each do |file|
   #puts file
   require file
 end

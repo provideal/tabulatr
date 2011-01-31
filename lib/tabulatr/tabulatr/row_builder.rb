@@ -1,6 +1,6 @@
 # These are extensions for use as a row builder
 # In a seperate class call only for clearity
-module TableBuilder::RowBuilder
+module Tabulatr::RowBuilder
 
   # called inside the build_table block, branches into data, header,
   # or filter building methods depending on the current mode
@@ -53,7 +53,7 @@ private
 
   # some preprocessing of the options
   def normalize_column_options(opts)
-    opts = TableBuilder::COLUMN_OPTIONS.merge(opts)
+    opts = Tabulatr::COLUMN_OPTIONS.merge(opts)
     {:width => 'width', :align => 'text-align', :valign => 'vertical-align'}.each do |key,css|
       if opts[key]
         [:th_html, :filter_html, :td_html].each do |set|
@@ -67,4 +67,4 @@ private
   end
 end
 
-TableBuilder.send :include, TableBuilder::RowBuilder
+Tabulatr.send :include, Tabulatr::RowBuilder

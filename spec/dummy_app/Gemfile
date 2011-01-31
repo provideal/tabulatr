@@ -31,4 +31,4 @@ group :development, :test do
   gem 'ruby-debug19'
 end
 
-gem 'table_builder', :path => File.expand_path('../../')
+gem 'tabulatr', :path => File.expand_path('../../')

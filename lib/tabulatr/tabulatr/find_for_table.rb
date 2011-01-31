@@ -1,7 +1,7 @@
 
 # These are extensions for use from ActionController instances
 # In a seperate class call only for clearity
-class TableBuilder
+class Tabulatr
 
   # -------------------------------------------------------------------
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
@@ -37,7 +37,7 @@ class TableBuilder
 
     # secondly, find the order_by stuff
     # FIXME: Implement me! PLEEEZE!
-    sortparam = params["#{cname}#{TableBuilder::TABLE_FORM_OPTIONS[:sort_postfix]}"]
+    sortparam = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:sort_postfix]}"]
     if sortparam
       if sortparam[:_resort]
         order_by = sortparam[:_resort].first.first
@@ -117,7 +117,7 @@ class TableBuilder
 
     # secondly, find the order_by stuff
     # FIXME: Implement me! PLEEEZE!
-    sortparam = params["#{cname}#{TableBuilder::TABLE_FORM_OPTIONS[:sort_postfix]}"]
+    sortparam = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:sort_postfix]}"]
     if sortparam
       if sortparam[:_resort]
         order_by = sortparam[:_resort].first.first

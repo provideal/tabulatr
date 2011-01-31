@@ -1,4 +1,4 @@
-module TableBuilder::Format
+module Tabulatr::Format
   ALLOWED_METHODS = [:euro, :dollar, :percent, :lamp]
   
   def euro(x)

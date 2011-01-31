@@ -6,7 +6,7 @@
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 
-require 'lib/table_builder/table_builder.rb'
+require 'lib/tabulatr/tabulatr.rb'
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 

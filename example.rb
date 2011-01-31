@@ -1,5 +1,5 @@
 require "ostruct"
-require "table_builder"
+require "tabulatr"
 
 @products = [
   OpenStruct.new({:idd => 1, :title => "Hund", :happy => 'no', :category_id => 1, :ping => 'pong'}),

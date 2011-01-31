@@ -1,4 +1,4 @@
-module TableBuilder::DataCell
+module Tabulatr::DataCell
 
   # the method used to actually define the data cells of the columns,
   # taking the name of the attribute and a hash of options.
@@ -67,4 +67,4 @@ module TableBuilder::DataCell
 
 end
 
-TableBuilder.send :include, TableBuilder::DataCell
+Tabulatr.send :include, Tabulatr::DataCell

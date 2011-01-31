@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    table_builder (0.0.1)
+    tabulatr (0.0.1)
       rails (~> 3.0.3)
 
 GEM
@@ -96,5 +96,5 @@ DEPENDENCIES
   rails
   rspec
   rspec-rails
-  table_builder!
+  tabulatr!
   webrat
