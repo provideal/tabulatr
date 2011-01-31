@@ -14,14 +14,23 @@ module TableBuilder::DataCell
     raise "Not in data mode!" if @row_mode != :data
     opts = normalize_column_options opts
     make_tag(:td, opts[:td_html]) do
-      if block_given?
-        yield(@record)
-      else
-        val = @record.send(opts[:method] || name)
-        val = opts[:format].call(val) if opts[:format].class == Proc
-        val = (opts[:format] % val)   if opts[:format].class == String
-        concat(val.to_s)
-      end # block_given?
+      href = if opts[:link].class == Symbol || opts[:link].class == String
+          @view.send(opts[:link], @record)
+        elsif opts[:link].respond_to?(:call)
+          opts[:link].call(@record)
+        else
+          nil
+        end
+      make_tag((href ? :a : nil), :href => href) do
+        if block_given?
+          concat(yield(@record))
+        else
+          val = @record.send(opts[:method] || name)
+          val = opts[:format].call(val) if opts[:format].class == Proc
+          val = (opts[:format] % val)   if opts[:format].class == String
+          concat(val.to_s)
+        end # block_given?
+      end # </a>
     end # </td>
   end
 

@@ -6,7 +6,7 @@ class TableBuilder #::Settings
   # on a per-table basis
   TABLE_DESIGN_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     :sortable => 'sortable',                    # class for the header of a sortable column
-    :sorting_asc => 'sort-asc',                 # class for the currently asc sorting column
+    :sorting_asc => 'sorting-asc',              # class for the currently asc sorting column
     :sorting_desc => 'sorting-desc',            # class for the currently desc sorting column
     :page_left_id => 'page-left',               # id for the page left <a>
     :page_right_id => 'page-right',             # id for the page right <a>
@@ -80,6 +80,7 @@ class TableBuilder #::Settings
     :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
     :format => false,                   # a sprintf-string or a proc to do special formatting
     :method => false,                   # if you want to get the column by a different method than its name
+    :link => false,                     # proc or symbol to make the content a link
     :sortable => true                   # if set, sorting-stuff is added to the header cell
   })
 

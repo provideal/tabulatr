@@ -23,8 +23,19 @@ class ActionController::Base
   end
 end
 
-class ActiveRecord::Base
-  def self.find_for_table(params, opts={})
-    TableBuilder.find_for_table(self, params, opts)
+if Object.const_defined? "ActiveRecord"
+  class ActiveRecord::Base
+    def self.find_for_table(params, opts={})
+      TableBuilder.find_for_active_record_table(self, params, opts)
+    end
   end
 end
+
+if Object.const_defined? "Mongoid"
+  class Mongoid::Document
+    def self.find_for_table(params, opts={})
+      TableBuilder.find_for_mongoid_table(self, params, opts)
+    end
+  end
+end
+
