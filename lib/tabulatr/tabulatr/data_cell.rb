@@ -65,6 +65,16 @@ module Tabulatr::DataCell
     end # </td>
   end
 
+  def data_checkbox(opts={}, &block)
+    raise "Whatever that's for!" if block_given?
+    iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}[current_page][]"
+    make_tag(:td, opts[:td_html]) do
+      checked = @checked[:selected].member?(@record.id.to_s) ? :checked : nil
+      make_tag(:input, :type => 'checkbox', :name => iname, 
+        :value => @record.id, :checked => checked)
+    end
+  end
+
 end
 
 Tabulatr.send :include, Tabulatr::DataCell

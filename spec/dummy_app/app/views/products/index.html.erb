@@ -7,6 +7,7 @@
 </style>
 
 <%= table_for @products, :paginate => true do |t|
+  t.checkbox
   t.column :id, :filter => false, :align => :right
   t.column :title, :filter => :like, :link => :product_url
   t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;",
@@ -20,4 +21,9 @@
     :filter => Vendor.all.map{|v| [v.name, v.id] }
 end.html_safe %>
 
+<form>
+<input type="text" name="selected_ids[]" value="1" /><br>
+<input type="text" name="selected_ids[]" value="2" />
+<input type="submit" name="muff" value="Puff" id="some_name">
+</form>
 <%= link_to 'New Product', new_product_path %>

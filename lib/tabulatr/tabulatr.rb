@@ -32,6 +32,7 @@ class Tabulatr
     @pagination = @records.send(FINDER_INJECT_OPTIONS[:pagination])
     @filters = @records.send(FINDER_INJECT_OPTIONS[:filters])
     @sorting = @records.send(FINDER_INJECT_OPTIONS[:sorting])
+    @checked = @records.send(FINDER_INJECT_OPTIONS[:checked])
   end
 
   # the actual table definition method. It takes an Array of records, a hash of

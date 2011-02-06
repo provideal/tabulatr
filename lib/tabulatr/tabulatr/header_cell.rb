@@ -51,6 +51,13 @@ module Tabulatr::HeaderCell
     end # </th>
   end
 
+  def header_checkbox(opts={}, &block)
+    raise "Whatever that's for!" if block_given?
+    make_tag(:th, opts[:th_html]) do
+      concat "B"
+    end
+  end
+
 end
 
 Tabulatr.send :include, Tabulatr::HeaderCell

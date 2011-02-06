@@ -26,6 +26,18 @@ module Tabulatr::RowBuilder
     end # case
   end
 
+  # called inside the build_table block, branches into data, header,
+  # or filter building methods depending on the current mode
+  def checkbox(opts={}, &block)
+    #puts "column: '#{name}'"
+    case @row_mode
+    when :data   then data_checkbox(opts, &block)
+    when :header then header_checkbox(opts, &block)
+    when :filter then filter_checkbox(opts, &block)
+    else raise "Wrong row mode '#{@row_mode}'"
+    end # case
+  end
+
 private
   # returns self, sets record and row_mode as required for a
   # data row

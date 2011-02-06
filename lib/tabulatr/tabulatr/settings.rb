@@ -32,7 +32,9 @@ class Tabulatr #::Settings
     :pagination_postfix => '_pagination',       # name of the param w/ the pagination infos
     :filter_postfix => '_filter',               # postfix for name of the filter in the params hash: xxx_filter
     :sort_postfix => '_sort',                   # postfix for name of the filter in the params hash: xxx_filter
-    :method => 'post'                           # http method for that form if applicable
+    :checked_postfix => '_checked',             # postfix for name of the checked in the params hash: xxx_filter
+    :method => 'post',                          # http method for that form if applicable
+    :checked_separator => ';'                   # symbol to separate the checked ids
   })
 
   PAGINATE_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
@@ -88,7 +90,8 @@ class Tabulatr #::Settings
     :pagination => :__pagination,
     :filters => :__filters,
     :classname => :__classname,
-    :sorting => :__sorting
+    :sorting => :__sorting,
+    :checked => :__checked
   })
 
 end

@@ -1,5 +1,5 @@
 PATH
-  remote: /Users/hornp/Development/table_builder
+  remote: /Users/hornp/Development/tabulatr
   specs:
     tabulatr (0.0.1)
       rails (~> 3.0.3)

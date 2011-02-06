@@ -104,6 +104,15 @@ module Tabulatr::FilterCell
     # end # </td>
   end
 
+  def filter_checkbox(opts={}, &block)
+    raise "Whatever that's for!" if block_given?
+    make_tag(:td, opts[:filter_html]) do
+      iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}[checked_ids]"
+      make_tag(:input, :type => 'hidden', :name => iname, :value => @checked[:checked_ids])
+    end
+  end
+
+
 end
 
 Tabulatr.send :include, Tabulatr::FilterCell

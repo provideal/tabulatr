@@ -79,6 +79,22 @@ class Tabulatr
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
+    checked_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"]
+    checked_param[:checked_ids] ||= ''
+    checked_param[:current_page] ||= []
+    puts checked_param.to_s
+    checked_ids = checked_param[:checked_ids].split(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
+    new_ids = checked_param[:current_page] 
+    puts " >>>" + new_ids.join(',')
+    selected_ids = checked_ids + new_ids
+    ids = found.map { |r| r.id.to_s }
+    checked_ids = selected_ids - ids
+    puts "A>>>" + selected_ids.join(',')
+    puts "B>>>" + checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
+    found.define_singleton_method(FINDER_INJECT_OPTIONS[:checked]) do
+      { :selected => selected_ids, 
+        :checked_ids => checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator]) }
+    end
 
     found
   end
@@ -159,14 +175,24 @@ class Tabulatr
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
-
+    checked_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"]
+    checked_ids = checked_param[:checked].split(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
+    new_ids = checked_param[:current_page] || []
+    selected_ids = checked_ids + new_ids
+    ids = found.map { |r| r.id.to_s }
+    checked_ids = selected_ids - ids
+    puts "----->>>>> #{FINDER_INJECT_OPTIONS[:checked]}\n\n\n"
+    found.define_singleton_method(FINDER_INJECT_OPTIONS[:checked]) do
+      { :selected => selected_ids, 
+        :checked_ids => checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator]) }
+    end
     found
   end
 
 private
 
   def self.class_to_param(klaz)
-    klaz.to_s.tableize.gsub("/","_")
+    klaz.to_s.downcase.gsub("/","_")
   end
 
 end
