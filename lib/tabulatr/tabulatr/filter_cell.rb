@@ -32,11 +32,11 @@ module Tabulatr::FilterCell
           end
         end # </select>
       elsif opts[:filter] == :range
-        make_tag(:input, :type => :text, :name => "#{iname}[from]", 
+        make_tag(:input, :type => :text, :name => "#{iname}[from]",
           :style => "width:#{opts[:filter_width]}",
           :value => value ? value[:from] : '')
         concat(opts[:range_filter_symbol])
-        make_tag(:input, :type => :text, :name => "#{iname}[to]", 
+        make_tag(:input, :type => :text, :name => "#{iname}[to]",
           :style => "width:#{opts[:filter_width]}",
           :value => value ? value[:to] : '')
       elsif opts[:filter] == :checkbox
@@ -45,7 +45,7 @@ module Tabulatr::FilterCell
         concat(check_box_tag(iname, checkbox_value, false, {}))
         concat(checkbox_label)
       elsif opts[:filter] == :like
-        make_tag(:input, :type => :text, :name => "#{iname}[like]", 
+        make_tag(:input, :type => :text, :name => "#{iname}[like]",
           :style => "width:#{opts[:filter_width]}",
           :value => value ? value[:like] : '')
       else
@@ -107,8 +107,9 @@ module Tabulatr::FilterCell
   def filter_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
     make_tag(:td, opts[:filter_html]) do
-      iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}[checked_ids]"
-      make_tag(:input, :type => 'hidden', :name => iname, :value => @checked[:checked_ids])
+      iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"
+      make_tag(:input, :type => 'hidden', :name => "#{iname}[checked_ids]", :value => @checked[:checked_ids])
+      make_tag(:input, :type => 'hidden', :name => "#{iname}[visible]", :value => @checked[:visible])
     end
   end
 

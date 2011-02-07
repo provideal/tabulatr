@@ -23,7 +23,14 @@ class Tabulatr #::Settings
     :sort_up_button => '/images/tabulatr/sort_arrow_up.gif',
     :sort_up_button_inactive => '/images/tabulatr/sort_arrow_up_off.gif',
     :sort_down_button => '/images/tabulatr/sort_arrow_down.gif',
-    :sort_down_button_inactive => '/images/tabulatr/sort_arrow_down_off.gif'
+    :sort_down_button_inactive => '/images/tabulatr/sort_arrow_down_off.gif',
+    :select_all_label => 'Select All',
+    :select_none_label => 'Select None',
+    :select_visible_label => 'Select visible',
+    :unselect_visible_label => 'Unselect visible',
+    :select_filtered_label => 'Select filtered',
+    :unselect_filtered_label => 'Unselect filtered',
+    :info_text => "Showing %1$d, total %2$d, selected %3$d, matching %4$d"
   })
 
   TABLE_FORM_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
@@ -35,7 +42,7 @@ class Tabulatr #::Settings
     :checked_postfix => '_checked',             # postfix for name of the checked in the params hash: xxx_filter
     :method => 'post',                          # http method for that form if applicable
     :batch_postfix => '_batch',                 # postfix for name of the batch action select
-    :checked_separator => ';'                   # symbol to separate the checked ids
+    :checked_separator => ','                   # symbol to separate the checked ids
   })
 
   PAGINATE_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
@@ -55,6 +62,7 @@ class Tabulatr #::Settings
     :filter => true,             # false for no filter row at all
     :paginate => false,          # true to show paginator
     :sortable => true,           # true to allow sorting (can be specified for every sortable column)
+    :check_controls => true,     # true to render "select all", "select none" and the like
     :action => nil,              # target action of the wrapping form if applicable
     :batch_actions => false,     # name => value hash of batch action stuff
     :join_symbol => ', '         # symbol used to join the elements of 'many' associations

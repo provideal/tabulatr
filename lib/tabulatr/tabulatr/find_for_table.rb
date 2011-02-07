@@ -8,19 +8,18 @@ class Tabulatr
   #
   def self.find_for_active_record_table(klaz, params, opts={}, &block)
     cname = class_to_param(klaz)
-
+    params ||= {}
     # before we do anything else, we find whether there's something to do for batch actions
-    checked_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"]
-    checked_param[:checked_ids] ||= ''
-    checked_param[:current_page] ||= []
-    checked_ids = checked_param[:checked_ids].split(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
-    new_ids = checked_param[:current_page] 
+    checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
+      merge(params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"] || {})
+    checked_ids = uncompress_id_list(checked_param[:checked_ids])
+    new_ids = checked_param[:current_page]
     selected_ids = checked_ids + new_ids
     batch_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:batch_postfix]}"]
-    if batch_param and block_given?
-      return unless yield(Invoker.new(batch_param, selected_ids))
+    if batch_param.present? and block_given?
+      yield(Invoker.new(batch_param, selected_ids))
     end
-    
+
     # firstly, get the conditions from the filters
     filter_param = (params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"] || {})
     conditions = filter_param.inject(["(1=1) ", []]) do |c, t|
@@ -77,6 +76,29 @@ class Tabulatr
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
 
+    debugger
+
+    # then, we obey any "select" buttons if pushed
+    if checked_param[:select_all]
+      all = klaz.find :all, :select => :id
+      selected_ids = all.map { |r| r.id.to_s }
+    elsif checked_param[:select_none]
+      selected_ids = []
+    elsif checked_param[:select_visible]
+      visible_ids = uncompress_id_list(checked_param[:visible])
+      selected_ids = (selected_ids + visible_ids).sort.uniq
+    elsif checked_param[:unselect_visible]
+      visible_ids = uncompress_id_list(checked_param[:visible])
+      selected_ids = (selected_ids - visible_ids).sort.uniq
+    elsif checked_param[:select_filtered]
+      all = klaz.find :all, :conditions => conditions, :select => :id
+      selected_ids = (selected_ids + all.map { |r| r.id.to_s }).sort.uniq
+    elsif checked_param[:unselect_filtered]
+      all = klaz.find :all, :conditions => conditions, :select => :id
+      selected_ids = (selected_ids - all.map { |r| r.id.to_s }).sort.uniq
+    end
+
+
     # Now, actually find the stuff
     found = klaz.find :all, :conditions => conditions,
       :limit => pagesize.to_i, :offset => ((page-1)*pagesize).to_i,
@@ -87,18 +109,55 @@ class Tabulatr
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:classname]) do cname end
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:pagination]) do
       {:page => page, :pagesize => pagesize, :count => c, :pages => pages,
-        :pagesizes => paginate_options[:pagesizes]}
+        :pagesizes => paginate_options[:pagesizes], :total => klaz.count }
     end
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
-    checked_ids = selected_ids - (found.map { |r| r.id.to_s })
+    visible_ids = (found.map { |r| r.id.to_s })
+    checked_ids = compress_id_list(selected_ids - visible_ids)
+    visible_ids = compress_id_list(visible_ids)
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:checked]) do
-      { :selected => selected_ids, 
-        :checked_ids => checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator]) }
+      { :selected => selected_ids,
+        :checked_ids => checked_ids,
+        :visible => visible_ids
+      }
     end
 
     found
+  end
+
+  # compress the list of ids as good as I could imagine ;)
+  # uses fancy base twisting
+  def self.compress_id_list(list)
+    return "PXS" if list.length == 0
+    "PXS" << (list.sort.uniq.map(&:to_i).inject([[-9,-9]]) do |l, c|
+      if l.last.last+1 == c
+        l.last[-1] = c
+        l
+      else
+        l << [c,c]
+      end
+    end.map do |r|
+      if r.first == r.last
+        r.first.to_s(8)
+      else
+        r.first.to_s(8) << "8" << r.last.to_s(8)
+      end
+    end[1..-1].join("9").to_i.to_s(36))
+  end
+
+  # inverse of compress_id_list
+  def self.uncompress_id_list(str)
+    return [] if !str.present? or str=='0' or str=='PXS'
+    raise "Corrupted id list. Or a bug ;)" unless str.start_with?("PXS")
+    n = str[3..-1].to_i(36).to_s.split("9").map do |e|
+      p = e.split("8")
+      if p.length == 1 then p[0].to_i(8)
+      elsif p.length == 2 then (p[0].to_i(8)..p[1].to_i(8)).entries
+      else raise "Corrupted id list. Or a bug ;)"
+      end
+    end.flatten.map &:to_s
   end
 
 
@@ -183,9 +242,8 @@ class Tabulatr
     selected_ids = checked_ids + new_ids
     ids = found.map { |r| r.id.to_s }
     checked_ids = selected_ids - ids
-    puts "----->>>>> #{FINDER_INJECT_OPTIONS[:checked]}\n\n\n"
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:checked]) do
-      { :selected => selected_ids, 
+      { :selected => selected_ids,
         :checked_ids => checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator]) }
     end
     found
@@ -196,13 +254,14 @@ class Tabulatr
       @batch_action = batch_action.to_sym
       @ids = ids
     end
-    
+
     def method_missing(name, *args, &block)
       if @batch_action == name
-        yield(ids, args)
+        yield(@ids, args)
       end
     end
   end
+
 private
 
   def self.class_to_param(klaz)

@@ -56,10 +56,16 @@ class Tabulatr
         render_paginator if @table_options[:paginate]
         render_batch_actions if @table_options[:batch_actions]
         if @table_options[:make_form]
-          make_tag(:input, :type => 'submit', 
-            :class => TABLE_DESIGN_OPTIONS[:submit_class], 
+          make_tag(:input, :type => 'submit',
+            :class => TABLE_DESIGN_OPTIONS[:submit_class],
             :value => TABLE_DESIGN_OPTIONS[:submit_label])
         end
+        render_check_controls if @table_options[:check_controls]
+        make_tag(:div) do
+          # :info_text => "Showing %1$d, total %2$d, selected %3$d, matching %4$d"
+          concat(format(TABLE_DESIGN_OPTIONS[:info_text],
+            @records.count, @pagination[:total], @checked[:selected].length, @pagination[:count]))
+        end if TABLE_DESIGN_OPTIONS[:info_text]
       end # </div>'
 
       make_tag(:table, @table_options[:table_html]) do
@@ -98,11 +104,11 @@ private
     make_tag(:div, :id => TABLE_DESIGN_OPTIONS[:paginator_div_id]) do
       # << Page Left
       if page > 1
-        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_left_button], 
+        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_left_button],
           :id => TABLE_DESIGN_OPTIONS[:page_left_id],
           :name => "#{pagination_name}[page_left]")
       else
-        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_left_button_inactive], 
+        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_left_button_inactive],
           :id => TABLE_DESIGN_OPTIONS[:page_left_id])
       end  # page > 1
       # current page number
@@ -118,11 +124,11 @@ private
       concat("/#{pages}")
       # >> Page Right
       if page < pages
-        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_right_button], 
+        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_right_button],
           :id => TABLE_DESIGN_OPTIONS[:page_right_id],
           :name => "#{pagination_name}[page_right]")
       else
-        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_right_button_inactive], 
+        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_right_button_inactive],
           :id => TABLE_DESIGN_OPTIONS[:page_right_id])
       end  # page < pages
       if pagesizes.length > 1
@@ -139,7 +145,6 @@ private
           :name => "#{pagination_name}[pagesize]",
           :value => pagesizes.first))
       end
-      # FIXME attach js actions to pager controls
     end # </div>
   end
 
@@ -155,7 +160,18 @@ private
           end # </option>
         end # each
       end # </select>
-      # FIXME add js trigger stuff if appropriate
+    end # </div>
+  end
+
+  def render_check_controls
+    make_tag(:div, :id => TABLE_OPTIONS[:check_controls_div_id]) do
+      iname = "#{@classname}#{TABLE_FORM_OPTIONS[:checked_postfix]}"
+      make_tag(:input, :type => 'submit', :value => TABLE_DESIGN_OPTIONS[:select_all_label], :name => "#{iname}[select_all]")
+      make_tag(:input, :type => 'submit', :value => TABLE_DESIGN_OPTIONS[:select_none_label], :name => "#{iname}[select_none]")
+      make_tag(:input, :type => 'submit', :value => TABLE_DESIGN_OPTIONS[:select_visible_label], :name => "#{iname}[select_visible]")
+      make_tag(:input, :type => 'submit', :value => TABLE_DESIGN_OPTIONS[:unselect_visible_label], :name => "#{iname}[unselect_visible]")
+      make_tag(:input, :type => 'submit', :value => TABLE_DESIGN_OPTIONS[:select_filtered_label], :name => "#{iname}[select_filtered]")
+      make_tag(:input, :type => 'submit', :value => TABLE_DESIGN_OPTIONS[:unselect_filtered_label], :name => "#{iname}[unselect_filtered]")
     end # </div>
   end
 
