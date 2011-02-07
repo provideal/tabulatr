@@ -145,9 +145,10 @@ private
 
   # render the select tag for batch actions
   def render_batch_actions
-    return
     make_tag(:div, :id => TABLE_OPTIONS[:batch_actions_div_id]) do
-      make_tag(:select, :name => TABLE_OPTIONS[:batch_actions_name], :id => TABLE_OPTIONS[:batch_actions_name]) do
+      iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
+      make_tag(:select, :name => iname, :id => TABLE_OPTIONS[:batch_actions_name]) do
+        concat("<option></option>")
         @table_options[:batch_actions].each do |n,v|
           make_tag(:option, :value => n) do
             concat(v)

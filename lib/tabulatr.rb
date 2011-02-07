@@ -25,8 +25,8 @@ end
 
 if Object.const_defined? "ActiveRecord"
   class ActiveRecord::Base
-    def self.find_for_table(params, opts={})
-      Tabulatr.find_for_active_record_table(self, params, opts)
+    def self.find_for_table(params, opts={}, &block)
+      Tabulatr.find_for_active_record_table(self, params, opts, &block)
     end
   end
 end
@@ -34,8 +34,8 @@ end
 if Object.const_defined? "Mongoid"
   module Mongoid::Document
     module ClassMethods
-      def find_for_table(params, opts={})
-        Tabulatr.find_for_mongoid_table(self, params, opts)
+      def find_for_table(params, opts={}, &block)
+        Tabulatr.find_for_mongoid_table(self, params, opts, &block)
       end
     end
   end

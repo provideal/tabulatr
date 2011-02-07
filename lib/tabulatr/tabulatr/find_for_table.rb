@@ -6,9 +6,22 @@ class Tabulatr
   # -------------------------------------------------------------------
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
   #
-  def self.find_for_active_record_table(klaz, params, opts={})
-    # firstly, get the conditions from the filters
+  def self.find_for_active_record_table(klaz, params, opts={}, &block)
     cname = class_to_param(klaz)
+
+    # before we do anything else, we find whether there's something to do for batch actions
+    checked_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"]
+    checked_param[:checked_ids] ||= ''
+    checked_param[:current_page] ||= []
+    checked_ids = checked_param[:checked_ids].split(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
+    new_ids = checked_param[:current_page] 
+    selected_ids = checked_ids + new_ids
+    batch_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:batch_postfix]}"]
+    if batch_param and block_given?
+      return unless yield(Invoker.new(batch_param, selected_ids))
+    end
+    
+    # firstly, get the conditions from the filters
     filter_param = (params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"] || {})
     conditions = filter_param.inject(["(1=1) ", []]) do |c, t|
       n, v = t
@@ -79,18 +92,7 @@ class Tabulatr
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
-    checked_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"]
-    checked_param[:checked_ids] ||= ''
-    checked_param[:current_page] ||= []
-    puts checked_param.to_s
-    checked_ids = checked_param[:checked_ids].split(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
-    new_ids = checked_param[:current_page] 
-    puts " >>>" + new_ids.join(',')
-    selected_ids = checked_ids + new_ids
-    ids = found.map { |r| r.id.to_s }
-    checked_ids = selected_ids - ids
-    puts "A>>>" + selected_ids.join(',')
-    puts "B>>>" + checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
+    checked_ids = selected_ids - (found.map { |r| r.id.to_s })
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:checked]) do
       { :selected => selected_ids, 
         :checked_ids => checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator]) }
@@ -189,6 +191,18 @@ class Tabulatr
     found
   end
 
+  class Invoker
+    def initialize(batch_action, ids)
+      @batch_action = batch_action.to_sym
+      @ids = ids
+    end
+    
+    def method_missing(name, *args, &block)
+      if @batch_action == name
+        yield(ids, args)
+      end
+    end
+  end
 private
 
   def self.class_to_param(klaz)
