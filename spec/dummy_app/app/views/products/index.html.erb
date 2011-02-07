@@ -25,6 +25,4 @@
     :filter => Vendor.all.map{|v| [v.name, v.id] }
 end.html_safe %>
 
-<input type="button" name="some_name" value="Muff" id="some_name">
-
 <%= link_to 'New Product', new_product_path %>
