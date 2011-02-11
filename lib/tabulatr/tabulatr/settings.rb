@@ -49,6 +49,7 @@ class Tabulatr #::Settings
     :filter_postfix => '_filter',               # postfix for name of the filter in the params hash: xxx_filter
     :sort_postfix => '_sort',                   # postfix for name of the filter in the params hash: xxx_filter
     :checked_postfix => '_checked',             # postfix for name of the checked in the params hash: xxx_filter
+    :associations_filter => '__association',    # name of the associations in the filter hash
     :method => 'post',                          # http method for that form if applicable
     :batch_postfix => '_batch',                 # postfix for name of the batch action select
     :checked_separator => ','                   # symbol to separate the checked ids

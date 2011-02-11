@@ -21,29 +21,24 @@ class Tabulatr
     end
 
     # firstly, get the conditions from the filters
+    includes = []
     filter_param = (params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"] || {})
     conditions = filter_param.inject(["(1=1) ", []]) do |c, t|
       n, v = t
-      nc = c
       # FIXME n = name_escaping(n)
-      raise "SECURITY violation, field name is '#{n}'" unless /^[\d\w]+$/.match n
-      if v.class == String
-        if v.present?
-          nc = [c[0] << "AND (`#{n}` = ?) ", c[1] << v]
-        end
-      elsif v.is_a?(Hash)
-        if v[:like]
-          if v[:like].present?
-            nc = [c[0] << "AND (`#{n}` LIKE ?) ", c[1] << "%#{v[:like]}%"]
-          end
-        else
-          nc = [c[0] << "AND (`#{n}` > ?) ", c[1] << "#{v[:from]}"] if v[:from].present?
-          nc = [nc[0] << "AND (`#{n}` < ?) ", nc[1] << "#{v[:to]}"] if v[:to].present?
-        end
+      if (n != Tabulatr::TABLE_FORM_OPTIONS[:associations_filter])
+        condition_from(n,v,c)
       else
-        raise "Wrong filter type: #{v.class}"
+        v.inject(c) do |c,t|
+          n,v = t
+          assoc, att = n.split(".").map(&:to_sym)
+          r = klaz.reflect_on_association(assoc)
+          includes << assoc
+          tname = r.table_name
+          nn = "#{tname}.#{att}"
+          condition_from(nn,v,c)
+        end
       end
-      nc
     end
     conditions = [conditions.first] + conditions.last
 
@@ -72,11 +67,9 @@ class Tabulatr
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
     pagesize = paginate_options[:pagesize].to_f
-    c = klaz.count :conditions => conditions
+    c = klaz.count :conditions => conditions, :include => includes
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
-
-    debugger
 
     # then, we obey any "select" buttons if pushed
     if checked_param[:select_all]
@@ -91,10 +84,10 @@ class Tabulatr
       visible_ids = uncompress_id_list(checked_param[:visible])
       selected_ids = (selected_ids - visible_ids).sort.uniq
     elsif checked_param[:select_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id
+      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
       selected_ids = (selected_ids + all.map { |r| r.id.to_s }).sort.uniq
     elsif checked_param[:unselect_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id
+      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
       selected_ids = (selected_ids - all.map { |r| r.id.to_s }).sort.uniq
     end
 
@@ -102,7 +95,7 @@ class Tabulatr
     # Now, actually find the stuff
     found = klaz.find :all, :conditions => conditions,
       :limit => pagesize.to_i, :offset => ((page-1)*pagesize).to_i,
-      :order  => order
+      :order  => order, :include => includes
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do filter_param end
@@ -268,4 +261,25 @@ private
     klaz.to_s.downcase.gsub("/","_")
   end
 
+  def self.condition_from(n,v,c)
+    raise "SECURITY violation, field name is '#{n}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match n
+    nc = c
+    if v.is_a?(String)
+      if v.present?
+        nc = [c[0] << "AND (#{n} = ?) ", c[1] << v]
+      end
+    elsif v.is_a?(Hash)
+      if v[:like]
+        if v[:like].present?
+          nc = [c[0] << "AND (#{n} LIKE ?) ", c[1] << "%#{v[:like]}%"]
+        end
+      else
+        nc = [c[0] << "AND (#{n} > ?) ", c[1] << "#{v[:from]}"] if v[:from].present?
+        nc = [nc[0] << "AND (#{n} < ?) ", nc[1] << "#{v[:to]}"] if v[:to].present?
+      end
+    else
+      raise "Wrong filter type: #{v.class}"
+    end
+    nc
+  end
 end

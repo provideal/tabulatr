@@ -20,38 +20,7 @@ module Tabulatr::FilterCell
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
       iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:filter_postfix]}[#{name}]"
-      if !of
-        ""
-      elsif of.class == Hash or of.class == Array or of.class == String
-        make_tag(:select, :name => iname) do
-          if of.class == String
-            concat(of)
-          else
-            concat("<option></option>")
-            concat(options_for_select(of))
-          end
-        end # </select>
-      elsif opts[:filter] == :range
-        make_tag(:input, :type => :text, :name => "#{iname}[from]",
-          :style => "width:#{opts[:filter_width]}",
-          :value => value ? value[:from] : '')
-        concat(opts[:range_filter_symbol])
-        make_tag(:input, :type => :text, :name => "#{iname}[to]",
-          :style => "width:#{opts[:filter_width]}",
-          :value => value ? value[:to] : '')
-      elsif opts[:filter] == :checkbox
-        checkbox_value = opts[:checkbox_value]
-        checkbox_label = opts[:checkbox_label]
-        concat(check_box_tag(iname, checkbox_value, false, {}))
-        concat(checkbox_label)
-      elsif opts[:filter] == :like
-        make_tag(:input, :type => :text, :name => "#{iname}[like]",
-          :style => "width:#{opts[:filter_width]}",
-          :value => value ? value[:like] : '')
-      else
-        make_tag(:input, :type => :text, :name => "#{iname}", :style => "width:#{opts[:filter_width]}",
-          :value => value)
-      end # if
+      filter_tag(of, iname, value, opts)
     end # </td>
   end
 
@@ -70,38 +39,14 @@ module Tabulatr::FilterCell
   #                                                                with all instances
   def filter_association(relation, name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
-    filter_column(relation, opts, &block)
-    # opts = normalize_column_options(opts)
-    # make_tag(:td, opts[:filter_html]) do
-      # of = opts[:filter]
-      # if !of
-      #   ""
-      # elsif of.class == Hash
-      #   make_tag(:select, :name => "filter[#{name}]") do
-      #     # TODO: make this nicer
-      #     concat("<option></option>")
-      #     of.each do |t,v|
-      #       make_tag(:option, :value => v) do
-      #         concat t
-      #       end # </option>
-      #     end # each
-      #   end # </select>
-      # elsif opts[:filter].class == Array
-      #   # TODO: make this nicer
-      #   concat("<option></option>")
-      #   of.each do |p|
-      #     make_tag(:option, :value => p) do
-      #       concat p
-      #     end # </option>
-      #   end # each
-      # elsif opts[:filter].class == Class
-      #   # FIXME implement opts[:filter].all ...
-      #   raise "Implement me: '#{opts[:filter]}'"
-      # else
-      #   make_tag(:input, :type => :text, :name => "filter[#{name}]", :style => "width:98%")
-      # end # if
-      # make_tag(:input, :type => hidden, :name => "filter_matcher[#{name}]", :value => "like") if opts[:filter_like]
-    # end # </td>
+    opts = normalize_column_options(opts)
+    filters = (@filters[Tabulatr::TABLE_FORM_OPTIONS[:associations_filter]] || {})
+    value = filters["#{relation}.#{name}"]
+    make_tag(:td, opts[:filter_html]) do
+      of = opts[:filter]
+      iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:filter_postfix]}[#{Tabulatr::TABLE_FORM_OPTIONS[:associations_filter]}][#{relation}.#{name}]"
+      filter_tag(of, iname, value, opts)
+    end # </td>
   end
 
   def filter_checkbox(opts={}, &block)
@@ -113,6 +58,43 @@ module Tabulatr::FilterCell
     end
   end
 
+private
+
+  def filter_tag(of, iname, value, opts)
+    if !of
+      ""
+    elsif of.class == Hash or of.class == Array or of.class == String
+      make_tag(:select, :name => iname) do
+        if of.class == String
+          concat(of)
+        else
+          concat("<option></option>")
+          t = options_for_select(of)
+          concat(t.sub("value=\"#{value}\"", "value=\"#{value}\" selected=\"selected\""))
+        end
+      end # </select>
+    elsif opts[:filter] == :range
+      make_tag(:input, :type => :text, :name => "#{iname}[from]",
+        :style => "width:#{opts[:filter_width]}",
+        :value => value ? value[:from] : '')
+      concat(opts[:range_filter_symbol])
+      make_tag(:input, :type => :text, :name => "#{iname}[to]",
+        :style => "width:#{opts[:filter_width]}",
+        :value => value ? value[:to] : '')
+    elsif opts[:filter] == :checkbox
+      checkbox_value = opts[:checkbox_value]
+      checkbox_label = opts[:checkbox_label]
+      concat(check_box_tag(iname, checkbox_value, false, {}))
+      concat(checkbox_label)
+    elsif opts[:filter] == :like
+      make_tag(:input, :type => :text, :name => "#{iname}[like]",
+        :style => "width:#{opts[:filter_width]}",
+        :value => value ? value[:like] : '')
+    else
+      make_tag(:input, :type => :text, :name => "#{iname}", :style => "width:#{opts[:filter_width]}",
+        :value => value)
+    end # if
+  end
 
 end
 
