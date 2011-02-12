@@ -1,3 +1,26 @@
+#--
+# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+
 module Tabulatr::DataCell
 
   # the method used to actually define the data cells of the columns,
@@ -52,7 +75,7 @@ module Tabulatr::DataCell
     end
     assoc = @record.class.reflect_on_association(relation)
     make_tag(:td, opts[:td_html]) do
-      concat(if [:has_many, :has_and_belongs_to_many].member? assoc.macro
+      concat(if assoc.collection?
         @record.send relation
       else
         [ @record.send(relation.to_sym) ]
@@ -67,7 +90,7 @@ module Tabulatr::DataCell
 
   def data_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
-    iname = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}[current_page][]"
+    iname = "#{@classname}#{table_form_options[:checked_postfix]}[current_page][]"
     make_tag(:td, opts[:td_html]) do
       checked = @checked[:selected].member?(@record.id.to_s) ? :checked : nil
       make_tag(:input, :type => 'checkbox', :name => iname, 

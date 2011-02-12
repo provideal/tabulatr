@@ -1,3 +1,26 @@
+#--
+# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+
 module Tabulatr::HeaderCell
 
 
@@ -10,21 +33,21 @@ module Tabulatr::HeaderCell
   #                    otherwise, the capitalized name is used
   def header_column(name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
-    sortparam = "#{@classname}#{Tabulatr::TABLE_FORM_OPTIONS[:sort_postfix]}"
+    sortparam = "#{@classname}#{table_form_options[:sort_postfix]}"
     opts = normalize_column_options opts
     make_tag(:th, opts[:th_html]) do
       concat(opts[:header] || name.to_s.capitalize)
       if opts[:sortable] and @table_options[:sortable]
         if @sorting and @sorting[:by].to_s == name.to_s
           pname = "#{sortparam}[_resort][#{name}][#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}]" 
-          psrc = Tabulatr::TABLE_DESIGN_OPTIONS[@sorting[:direction] == 'desc' ? 
+          psrc = table_design_options[@sorting[:direction] == 'desc' ? 
             :sort_down_button : :sort_up_button]
           make_tag(:input, :type => :hidden, 
             :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]", 
             :value => "#{@sorting[:direction]}")
         else
           pname = "#{sortparam}[_resort][#{name}][desc]"
-          psrc = Tabulatr::TABLE_DESIGN_OPTIONS[:sort_down_button_inactive]
+          psrc = table_design_options[:sort_down_button_inactive]
         end
         make_tag(:input, :type => 'image', 
           :src => psrc,

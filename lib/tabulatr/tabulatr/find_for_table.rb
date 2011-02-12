@@ -1,3 +1,25 @@
+#--
+# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
 
 # These are extensions for use from ActionController instances
 # In a seperate class call only for clearity
@@ -11,23 +33,23 @@ class Tabulatr
     params ||= {}
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
-      merge(params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"] || {})
+      merge(params["#{cname}#{table_form_options[:checked_postfix]}"] || {})
     checked_ids = uncompress_id_list(checked_param[:checked_ids])
     new_ids = checked_param[:current_page]
     selected_ids = checked_ids + new_ids
-    batch_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:batch_postfix]}"]
+    batch_param = params["#{cname}#{table_form_options[:batch_postfix]}"]
     if batch_param.present? and block_given?
       yield(Invoker.new(batch_param, selected_ids))
     end
 
     # firstly, get the conditions from the filters
     includes = []
-    filter_param = (params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"] || {})
+    filter_param = (params["#{cname}#{table_form_options[:filter_postfix]}"] || {})
     conditions = filter_param.inject(["(1=1) ", []]) do |c, t|
       n, v = t
       # FIXME n = name_escaping(n)
-      if (n != Tabulatr::TABLE_FORM_OPTIONS[:associations_filter])
-        condition_from(n,v,c)
+      if (n != table_form_options[:associations_filter])
+        condition_from("#{klaz.table_name}.#{n}",v,c)
       else
         v.inject(c) do |c,t|
           n,v = t
@@ -44,7 +66,7 @@ class Tabulatr
 
     # secondly, find the order_by stuff
     # FIXME: Implement me! PLEEEZE!
-    sortparam = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:sort_postfix]}"]
+    sortparam = params["#{cname}#{table_form_options[:sort_postfix]}"]
     if sortparam
       if sortparam[:_resort]
         order_by = sortparam[:_resort].first.first
@@ -62,7 +84,7 @@ class Tabulatr
 
     # thirdly, get the pagination data
     paginate_options = PAGINATE_OPTIONS.merge(opts).
-      merge(params["#{cname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"] || {})
+      merge(params["#{cname}#{table_form_options[:pagination_postfix]}"] || {})
     page = paginate_options[:page].to_i
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
@@ -98,19 +120,19 @@ class Tabulatr
       :order  => order, :include => includes
 
     # finally, inject methods to retrieve the current 'settings'
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do filter_param end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:classname]) do cname end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:pagination]) do
+    found.define_singleton_method(finder_inject_options[:filters]) do filter_param end
+    found.define_singleton_method(finder_inject_options[:classname]) do cname end
+    found.define_singleton_method(finder_inject_options[:pagination]) do
       {:page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes], :total => klaz.count }
     end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:sorting]) do
+    found.define_singleton_method(finder_inject_options[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
     visible_ids = (found.map { |r| r.id.to_s })
     checked_ids = compress_id_list(selected_ids - visible_ids)
     visible_ids = compress_id_list(visible_ids)
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:checked]) do
+    found.define_singleton_method(finder_inject_options[:checked]) do
       { :selected => selected_ids,
         :checked_ids => checked_ids,
         :visible => visible_ids
@@ -160,7 +182,7 @@ class Tabulatr
   def self.find_for_mongoid_table(klaz, params, opts={})
     # firstly, get the conditions from the filters
     cname = class_to_param(klaz)
-    filter_param = (params["#{cname}#{TABLE_FORM_OPTIONS[:filter_postfix]}"] || {})
+    filter_param = (params["#{cname}#{table_form_options[:filter_postfix]}"] || {})
     conditions = filter_param.inject({}) do |c, t|
       n, v = t
       nc = c
@@ -187,7 +209,7 @@ class Tabulatr
 
     # secondly, find the order_by stuff
     # FIXME: Implement me! PLEEEZE!
-    sortparam = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:sort_postfix]}"]
+    sortparam = params["#{cname}#{table_form_options[:sort_postfix]}"]
     if sortparam
       if sortparam[:_resort]
         order_by = sortparam[:_resort].first.first
@@ -205,7 +227,7 @@ class Tabulatr
 
     # thirdly, get the pagination data
     paginate_options = PAGINATE_OPTIONS.merge(opts).
-      merge(params["#{cname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"] || {})
+      merge(params["#{cname}#{table_form_options[:pagination_postfix]}"] || {})
     page = paginate_options[:page].to_i
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
@@ -220,24 +242,24 @@ class Tabulatr
     found = found.paginate(:page => page, :per_page => pagesize)
 
     # finally, inject methods to retrieve the current 'settings'
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:filters]) do filter_param end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:classname]) do cname end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:pagination]) do
+    found.define_singleton_method(finder_inject_options[:filters]) do filter_param end
+    found.define_singleton_method(finder_inject_options[:classname]) do cname end
+    found.define_singleton_method(finder_inject_options[:pagination]) do
       {:page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes]}
     end
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:sorting]) do
+    found.define_singleton_method(finder_inject_options[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
-    checked_param = params["#{cname}#{Tabulatr::TABLE_FORM_OPTIONS[:checked_postfix]}"]
-    checked_ids = checked_param[:checked].split(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator])
+    checked_param = params["#{cname}#{table_form_options[:checked_postfix]}"]
+    checked_ids = checked_param[:checked].split(table_form_options[:checked_separator])
     new_ids = checked_param[:current_page] || []
     selected_ids = checked_ids + new_ids
     ids = found.map { |r| r.id.to_s }
     checked_ids = selected_ids - ids
-    found.define_singleton_method(FINDER_INJECT_OPTIONS[:checked]) do
+    found.define_singleton_method(finder_inject_options[:checked]) do
       { :selected => selected_ids,
-        :checked_ids => checked_ids.join(Tabulatr::TABLE_FORM_OPTIONS[:checked_separator]) }
+        :checked_ids => checked_ids.join(table_form_options[:checked_separator]) }
     end
     found
   end

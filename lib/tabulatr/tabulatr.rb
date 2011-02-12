@@ -1,3 +1,26 @@
+#--
+# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+
 # Tabulatr is a class to allow easy creation of data tables as you
 # frequently find them on 'index' pages in rails. The 'table convention'
 # here is that we consider every table to consist of three parts:
@@ -6,9 +29,12 @@
 #   particular attribute
 # * the rows with the actual data.
 #
+# Additionally, we expect that people want to 'select' rows and perform
+# batch actions on these rows.
+#
 # Author::    Peter Horn, (mailto:peter.horn@provideal.net)
-# Copyright:: Copyright (c) 2010 by Provideal Systems GmbH (http://www.provideal.net)
-# License::   MIT, APACHE, Ruby, whatever, something free, ya know?
+# Copyright:: Copyright (c) 2010-2011 by Provideal GmbH (http://www.provideal.net)
+# License::   MIT Licence
 class Tabulatr
 
   include ActionView::Helpers::TagHelper
@@ -21,10 +47,10 @@ class Tabulatr
   # <tt>records</tt>:: the 'row' data of the table
   # <tt>view</tt>:: the current instance of ActionView
   # <tt>opts</tt>:: a hash of options specific for this table
-  def initialize(records, view=nil, table_options={})
+  def initialize(records, view=nil, toptions={})
     @records = records
     @view = view
-    @table_options = TABLE_OPTIONS.merge(table_options)
+    @table_options = TABLE_OPTIONS.merge(toptions)
     @val = []
     @record = nil
     @row_mode = false
@@ -80,6 +106,42 @@ class Tabulatr
     end # </form>
     @val.join("\n")
   end
+
+  def self.finder_inject_options(n=nil)
+    FINDER_INJECT_OPTIONS.merge!(n) if n
+    FINDER_INJECT_OPTIONS
+  end
+  def finder_inject_options(n=nil) self.class.finder_inject_options(n) end
+  
+  def self.column_options(n=nil)
+    COLUMN_OPTIONS.merge!(n) if n
+    COLUMN_OPTIONS
+  end
+  def column_options(n=nil) self.class.column_options(n) end
+  
+  def self.table_options(n=nil)
+    TABLE_OPTIONS.merge!(n) if n
+    TABLE_OPTIONS
+  end
+  def table_options(n=nil) self.class.table_options(n) end
+  
+  def self.paginate_options(n=nil)
+    PAGINATE_OPTIONS.merge!(n) if n
+    PAGINATE_OPTIONS
+  end
+  def paginate_options(n=nil) self.class.paginate_options(n) end
+      
+  def self.table_form_options(n=nil)
+    TABLE_FORM_OPTIONS.merge!(n) if n
+    TABLE_FORM_OPTIONS
+  end
+  def table_form_options(n=nil) self.class.table_form_options(n) end
+  
+  def self.table_design_options(n=nil)
+    TABLE_DESIGN_OPTIONS.merge!(n) if n
+    TABLE_DESIGN_OPTIONS
+  end
+  def table_design_options(n=nil) self.class.table_design_options(n) end
 
 private
   # either append to the internal string buffer or use

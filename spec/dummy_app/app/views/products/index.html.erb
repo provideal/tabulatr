@@ -10,7 +10,7 @@
     border-collapse: collapse; 
     width:100%; 
   }
-  
+
   td, th { 
     border: 1px solid gray; 
     padding:5px; 
@@ -117,13 +117,13 @@
   t.column :title, :filter => :like, :link => :product_url
   t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;",
     :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
-  t.column :active, :filter => :checkbox,
-    :checkbox_value => "1", :checkbox_label => 'ja?'
+  t.column :active, :filter => { 'ja' => 1, 'nein' => 0 }
   t.column :description do |record|
     record.description[0..40]
   end
   t.association :vendor, :id, :method => :name, :header => "Vendor",
     :filter => Vendor.all.map{|v| [v.name, v.id] }
+  t.association :tags, :title, :join_symbol => ' ', :format => proc {|a| "[#{a.upcase}]" }
 end.html_safe %>
 
 <%= link_to 'New Product', new_product_path %>
