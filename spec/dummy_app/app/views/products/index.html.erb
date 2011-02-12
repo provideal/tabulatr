@@ -115,7 +115,7 @@
   t.checkbox
   t.column :id, :filter => false, :align => :right
   t.column :title, :filter => :like, :link => :product_url
-  t.column :price, :align => :right, :format => "%.2f&thinsp;&euro;",
+  t.column :price, :align => :right, :format => :euro, #"%.2f&thinsp;&euro;",
     :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
   t.column :active, :filter => { 'ja' => 1, 'nein' => 0 }
   t.column :description do |record|

@@ -21,18 +21,27 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tabulatr::Format
+module Tabulatr::Formattr
   ALLOWED_METHODS = [:euro, :dollar, :percent, :lamp]
   
-  def euro(x)
-    ("%.2f&thinspace;&euro;" % x).gsub(".", ",")
+  def self.format(nam, val)
+    nam = nam.to_sym
+    if ALLOWED_METHODS.member?(nam)
+      self.send nam, val
+    else
+      "[Requested unautorized format '#{nam}' for '#{val}'.]" 
+    end
   end
   
-  def dollar(x)
-    "$&thinspace;%.2f" % x
+  def self.euro(x)
+    ("%.2f&thinsp;&euro;" % x).gsub(".", ",")
   end
   
-  def percent(x)
+  def self.dollar(x)
+    "$&thinsp;%.2f" % x
+  end
+  
+  def self.percent(x)
     ("%.2f&thinspace;%%" % 100.0*x).gsub(".", ",")
   end
   

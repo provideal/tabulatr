@@ -104,7 +104,7 @@ class Tabulatr
         end # </tbody>
       end # </table>
     end # </form>
-    @val.join("\n")
+    @val.join("").html_safe
   end
 
   def self.finder_inject_options(n=nil)

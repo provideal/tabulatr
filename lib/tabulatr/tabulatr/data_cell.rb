@@ -49,8 +49,9 @@ module Tabulatr::DataCell
           concat(yield(@record))
         else
           val = @record.send(opts[:method] || name)
-          val = opts[:format].call(val) if opts[:format].class == Proc
-          val = (opts[:format] % val)   if opts[:format].class == String
+          val = opts[:format].call(val) if opts[:format].is_a?(Proc)
+          val = (opts[:format] % val)   if opts[:format].is_a?(String)
+          val = Tabulatr::Formattr.format(opts[:format], val) if opts[:format].is_a?(Symbol)
           concat(val.to_s)
         end # block_given?
       end # </a>
