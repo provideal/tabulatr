@@ -146,10 +146,14 @@ class Tabulatr
 private
   # either append to the internal string buffer or use
   # ActionView#concat to output if an instance is available.
-  def concat(s)
-    @view.concat(s) if (Rails.version.to_f < 3.0 && @view)
+  def concat(s, html_escape=false)
+    #@view.concat(s) if (Rails.version.to_f < 3.0 && @view)
     #puts "\##{Rails.version.to_f} '#{s}'"
-    @val << s
+    @val << (html_escape ? h(s) : s)
+  end
+
+  def h(s)
+    ERB::Util.h(s)
   end
 
   #render the paginator controls, inputs etc.

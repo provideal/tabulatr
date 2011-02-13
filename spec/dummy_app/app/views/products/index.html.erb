@@ -97,6 +97,7 @@
     font-size: 9px;
     height: 20px;
     line-height: 20px;
+    margin:3px;
   }
 
   div.info-text {
@@ -123,7 +124,7 @@
   end
   t.association :vendor, :id, :method => :name, :header => "Vendor",
     :filter => Vendor.all.map{|v| [v.name, v.id] }
-  t.association :tags, :title, :join_symbol => ' ', :format => proc {|a| "[#{a.upcase}]" }
-end.html_safe %>
+  t.association :tags, :title, :join_symbol => ', ', :format => proc {|a| "[#{a.upcase}]" }
+end %>
 
 <%= link_to 'New Product', new_product_path %>

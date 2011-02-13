@@ -48,7 +48,7 @@ module Tabulatr::DataCell
         if block_given?
           concat(yield(@record))
         else
-          val = @record.send(opts[:method] || name)
+          val = h(@record.send(opts[:method] || name))
           val = opts[:format].call(val) if opts[:format].is_a?(Proc)
           val = (opts[:format] % val)   if opts[:format].is_a?(String)
           val = Tabulatr::Formattr.format(opts[:format], val) if opts[:format].is_a?(Symbol)
@@ -81,7 +81,7 @@ module Tabulatr::DataCell
       else
         [ @record.send(relation.to_sym) ]
       end.map do |r|
-        val = r.send(opts[:method] || name)
+        val = h(r.send(opts[:method] || name))
         val = opts[:format].call(val) if opts[:format].class == Proc
         val = (opts[:format] % val)   if opts[:format].class == String
         val
