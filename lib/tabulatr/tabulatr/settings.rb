@@ -87,18 +87,19 @@ class Tabulatr #::Settings
   # Hash keeping the defaults for the table options, may be overriden in the
   # table_for call
   TABLE_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
-    :make_form => true,          # whether or not to wrap the whole table (incl. controls) in a form
-    :table_html => false,        # a hash with html attributes for the table
-    :row_html => false,          # a hash with html attributes for the normal trs
-    :header_html => false,       # a hash with html attributes for the header trs
-    :filter_html => false,       # a hash with html attributes for the filter trs
-    :filter => true,             # false for no filter row at all
-    :paginate => false,          # true to show paginator
-    :sortable => true,           # true to allow sorting (can be specified for every sortable column)
-    :check_controls => true,     # true to render "select all", "select none" and the like
-    :action => nil,              # target action of the wrapping form if applicable
-    :batch_actions => false,     # name => value hash of batch action stuff
-    :translate => false          # call t() for all 'labels' and stuff, possible values are true/:translate or :localize
+    :make_form => true,               # whether or not to wrap the whole table (incl. controls) in a form
+    :table_html => false,             # a hash with html attributes for the table
+    :row_html => false,               # a hash with html attributes for the normal trs
+    :header_html => false,            # a hash with html attributes for the header trs
+    :filter_html => false,            # a hash with html attributes for the filter trs
+    :filter => true,                  # false for no filter row at all
+    :paginate => false,               # true to show paginator
+    :sortable => true,                # true to allow sorting (can be specified for every sortable column)
+    :check_controls => true,          # true to render "select all", "select none" and the like
+    :action => nil,                   # target action of the wrapping form if applicable
+    :batch_actions => false,          # name => value hash of batch action stuff
+    :translate => false,              # call t() for all 'labels' and stuff, possible values are true/:translate or :localize
+    :row_classes => ['odd', 'even']   # class for the trs
   })
 
   # Hash keeping the defaults for the column options

@@ -122,7 +122,7 @@
 
 
 
-<%= table_for @products, :paginate => true, :translate => false, :batch_actions => {
+<%= table_for @products, :paginate => true, :translate => proc {|x| "`#{x}`"}, :row_classes => nil, :batch_actions => {
     :activate => "Activate",
     :deactivate => "Deactivate",
     :foo => "Foo"

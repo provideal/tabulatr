@@ -284,9 +284,18 @@ private
 
   # render the table rows
   def render_table_rows(&block)
+    row_classes = @table_options[:row_classes] || []
+    row_html = @table_options[:row_html] || {}
+    row_class = row_html[:class] || ""
     @records.each_with_index do |record, i|
       concat("<!-- Row #{i} -->")
-      make_tag(:tr, @table_options[:row_html]) do
+      if row_classes.present?
+        rc = row_class.present? ? row_class + " " : ''
+        rc += row_classes[i % row_classes.length]
+      else
+        rc = nil
+      end
+      make_tag(:tr, row_html.merge(:class => rc)) do
         yield(data_row_builder(record))
       end # </tr>
     end
