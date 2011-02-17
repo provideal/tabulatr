@@ -94,10 +94,23 @@ module Tabulatr::DataCell
     iname = "#{@classname}#{table_form_options[:checked_postfix]}[current_page][]"
     make_tag(:td, opts[:td_html]) do
       checked = @checked[:selected].member?(@record.id.to_s) ? :checked : nil
-      make_tag(:input, :type => 'checkbox', :name => iname, 
+      make_tag(:input, :type => 'checkbox', :name => iname,
         :value => @record.id, :checked => checked)
     end
   end
+
+  def data_action(opts={}, &block)
+    raise "Not in data mode!" if @row_mode != :data
+    opts = normalize_column_options opts
+    make_tag(:td, opts[:td_html]) do
+      if block_given?
+        concat(yield(@record))
+      else
+        raise "Always give a block ino action columns"
+      end # block_given?
+    end # </td>
+  end
+
 
 end
 

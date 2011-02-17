@@ -36,20 +36,20 @@ module Tabulatr::HeaderCell
     sortparam = "#{@classname}#{table_form_options[:sort_postfix]}"
     opts = normalize_column_options opts
     make_tag(:th, opts[:th_html]) do
-      concat(opts[:header] || name.to_s.capitalize, :escape_html)
+      concat(t(opts[:header] || name.to_s.capitalize), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
         if @sorting and @sorting[:by].to_s == name.to_s
-          pname = "#{sortparam}[_resort][#{name}][#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}]" 
-          psrc = table_design_options[@sorting[:direction] == 'desc' ? 
+          pname = "#{sortparam}[_resort][#{name}][#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}]"
+          psrc = table_design_options[@sorting[:direction] == 'desc' ?
             :sort_down_button : :sort_up_button]
-          make_tag(:input, :type => :hidden, 
-            :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]", 
+          make_tag(:input, :type => :hidden,
+            :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]",
             :value => "#{@sorting[:direction]}")
         else
           pname = "#{sortparam}[_resort][#{name}][desc]"
           psrc = table_design_options[:sort_down_button_inactive]
         end
-        make_tag(:input, :type => 'image', 
+        make_tag(:input, :type => 'image',
           :src => psrc,
           :name => pname)
       end
@@ -70,14 +70,20 @@ module Tabulatr::HeaderCell
       # change classes accordingly
     end
     make_tag(:th, opts[:th_html]) do
-      concat(opts[:header] || "#{relation.to_s.capitalize} #{name.to_s.capitalize}", :escape_html)
+      concat(t(opts[:header] || "#{relation.to_s.capitalize} #{name.to_s.capitalize}"), :escape_html)
     end # </th>
   end
 
   def header_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
     make_tag(:th, opts[:th_html]) do
-      concat(opts[:header] || "", :escape_html)
+      concat(t(opts[:header] || ""), :escape_html)
+    end
+  end
+
+  def header_action(opts={}, &block)
+    make_tag(:th, opts[:th_html]) do
+      concat(t(opts[:header] || ""), :escape_html)
     end
   end
 

@@ -64,3 +64,21 @@ if Object.const_defined? "Mongoid"
   end
 end
 
+module MarkAsLocalizable
+  def l
+    @should_localize = true
+    self
+  end
+
+  def should_localize?
+    @should_localize == true
+  end
+end
+
+class String
+  include MarkAsLocalizable
+end
+
+class Symbol
+  include MarkAsLocalizable
+end

@@ -61,6 +61,16 @@ module Tabulatr::RowBuilder
     end # case
   end
 
+  def action(opts={}, &block)
+    #puts "column: '#{name}'"
+    case @row_mode
+    when :data   then data_action(opts, &block)
+    when :header then header_action(opts, &block)
+    when :filter then filter_action(opts, &block)
+    else raise "Wrong row mode '#{@row_mode}'"
+    end # case
+  end
+
 private
   # returns self, sets record and row_mode as required for a
   # data row

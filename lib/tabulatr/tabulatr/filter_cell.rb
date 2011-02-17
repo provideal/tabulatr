@@ -83,6 +83,14 @@ module Tabulatr::FilterCell
     end
   end
 
+  def filter_action(opts={}, &block)
+    raise "Not in filter mode!" if @row_mode != :filter
+    opts = normalize_column_options(opts)
+    make_tag(:td, opts[:filter_html]) do
+      concat(t(opts[:filter]))
+    end # </td>
+  end
+
 private
 
   def filter_tag(of, iname, value, opts)
@@ -102,7 +110,7 @@ private
       make_tag(:input, :type => :text, :name => "#{iname}[from]",
         :style => "width:#{opts[:filter_width]}",
         :value => value ? value[:from] : '')
-      concat(opts[:range_filter_symbol])
+      concat(t(opts[:range_filter_symbol]))
       make_tag(:input, :type => :text, :name => "#{iname}[to]",
         :style => "width:#{opts[:filter_width]}",
         :value => value ? value[:to] : '')

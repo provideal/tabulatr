@@ -97,7 +97,8 @@ class Tabulatr #::Settings
     :sortable => true,           # true to allow sorting (can be specified for every sortable column)
     :check_controls => true,     # true to render "select all", "select none" and the like
     :action => nil,              # target action of the wrapping form if applicable
-    :batch_actions => false      # name => value hash of batch action stuff
+    :batch_actions => false,     # name => value hash of batch action stuff
+    :translate => false          # call t() for all 'labels' and stuff, possible values are true/:translate or :localize
   })
 
   # Hash keeping the defaults for the column options
