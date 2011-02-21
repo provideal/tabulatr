@@ -72,8 +72,6 @@ module Tabulatr::FilterCell
     end # </td>
   end
 
-
-
   def filter_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
     make_tag(:td, opts[:filter_html]) do
@@ -87,7 +85,7 @@ module Tabulatr::FilterCell
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(opts)
     make_tag(:td, opts[:filter_html]) do
-      concat(t(opts[:filter]))
+      concat(t(opts[:filter])) unless [true, false, nil].member?(opts[:filter])
     end # </td>
   end
 

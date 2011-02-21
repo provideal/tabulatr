@@ -77,7 +77,10 @@ class Tabulatr
   # <tt>:filter</tt>:: if set to false, no filter row is output
   def build_table(&block)
     @val = []
-    make_tag(@table_options[:make_form] ? :form : nil, :method => :get) do
+    make_tag(@table_options[:make_form] ? :form : nil,
+        :method => :get,
+        :class => TABLE_DESIGN_OPTIONS[:form_class],
+        'data-remote' => (TABLE_DESIGN_OPTIONS[:remote] ? "true" : nil)) do
       make_tag(:div,  :class => TABLE_DESIGN_OPTIONS[:control_div_class]) do
         # FIXME: table options and stuff
         #render_sort_field if @table_options[:sortable]
@@ -96,7 +99,9 @@ class Tabulatr
         end if TABLE_DESIGN_OPTIONS[:info_text]
       end # </div>'
 
-      make_tag(:table, @table_options[:table_html]) do
+      to = @table_options[:table_html]
+      to = (to || {}).merge(:class => TABLE_DESIGN_OPTIONS[:table_class]) if TABLE_DESIGN_OPTIONS[:table_class]
+      make_tag(:table, to) do
         make_tag(:thead) do
           render_table_header(&block)
           render_table_filters(&block) if @table_options[:filter]
@@ -224,7 +229,7 @@ private
           :class => TABLE_DESIGN_OPTIONS[:page_right_class])
       end  # page < pages
       if pagesizes.length > 1
-        make_tag(:select, :name => "#{pagination_name}[pagesize]", :id => "muff") do
+        make_tag(:select, :name => "#{pagination_name}[pagesize]", :class => TABLE_DESIGN_OPTIONS[:pagesize_select_class]) do
           pagesizes.each do |n|
             make_tag(:option, (n.to_i==pagesize ? {:selected  => :selected} : {}).merge(:value => n)) do
               concat(n.to_s)

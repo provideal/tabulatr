@@ -1,0 +1,1 @@
+Tabulatr.table_design_options :form_class => 'hooray'

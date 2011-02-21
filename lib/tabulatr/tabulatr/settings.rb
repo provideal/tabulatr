@@ -28,19 +28,23 @@ class Tabulatr #::Settings
   # these settings are considered constant for the whole application, can not be overridden
   # on a per-table basis
   TABLE_DESIGN_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
-    :sortable => 'sortable',                    # class for the header of a sortable column
-    :sorting_asc => 'sorting-asc',              # class for the currently asc sorting column
-    :sorting_desc => 'sorting-desc',            # class for the currently desc sorting column
-    :page_left_class => 'page-left',            # class for the page left button
-    :page_right_class => 'page-right',          # class for the page right button
-    :page_no_class => 'page-no',                # class for the page no <input>
-    :control_div_class => 'table-controls',     # class of the div containing the paging and batch action controls
-    :paginator_div_class => 'paginator',        # class of the div containing the paging controls
-    :batch_actions_div_class => 'batch-actions',# class of the div containing the batch action controls
+    :form_class => 'tabulatr_form',              # class of the overall form
+    :remote => false,                            # add data-remote="true" to form
+    :table_class => 'tabulatr_table',            # class for the actual data table
+    :sortable => 'sortable',                     # class for the header of a sortable column
+    :sorting_asc => 'sorting-asc',               # class for the currently asc sorting column
+    :sorting_desc => 'sorting-desc',             # class for the currently desc sorting column
+    :page_left_class => 'page-left',             # class for the page left button
+    :page_right_class => 'page-right',           # class for the page right button
+    :page_no_class => 'page-no',                 # class for the page no <input>
+    :control_div_class => 'table-controls',      # class of the div containing the paging and batch action controls
+    :paginator_div_class => 'paginator',         # class of the div containing the paging controls
+    :batch_actions_div_class => 'batch-actions', # class of the div containing the batch action controls
     :check_controls_div_class => 'check-controls', # class of the div containing the check controls
-    :batch_actions_label => 'Batch Action: ',   # Text to show in front of the batch action select
-    :submit_class => 'submit-table',            # class of submit button
-    :submit_label => 'Apply',                   # Text on the submit button
+    :batch_actions_label => 'Batch Action: ',    # Text to show in front of the batch action select
+    :submit_class => 'submit-table',             # class of submit button
+    :submit_label => 'Apply',                    # Text on the submit button
+    :pagesize_select_class => 'pagesize_select', # class of the pagesize select element
     :pager_left_button => '/images/tabulatr/pager_arrow_left.gif',
     :pager_left_button_inactive => '/images/tabulatr/pager_arrow_left_off.gif',
     :pager_right_button => '/images/tabulatr/pager_arrow_right.gif',
