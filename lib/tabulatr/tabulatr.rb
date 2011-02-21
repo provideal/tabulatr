@@ -150,6 +150,12 @@ class Tabulatr
   end
   def table_design_options(n=nil) self.class.table_design_options(n) end
 
+  def self.sql_options(n=nil)
+    SQL_OPTIONS.merge!(n) if n
+    SQL_OPTIONS
+  end
+  def sql_options(n=nil) self.class.sql_options(n) end
+
 private
   # either append to the internal string buffer or use
   # ActionView#concat to output if an instance is available.

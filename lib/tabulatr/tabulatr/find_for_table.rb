@@ -293,7 +293,7 @@ private
     elsif v.is_a?(Hash)
       if v[:like]
         if v[:like].present?
-          nc = [c[0] << "AND (#{n} LIKE ?) ", c[1] << "%#{v[:like]}%"]
+          nc = [c[0] << "AND (#{n} #{SQL_OPTIONS[:like]} ?) ", c[1] << "%#{v[:like]}%"]
         end
       else
         nc = [c[0] << "AND (#{n} > ?) ", c[1] << "#{v[:from]}"] if v[:from].present?

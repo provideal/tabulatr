@@ -142,4 +142,8 @@ class Tabulatr #::Settings
     :checked => :__checked
   })
 
+  SQL_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
+    :like => 'LIKE'
+  })
+
 end
