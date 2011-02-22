@@ -108,21 +108,8 @@
 
 </style>
 
-<%
-
-  # Tabulatr.table_design_options(:select_all_label => 'All'.l,
-  # :select_none_label => 'None'.l,
-  # :select_visible_label => 'Visible'.l,
-  # :unselect_visible_label => 'Unselect visible'.l,
-  # :select_filtered_label => 'Filtered'.l,
-  # :unselect_filtered_label => 'Unselect filtered'.l,
-  # )
-
-%>
-
-
-
-<%= table_for @products, :paginate => true, :translate => proc {|x| "`#{x}`"}, :row_classes => nil, :batch_actions => {
+<%= table_for @products, :paginate => true, :translate => proc {|x| "`#{x}`"},  
+  :batch_actions => {
     :activate => "Activate",
     :deactivate => "Deactivate",
     :foo => "Foo"

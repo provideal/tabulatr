@@ -38,6 +38,7 @@ end
 class ActionController::Base
   # get the correct settings from the current params hash
   def get_table_options(opts={})
+    raise "This is unused, isn't it?"
     val = Tabulatr.get_table_options(opts, params)
     @page = val[:paginate][:page]
     @pagesize = val[:paginate][:pagesize]

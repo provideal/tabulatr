@@ -79,28 +79,28 @@ class Tabulatr
     @val = []
     make_tag(@table_options[:make_form] ? :form : nil,
         :method => :get,
-        :class => TABLE_DESIGN_OPTIONS[:form_class],
-        'data-remote' => (TABLE_DESIGN_OPTIONS[:remote] ? "true" : nil)) do
-      make_tag(:div,  :class => TABLE_DESIGN_OPTIONS[:control_div_class]) do
+        :class => @table_options[:form_class],
+        'data-remote' => (@table_options[:remote] ? "true" : nil)) do
+      make_tag(:div,  :class => @table_options[:control_div_class]) do
         # FIXME: table options and stuff
         #render_sort_field if @table_options[:sortable]
         render_paginator if @table_options[:paginate]
         render_batch_actions if @table_options[:batch_actions]
         if @table_options[:make_form]
           make_tag(:input, :type => 'submit',
-            :class => TABLE_DESIGN_OPTIONS[:submit_class],
-            :value => t(TABLE_DESIGN_OPTIONS[:submit_label]))
+            :class => @table_options[:submit_class],
+            :value => t(@table_options[:submit_label]))
         end
         render_check_controls if @table_options[:check_controls]
-        make_tag(:div, :class => TABLE_DESIGN_OPTIONS[:info_text_class]) do
+        make_tag(:div, :class => @table_options[:info_text_class]) do
           # :info_text => "Showing %1$d, total %2$d, selected %3$d, matching %4$d"
-          concat(format(t(TABLE_DESIGN_OPTIONS[:info_text]),
+          concat(format(t(@table_options[:info_text]),
             @records.count, @pagination[:total], @checked[:selected].length, @pagination[:count]))
-        end if TABLE_DESIGN_OPTIONS[:info_text]
+        end if @table_options[:info_text]
       end # </div>'
 
       to = @table_options[:table_html]
-      to = (to || {}).merge(:class => TABLE_DESIGN_OPTIONS[:table_class]) if TABLE_DESIGN_OPTIONS[:table_class]
+      to = (to || {}).merge(:class => @table_options[:table_class]) if @table_options[:table_class]
       make_tag(:table, to) do
         make_tag(:thead) do
           render_table_header(&block)
@@ -145,8 +145,8 @@ class Tabulatr
   def table_form_options(n=nil) self.class.table_form_options(n) end
 
   def self.table_design_options(n=nil)
-    TABLE_DESIGN_OPTIONS.merge!(n) if n
-    TABLE_DESIGN_OPTIONS
+    @table_options.merge!(n) if n
+    @table_options
   end
   def table_design_options(n=nil) self.class.table_design_options(n) end
 
@@ -204,15 +204,17 @@ private
     pagesize = pparams[:pagesize].to_i
     pagesizes = pparams[:pagesizes].map &:to_i
     # render the 'wrapping' div
-    make_tag(:div, :class => TABLE_DESIGN_OPTIONS[:paginator_div_class]) do
+    make_tag(:div, :class => @table_options[:paginator_div_class]) do
       # << Page Left
       if page > 1
-        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_left_button],
-          :class => TABLE_DESIGN_OPTIONS[:page_left_class],
+        make_tag(:input, :type => 'image', 
+          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_left_button]),
+          :class => @table_options[:page_left_class],
           :name => "#{pagination_name}[page_left]")
       else
-        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_left_button_inactive],
-          :class => TABLE_DESIGN_OPTIONS[:page_left_class])
+        make_tag(:img, 
+          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_left_button_inactive]),
+          :class => @table_options[:page_left_class])
       end  # page > 1
       # current page number
       concat(make_tag(:input,
@@ -227,15 +229,16 @@ private
       concat("/#{pages}")
       # >> Page Right
       if page < pages
-        make_tag(:input, :type => 'image', :src => TABLE_DESIGN_OPTIONS[:pager_right_button],
-          :class => TABLE_DESIGN_OPTIONS[:page_right_class],
+        make_tag(:input, :type => 'image', 
+          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_right_button]),
+          :class => @table_options[:page_right_class],
           :name => "#{pagination_name}[page_right]")
       else
-        make_tag(:img, :src => TABLE_DESIGN_OPTIONS[:pager_right_button_inactive],
-          :class => TABLE_DESIGN_OPTIONS[:page_right_class])
+        make_tag(:img, :src => @table_options[:pager_right_button_inactive],
+          :class => @table_options[:page_right_class])
       end  # page < pages
       if pagesizes.length > 1
-        make_tag(:select, :name => "#{pagination_name}[pagesize]", :class => TABLE_DESIGN_OPTIONS[:pagesize_select_class]) do
+        make_tag(:select, :name => "#{pagination_name}[pagesize]", :class => @table_options[:pagesize_select_class]) do
           pagesizes.each do |n|
             make_tag(:option, (n.to_i==pagesize ? {:selected  => :selected} : {}).merge(:value => n)) do
               concat(n.to_s)
@@ -253,10 +256,10 @@ private
 
   # render the select tag for batch actions
   def render_batch_actions
-    make_tag(:div, :class => TABLE_DESIGN_OPTIONS[:batch_actions_div_class]) do
-      concat(t(TABLE_DESIGN_OPTIONS[:batch_actions_label])) if TABLE_DESIGN_OPTIONS[:batch_actions_label]
+    make_tag(:div, :class => @table_options[:batch_actions_div_class]) do
+      concat(t(@table_options[:batch_actions_label])) if @table_options[:batch_actions_label]
       iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
-      make_tag(:select, :name => iname, :id => TABLE_OPTIONS[:batch_actions_name]) do
+      make_tag(:select, :name => iname, :id => @table_options[:batch_actions_name]) do
         concat("<option></option>")
         @table_options[:batch_actions].each do |n,v|
           make_tag(:option, :value => n) do
@@ -268,14 +271,14 @@ private
   end
 
   def render_check_controls
-    make_tag(:div, :class => TABLE_DESIGN_OPTIONS[:check_controls_div_class]) do
+    make_tag(:div, :class => @table_options[:check_controls_div_class]) do
       iname = "#{@classname}#{TABLE_FORM_OPTIONS[:checked_postfix]}"
-      make_tag(:input, :type => 'submit', :value => t(TABLE_DESIGN_OPTIONS[:select_all_label]), :name => "#{iname}[select_all]")
-      make_tag(:input, :type => 'submit', :value => t(TABLE_DESIGN_OPTIONS[:select_none_label]), :name => "#{iname}[select_none]")
-      make_tag(:input, :type => 'submit', :value => t(TABLE_DESIGN_OPTIONS[:select_visible_label]), :name => "#{iname}[select_visible]")
-      make_tag(:input, :type => 'submit', :value => t(TABLE_DESIGN_OPTIONS[:unselect_visible_label]), :name => "#{iname}[unselect_visible]")
-      make_tag(:input, :type => 'submit', :value => t(TABLE_DESIGN_OPTIONS[:select_filtered_label]), :name => "#{iname}[select_filtered]")
-      make_tag(:input, :type => 'submit', :value => t(TABLE_DESIGN_OPTIONS[:unselect_filtered_label]), :name => "#{iname}[unselect_filtered]")
+      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_all_label]), :name => "#{iname}[select_all]")
+      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_none_label]), :name => "#{iname}[select_none]")
+      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_visible_label]), :name => "#{iname}[select_visible]")
+      make_tag(:input, :type => 'submit', :value => t(@table_options[:unselect_visible_label]), :name => "#{iname}[unselect_visible]")
+      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_filtered_label]), :name => "#{iname}[select_filtered]")
+      make_tag(:input, :type => 'submit', :value => t(@table_options[:unselect_filtered_label]), :name => "#{iname}[unselect_filtered]")
     end # </div>
   end
 
