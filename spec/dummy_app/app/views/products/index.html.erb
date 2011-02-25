@@ -109,6 +109,7 @@
 </style>
 
 <%= table_for @products, :paginate => true, :translate => proc {|x| "`#{x}`"},  
+  :batch_actions_type => :select,
   :batch_actions => {
     :activate => "Activate",
     :deactivate => "Deactivate",

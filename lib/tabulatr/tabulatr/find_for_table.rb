@@ -39,6 +39,7 @@ class Tabulatr
     selected_ids = checked_ids + new_ids
     batch_param = params["#{cname}#{table_form_options[:batch_postfix]}"]
     if batch_param.present? and block_given?
+      batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       yield(Invoker.new(batch_param, selected_ids))
     end
 

@@ -259,14 +259,24 @@ private
     make_tag(:div, :class => @table_options[:batch_actions_div_class]) do
       concat(t(@table_options[:batch_actions_label])) if @table_options[:batch_actions_label]
       iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
-      make_tag(:select, :name => iname, :id => @table_options[:batch_actions_name]) do
-        concat("<option></option>")
+      case @table_options[:batch_actions_type]
+      when :select
+        make_tag(:select, :name => iname, :class => @table_options[:batch_actions_class]) do
+          concat("<option></option>")
+          @table_options[:batch_actions].each do |n,v|
+            make_tag(:option, :value => n) do
+              concat(v)
+            end # </option>
+          end # each
+        end # </select>
+      when :buttons
         @table_options[:batch_actions].each do |n,v|
-          make_tag(:option, :value => n) do
-            concat(v)
-          end # </option>
+          make_tag(:input, :type => 'submit', :value => v, 
+            :name => "#{iname}[#{n}]",
+            :class => @table_options[:batch_actions_class])
         end # each
-      end # </select>
+      else raise "Use either :select or :buttons for :batch_actions_type"
+      end # case
     end # </div>
   end
 

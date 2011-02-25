@@ -53,6 +53,8 @@ class Tabulatr #::Settings
     info_text_class: 'info-text',                # class of the info text div
                                                    
     batch_actions_label: 'Batch Action: ',       # Text to show in front of the batch action select
+    batch_actions_type: :select,                 # :select or :button depending on the kind of input you want
+    batch_actions_class: 'batch-action-inputs',  # class to apply on the batch action input elements
     submit_label: 'Apply',                       # Text on the submit button
     select_all_label: 'Select All',              # Text on the select all button
     select_none_label: 'Select None',            # Text on the select none button
