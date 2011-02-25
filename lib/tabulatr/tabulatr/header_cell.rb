@@ -66,7 +66,7 @@ module Tabulatr::HeaderCell
   def header_association(relation, name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
     opts = normalize_column_options opts
-    if opts[:sortable] and @table_options[:sort]
+    if opts[:sortable] and @table_options[:sortable]
       # change classes accordingly
     end
     make_tag(:th, opts[:th_html]) do

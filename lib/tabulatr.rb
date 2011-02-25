@@ -25,6 +25,23 @@
 # Monkey Patching...
 #--
 
+require "active_support/hash_with_indifferent_access"
+
+class AngryHash < ActiveSupport::HashWithIndifferentAccess
+  def [](key)
+    key?(key) ? super(key) : raise("No such key #{key}.")
+  end
+  
+  alias_method :merge_lidsa, :merge
+  def merge(other)
+    other.keys.each do |k| 
+      raise "Overriding unset key #{k}." unless key?(k) 
+    end
+    AngryHash.new(merge_lidsa(other))
+  end
+  
+end
+
 require 'tabulatr/tabulatr'
 
 class ActionView::Base
@@ -83,3 +100,4 @@ end
 class Symbol
   include MarkAsLocalizable
 end
+
