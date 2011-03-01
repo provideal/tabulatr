@@ -8,3 +8,4 @@ Tabulatr.table_options :form_class => 'hooray',
   sort_up_button_inactive: 'sort_arrow_up_off.gif',
   sort_down_button: 'sort_arrow_down.gif',
   sort_down_button_inactive: 'sort_arrow_down_off.gif'
+  

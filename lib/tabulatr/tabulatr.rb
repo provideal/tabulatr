@@ -81,37 +81,55 @@ class Tabulatr
         :method => :get,
         :class => @table_options[:form_class],
         'data-remote' => (@table_options[:remote] ? "true" : nil)) do
-      make_tag(:div,  :class => @table_options[:control_div_class]) do
-        # FIXME: table options and stuff
-        #render_sort_field if @table_options[:sortable]
-        render_paginator if @table_options[:paginate]
-        render_batch_actions if @table_options[:batch_actions]
-        if @table_options[:make_form]
-          make_tag(:input, :type => 'submit',
-            :class => @table_options[:submit_class],
-            :value => t(@table_options[:submit_label]))
+      # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
+      make_tag(:div,  :class => @table_options[:control_div_class_before]) do
+        @table_options[:before_table_controls].each do |element|
+          render_element(element)
         end
-        render_check_controls if @table_options[:check_controls]
-        make_tag(:div, :class => @table_options[:info_text_class]) do
-          # :info_text => "Showing %1$d, total %2$d, selected %3$d, matching %4$d"
-          concat(format(t(@table_options[:info_text]),
-            @records.count, @pagination[:total], @checked[:selected].length, @pagination[:count]))
-        end if @table_options[:info_text]
-      end # </div>'
+      end if @table_options[:before_table_controls].present? # </div>
+      
+      render_element(:table, &block)
 
-      to = @table_options[:table_html]
-      to = (to || {}).merge(:class => @table_options[:table_class]) if @table_options[:table_class]
-      make_tag(:table, to) do
-        make_tag(:thead) do
-          render_table_header(&block)
-          render_table_filters(&block) if @table_options[:filter]
-        end # </thead>
-        make_tag(:tbody) do
-          render_table_rows(&block)
-        end # </tbody>
-      end # </table>
+      make_tag(:div,  :class => @table_options[:control_div_class_after]) do
+        @table_options[:after_table_controls].each do |element|
+          render_element(element)
+        end
+      end if @table_options[:after_table_controls].present? # </div>
+
     end # </form>
     @val.join("").html_safe
+  end
+
+  def render_element(element, &block)
+    case element
+    when :paginator then render_paginator if @table_options[:paginate]
+    when :submit then   make_tag(:input, :type => 'submit',
+        :class => @table_options[:submit_class],
+        :value => t(@table_options[:submit_label]))
+    when :batch_actions then render_batch_actions if @table_options[:batch_actions]
+    when :check_controls then render_check_controls if @table_options[:check_controls]
+    when :info_text
+      make_tag(:div, :class => @table_options[:info_text_class]) do
+        concat(format(t(@table_options[:info_text]),
+          @records.count, @pagination[:total], @checked[:selected].length, @pagination[:count]))
+      end if @table_options[:info_text]
+    when :table then render_table &block
+    else raise "unknown element '#{element}'"
+    end
+  end
+
+  def render_table(&block)
+    to = @table_options[:table_html]
+    to = (to || {}).merge(:class => @table_options[:table_class]) if @table_options[:table_class]
+    make_tag(:table, to) do
+      make_tag(:thead) do
+        render_table_header(&block)
+        render_table_filters(&block) if @table_options[:filter]
+      end # </thead>
+      make_tag(:tbody) do
+        render_table_rows(&block)
+      end # </tbody>
+    end # </table>
   end
 
   def self.finder_inject_options(n=nil)
@@ -124,13 +142,11 @@ class Tabulatr
     COLUMN_OPTIONS.merge!(n) if n
     COLUMN_OPTIONS
   end
-  def column_options(n=nil) self.class.column_options(n) end
 
   def self.table_options(n=nil)
     TABLE_OPTIONS.merge!(n) if n
     TABLE_OPTIONS
   end
-  def table_options(n=nil) self.class.table_options(n) end
 
   def self.paginate_options(n=nil)
     PAGINATE_OPTIONS.merge!(n) if n
@@ -145,8 +161,7 @@ class Tabulatr
   def table_form_options(n=nil) self.class.table_form_options(n) end
 
   def self.table_design_options(n=nil)
-    @table_options.merge!(n) if n
-    @table_options
+    raise("table_design_options stopped existing. Use table_options instead.")
   end
   def table_design_options(n=nil) self.class.table_design_options(n) end
 
@@ -234,7 +249,7 @@ private
           :class => @table_options[:page_right_class],
           :name => "#{pagination_name}[page_right]")
       else
-        make_tag(:img, :src => @table_options[:pager_right_button_inactive],
+        make_tag(:img, :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_right_button_inactive]),
           :class => @table_options[:page_right_class])
       end  # page < pages
       if pagesizes.length > 1

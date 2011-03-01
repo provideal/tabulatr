@@ -38,7 +38,8 @@ class Tabulatr #::Settings
     page_left_class: 'page-left',                # class for the page left button
     page_right_class: 'page-right',              # class for the page right button
     page_no_class: 'page-no',                    # class for the page no <input>
-    control_div_class: 'table-controls',         # class of the div containing the paging and batch action controls
+    control_div_class_before: 'table-controls',  # class of the upper div containing the paging and batch action controls
+    control_div_class_after: 'table-controls',   # class of the lower div containing the paging and batch action controls 
     paginator_div_class: 'paginator',            # class of the div containing the paging controls
     batch_actions_div_class: 'batch-actions',    # class of the div containing the batch action controls
     check_controls_div_class: 'check-controls',  # class of the div containing the check controls
@@ -63,6 +64,10 @@ class Tabulatr #::Settings
     select_filtered_label: 'Select filtered',    # Text on the select filtered button
     unselect_filtered_label: 'Unselect filtered',# Text on the unselect filtered button
     info_text: "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
+    
+    # which controls to be rendered above and below the tabel and in which order
+    before_table_controls: [:paginator, :batch_actions, :submit, :check_controls, :info_text],
+    after_table_controls: [],
     
     image_path_prefix: '/images/tabulatr/',      
     pager_left_button: 'left.gif',
