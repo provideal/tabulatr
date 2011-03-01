@@ -23,6 +23,11 @@
 
 require "active_support/hash_with_indifferent_access"
 
+# We're extending the already dubious semantics of HashWithIndifferentAccess
+# to raise errors if either an unset key is requested, or if a previously
+# unset key is set by a merge.
+#
+# This is used to prevent usage of 'wrong' options.
 class AngryHash < ActiveSupport::HashWithIndifferentAccess
   def [](key)
     key?(key) ? super(key) : raise("No such key #{key}.")

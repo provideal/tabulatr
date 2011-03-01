@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
+# We monkey patch ActiveRecord::Base to add a function for finding using
+# the information of the params hash as created by a Tabulatr table
 if Object.const_defined? "ActiveRecord"
   class ActiveRecord::Base
     def self.find_for_table(params, opts={}, &block)

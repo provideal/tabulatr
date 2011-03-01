@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
+# buggy like hell
 if Object.const_defined? "Mongoid"
   raise "Mongoid support is buggy like hell as of now"
   module Mongoid::Document

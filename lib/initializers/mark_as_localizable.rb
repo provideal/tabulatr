@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
+# This is probably a REALLY bad idea...
 module MarkAsLocalizable
   def l
     @should_localize = true
