@@ -228,7 +228,6 @@ private
   end
 end
 
-Dir[File.dirname(__FILE__) + "/tabulatr/*.rb"].each do |file|
-  #puts file
+Dir[File.join(File.dirname(__FILE__), "tabulatr", "*.rb")].each do |file|
   require file
 end

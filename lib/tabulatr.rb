@@ -27,7 +27,7 @@ require 'tabulatr/tabulatr'
 #--
 # Mainly Monkey Patching...
 #--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
+Dir[File.join(File.dirname(__FILE__), "initializers", "*.rb")].each do |file|
   require file
 end
 
