@@ -21,13 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
-require 'tabulatr/tabulatr'
-
-#--
-# Mainly Monkey Patching...
-#--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
-  require file
+class ActionView::Base
+  # render the table in a view
+  def table_for(records, opts={}, &block)
+    tabulatr = Tabulatr.new(records, self, opts)
+    tabulatr.build_table(&block)# von concat , block.binding
+  end
 end
 

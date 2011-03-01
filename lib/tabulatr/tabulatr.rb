@@ -104,6 +104,7 @@ class Tabulatr
   def render_element(element, &block)
     case element
     when :paginator then render_paginator if @table_options[:paginate]
+    when :hidden_submit then 
     when :submit then   make_tag(:input, :type => 'submit',
         :class => @table_options[:submit_class],
         :value => t(@table_options[:submit_label]))
@@ -137,42 +138,6 @@ class Tabulatr
       end # </tbody>
     end # </table>
   end
-
-  def self.finder_inject_options(n=nil)
-    FINDER_INJECT_OPTIONS.merge!(n) if n
-    FINDER_INJECT_OPTIONS
-  end
-
-  def self.column_options(n=nil)
-    COLUMN_OPTIONS.merge!(n) if n
-    COLUMN_OPTIONS
-  end
-
-  def self.table_options(n=nil)
-    TABLE_OPTIONS.merge!(n) if n
-    TABLE_OPTIONS
-  end
-
-  def self.paginate_options(n=nil)
-    PAGINATE_OPTIONS.merge!(n) if n
-    PAGINATE_OPTIONS
-  end
-
-  def self.table_form_options(n=nil)
-    TABLE_FORM_OPTIONS.merge!(n) if n
-    TABLE_FORM_OPTIONS
-  end
-
-  def self.table_design_options(n=nil)
-    raise("table_design_options stopped existing. Use table_options instead.")
-  end
-  def table_design_options(n=nil) self.class.table_design_options(n) end
-
-  def self.sql_options(n=nil)
-    SQL_OPTIONS.merge!(n) if n
-    SQL_OPTIONS
-  end
-  def sql_options(n=nil) self.class.sql_options(n) end
 
 private
   # either append to the internal string buffer or use
@@ -210,104 +175,6 @@ private
     rescue
       raise "Translating '#{s}' failed!"
     end
-  end
-
-  #render the paginator controls, inputs etc.
-  def render_paginator
-    # get the current pagination state
-    pagination_name = "#{@classname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"
-    pparams = @records.send(FINDER_INJECT_OPTIONS[:pagination])
-    page = pparams[:page].to_i
-    pages = pparams[:pages].to_i
-    pagesize = pparams[:pagesize].to_i
-    pagesizes = pparams[:pagesizes].map &:to_i
-    # render the 'wrapping' div
-    make_tag(:div, :class => @table_options[:paginator_div_class]) do
-      # << Page Left
-      if page > 1
-        make_tag(:input, :type => 'image', 
-          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_left_button]),
-          :class => @table_options[:page_left_class],
-          :name => "#{pagination_name}[page_left]")
-      else
-        make_tag(:img, 
-          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_left_button_inactive]),
-          :class => @table_options[:page_left_class])
-      end  # page > 1
-      # current page number
-      concat(make_tag(:input,
-        :type => :hidden,
-        :name => "#{pagination_name}[current_page]",
-        :value => page))
-      concat(make_tag(:input,
-        :type => :text,
-        :size => pages.to_s.length,
-        :name => "#{pagination_name}[page]",
-        :value => page))
-      concat("/#{pages}")
-      # >> Page Right
-      if page < pages
-        make_tag(:input, :type => 'image', 
-          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_right_button]),
-          :class => @table_options[:page_right_class],
-          :name => "#{pagination_name}[page_right]")
-      else
-        make_tag(:img, :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_right_button_inactive]),
-          :class => @table_options[:page_right_class])
-      end  # page < pages
-      if pagesizes.length > 1
-        make_tag(:select, :name => "#{pagination_name}[pagesize]", :class => @table_options[:pagesize_select_class]) do
-          pagesizes.each do |n|
-            make_tag(:option, (n.to_i==pagesize ? {:selected  => :selected} : {}).merge(:value => n)) do
-              concat(n.to_s)
-            end # </option>
-          end # each
-        end # </select>
-      else # just one pagesize
-        concat(make_tag(:input,
-          :type => :hidden,
-          :name => "#{pagination_name}[pagesize]",
-          :value => pagesizes.first))
-      end
-    end # </div>
-  end
-
-  # render the select tag for batch actions
-  def render_batch_actions
-    make_tag(:div, :class => @table_options[:batch_actions_div_class]) do
-      concat(t(@table_options[:batch_actions_label])) if @table_options[:batch_actions_label]
-      iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
-      case @table_options[:batch_actions_type]
-      when :select
-        make_tag(:select, :name => iname, :class => @table_options[:batch_actions_class]) do
-          concat("<option></option>")
-          @table_options[:batch_actions].each do |n,v|
-            make_tag(:option, :value => n) do
-              concat(v)
-            end # </option>
-          end # each
-        end # </select>
-      when :buttons
-        @table_options[:batch_actions].each do |n,v|
-          make_tag(:input, :type => 'submit', :value => v, 
-            :name => "#{iname}[#{n}]",
-            :class => @table_options[:batch_actions_class])
-        end # each
-      else raise "Use either :select or :buttons for :batch_actions_type"
-      end # case
-    end # </div>
-  end
-
-  def render_check_controls
-    make_tag(:div, :class => @table_options[:check_controls_div_class]) do
-      iname = "#{@classname}#{TABLE_FORM_OPTIONS[:checked_postfix]}"
-      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_all_label]), :name => "#{iname}[select_all]")
-      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_none_label]), :name => "#{iname}[select_none]")
-      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_visible_label]), :name => "#{iname}[select_visible]")
-      make_tag(:input, :type => 'submit', :value => t(@table_options[:unselect_visible_label]), :name => "#{iname}[unselect_visible]")
-      make_tag(:input, :type => 'submit', :value => t(@table_options[:select_filtered_label]), :name => "#{iname}[select_filtered]")
-      make_tag(:input, :type => 'submit', :value => t(@table_options[:unselect_filtered_label]), :name => "#{iname}[unselect_filtered]")
-    end # </div>
   end
 
   # render the header row

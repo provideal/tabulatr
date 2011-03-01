@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tabulatr::HeaderCell
+class Tabulatr
 
 
   # the method used to actually define the headers of the columns,
@@ -88,5 +88,3 @@ module Tabulatr::HeaderCell
   end
 
 end
-
-Tabulatr.send :include, Tabulatr::HeaderCell

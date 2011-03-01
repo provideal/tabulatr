@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tabulatr::FilterCell
+class Tabulatr
 
   # the method used to actually define the filters of the columns,
   # taking the name of the attribute and a hash of options.
@@ -128,5 +128,3 @@ private
   end
 
 end
-
-Tabulatr.send :include, Tabulatr::FilterCell

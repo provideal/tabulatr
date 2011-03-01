@@ -21,13 +21,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
-require 'tabulatr/tabulatr'
-
-#--
-# Mainly Monkey Patching...
-#--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
-  require file
+if Object.const_defined? "Mongoid"
+  raise "Mongoid support is buggy like hell as of now"
+  module Mongoid::Document
+    module ClassMethods
+      def find_for_table(params, opts={}, &block)
+        Tabulatr.find_for_mongoid_table(self, params, opts, &block)
+      end
+    end
+  end
 end
-

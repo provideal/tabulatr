@@ -21,13 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require "active_support/hash_with_indifferent_access"
-
-class Tabulatr #::Settings
+class Tabulatr
 
   # Hash keeping the defaults for the table options, may be overriden in the
   # table_for call
-  TABLE_OPTIONS = AngryHash.new({ # ActiveSupport::HashWithIndifferentAccess.new({
+  TABLE_OPTIONS = ::AngryHash.new({ # ActiveSupport::HashWithIndifferentAccess.new({
     remote: false,                               # add data-remote="true" to form
     
     form_class: 'tabulatr_form',                 # class of the overall form
@@ -68,6 +66,11 @@ class Tabulatr #::Settings
     # which controls to be rendered above and below the tabel and in which order
     before_table_controls: [:paginator, :batch_actions, :submit, :check_controls, :info_text],
     after_table_controls: [],
+    
+    # whih selecting controls to render in which order
+    select_controls: [:select_all, :select_none, :select_visible, :unselect_visible, 
+                      :select_filtered, :unselect_filtered],
+
     
     image_path_prefix: '/images/tabulatr/',      
     pager_left_button: 'left.gif',
@@ -162,5 +165,42 @@ class Tabulatr #::Settings
   SQL_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     like: 'LIKE'
   })
+
+  def self.finder_inject_options(n=nil)
+    FINDER_INJECT_OPTIONS.merge!(n) if n
+    FINDER_INJECT_OPTIONS
+  end
+
+  def self.column_options(n=nil)
+    COLUMN_OPTIONS.merge!(n) if n
+    COLUMN_OPTIONS
+  end
+
+  def self.table_options(n=nil)
+    TABLE_OPTIONS.merge!(n) if n
+    TABLE_OPTIONS
+  end
+
+  def self.paginate_options(n=nil)
+    PAGINATE_OPTIONS.merge!(n) if n
+    PAGINATE_OPTIONS
+  end
+
+  def self.table_form_options(n=nil)
+    TABLE_FORM_OPTIONS.merge!(n) if n
+    TABLE_FORM_OPTIONS
+  end
+
+  def self.table_design_options(n=nil)
+    raise("table_design_options stopped existing. Use table_options instead.")
+  end
+  def table_design_options(n=nil) self.class.table_design_options(n) end
+
+  def self.sql_options(n=nil)
+    SQL_OPTIONS.merge!(n) if n
+    SQL_OPTIONS
+  end
+  def sql_options(n=nil) self.class.sql_options(n) end
+
 
 end

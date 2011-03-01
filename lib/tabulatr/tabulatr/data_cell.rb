@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tabulatr::DataCell
+class Tabulatr
 
   # the method used to actually define the data cells of the columns,
   # taking the name of the attribute and a hash of options.
@@ -111,7 +111,4 @@ module Tabulatr::DataCell
     end # </td>
   end
 
-
 end
-
-Tabulatr.send :include, Tabulatr::DataCell

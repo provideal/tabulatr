@@ -21,13 +21,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
-require 'tabulatr/tabulatr'
-
-#--
-# Mainly Monkey Patching...
-#--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
-  require file
+if Object.const_defined? "ActiveRecord"
+  class ActiveRecord::Base
+    def self.find_for_table(params, opts={}, &block)
+      Tabulatr.find_for_active_record_table(self, params, opts, &block)
+    end
+  end
 end
-

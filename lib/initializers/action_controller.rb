@@ -21,13 +21,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
-require 'tabulatr/tabulatr'
-
-#--
-# Mainly Monkey Patching...
-#--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
-  require file
+class ActionController::Base
+  # get the correct settings from the current params hash
+  def get_table_options(opts={})
+    raise "This is unused, isn't it?"
+    val = Tabulatr.get_table_options(opts, params)
+    @page = val[:paginate][:page]
+    @pagesize = val[:paginate][:pagesize]
+    @filter = val[:filter]
+    @sort_by = val[:sort_by]
+  end
 end
-

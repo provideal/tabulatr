@@ -21,13 +21,32 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
-require 'tabulatr/tabulatr'
+class Tabulatr
 
-#--
-# Mainly Monkey Patching...
-#--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
-  require file
+  # render the select tag for batch actions
+  def render_batch_actions
+    make_tag(:div, :class => @table_options[:batch_actions_div_class]) do
+      concat(t(@table_options[:batch_actions_label])) if @table_options[:batch_actions_label]
+      iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
+      case @table_options[:batch_actions_type]
+      when :select
+        make_tag(:select, :name => iname, :class => @table_options[:batch_actions_class]) do
+          concat("<option></option>")
+          @table_options[:batch_actions].each do |n,v|
+            make_tag(:option, :value => n) do
+              concat(v)
+            end # </option>
+          end # each
+        end # </select>
+      when :buttons
+        @table_options[:batch_actions].each do |n,v|
+          make_tag(:input, :type => 'submit', :value => v, 
+            :name => "#{iname}[#{n}]",
+            :class => @table_options[:batch_actions_class])
+        end # each
+      else raise "Use either :select or :buttons for :batch_actions_type"
+      end # case
+    end # </div>
+  end
+  
 end
-

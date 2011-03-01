@@ -23,7 +23,8 @@
 
 # These are extensions for use as a row builder
 # In a seperate class call only for clearity
-module Tabulatr::RowBuilder
+
+class Tabulatr
 
   # called inside the build_table block, branches into data, header,
   # or filter building methods depending on the current mode
@@ -112,4 +113,3 @@ private
   end
 end
 
-Tabulatr.send :include, Tabulatr::RowBuilder

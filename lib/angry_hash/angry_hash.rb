@@ -21,13 +21,19 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
-require 'tabulatr/tabulatr'
+require "active_support/hash_with_indifferent_access"
 
-#--
-# Mainly Monkey Patching...
-#--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
-  require file
+class AngryHash < ActiveSupport::HashWithIndifferentAccess
+  def [](key)
+    key?(key) ? super(key) : raise("No such key #{key}.")
+  end
+  
+  alias_method :merge_lidsa, :merge
+  def merge(other)
+    other.keys.each do |k| 
+      raise "Overriding unset key #{k}." unless key?(k) 
+    end
+    AngryHash.new(merge_lidsa(other))
+  end
+  
 end
-

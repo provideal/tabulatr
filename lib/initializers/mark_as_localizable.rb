@@ -21,13 +21,22 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
-require 'tabulatr/tabulatr'
+module MarkAsLocalizable
+  def l
+    @should_localize = true
+    self
+  end
 
-#--
-# Mainly Monkey Patching...
-#--
-Dir[File.dirname(__FILE__) + "/initializers/*.rb"].each do |file|
-  require file
+  def should_localize?
+    @should_localize == true
+  end
+end
+
+class String
+  include MarkAsLocalizable
+end
+
+class Symbol
+  include MarkAsLocalizable
 end
 
