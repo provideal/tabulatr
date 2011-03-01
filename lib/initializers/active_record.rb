@@ -26,7 +26,7 @@
 if Object.const_defined? "ActiveRecord"
   class ActiveRecord::Base
     def self.find_for_table(params, opts={}, &block)
-      Tabulatr.find_for_active_record_table(self, params, opts, &block)
+      Tabulatr::Finder.find_for_active_record_table(self, params, opts, &block)
     end
   end
 end
