@@ -42,7 +42,7 @@ module Tabulatr::FilterCell
     value = @filters[name]
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
-      iname = "#{@classname}#{table_form_options[:filter_postfix]}[#{name}]"
+      iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
       filter_tag(of, iname, value, opts)
     end # </td>
   end
@@ -63,11 +63,11 @@ module Tabulatr::FilterCell
   def filter_association(relation, name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(opts)
-    filters = (@filters[table_form_options[:associations_filter]] || {})
+    filters = (@filters[@table_form_options[:associations_filter]] || {})
     value = filters["#{relation}.#{name}"]
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
-      iname = "#{@classname}#{table_form_options[:filter_postfix]}[#{table_form_options[:associations_filter]}][#{relation}.#{name}]"
+      iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
       filter_tag(of, iname, value, opts)
     end # </td>
   end
@@ -75,7 +75,7 @@ module Tabulatr::FilterCell
   def filter_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
     make_tag(:td, opts[:filter_html]) do
-      iname = "#{@classname}#{table_form_options[:checked_postfix]}"
+      iname = "#{@classname}#{@table_form_options[:checked_postfix]}"
       make_tag(:input, :type => 'hidden', :name => "#{iname}[checked_ids]", :value => @checked[:checked_ids])
       make_tag(:input, :type => 'hidden', :name => "#{iname}[visible]", :value => @checked[:visible])
     end

@@ -52,6 +52,7 @@ class Tabulatr
     @records = records
     @view = view
     @table_options = TABLE_OPTIONS.merge(toptions)
+    @table_form_options = TABLE_FORM_OPTIONS
     @val = []
     @record = nil
     @row_mode = false
@@ -114,7 +115,12 @@ class Tabulatr
           @records.count, @pagination[:total], @checked[:selected].length, @pagination[:count]))
       end if @table_options[:info_text]
     when :table then render_table &block
-    else raise "unknown element '#{element}'"
+    else 
+      if element.is_a?(String)
+        concat(element)
+      else
+        raise "unknown element '#{element}'"
+      end
     end
   end
 
@@ -136,7 +142,6 @@ class Tabulatr
     FINDER_INJECT_OPTIONS.merge!(n) if n
     FINDER_INJECT_OPTIONS
   end
-  def finder_inject_options(n=nil) self.class.finder_inject_options(n) end
 
   def self.column_options(n=nil)
     COLUMN_OPTIONS.merge!(n) if n
@@ -152,13 +157,11 @@ class Tabulatr
     PAGINATE_OPTIONS.merge!(n) if n
     PAGINATE_OPTIONS
   end
-  def paginate_options(n=nil) self.class.paginate_options(n) end
 
   def self.table_form_options(n=nil)
     TABLE_FORM_OPTIONS.merge!(n) if n
     TABLE_FORM_OPTIONS
   end
-  def table_form_options(n=nil) self.class.table_form_options(n) end
 
   def self.table_design_options(n=nil)
     raise("table_design_options stopped existing. Use table_options instead.")

@@ -33,7 +33,7 @@ module Tabulatr::HeaderCell
   #                    otherwise, the capitalized name is used
   def header_column(name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
-    sortparam = "#{@classname}#{table_form_options[:sort_postfix]}"
+    sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}"
     opts = normalize_column_options opts
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || name.to_s.capitalize), :escape_html)
