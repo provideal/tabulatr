@@ -1,0 +1,83 @@
+h1.Tabulatr - Index Tables made easy, finally
+
+h2.Mission Objective
+
+Tabulatr aims at making the ever-recurring task of creating listings of ActiveRecord models simple and uniform.
+
+We found ourselves reinventing the wheel in every project we made, by using
+
+* different paging mechanisms,
+* different ways of implementing filtering/searching,
+* difterent ways of implementing selecting and batch actions,
+* different layouts.
+
+We finally thought that whilst gems like Formtastic or SimpleForm provide a really cool, uniform, and concise way to implement forms, it's time for a table builder. During a project with Magento (*shiver*) we decided that their general tables are quite reasonable, and enterprise-proven -- so that's our starting point. 
+
+h3.Visual Components
+
+Every Tabulatr table consists of the following components:
+
+* a wrapping form
+* a 'Controls Container' containing the table-controls as
+  * the paginator, 
+  * the batch_actions, 
+  * the submit button, 
+  * controls to manage selecting/checking/marking, 
+  * an info_text
+* The actual table consisting of
+  * A header row,
+  * A filter row,
+  * data rows,
+  * possibly a selecting/checking/marking column
+  * possibly action links/buttons
+  
+Whilst this is a strong decision, we made everything as-configurable-as-possible, there are roughly 150 options you can use to tweak almost every aspect of Tabulatr.
+
+h3.Features
+
+Tabulatr tries to make these common tasks as simple/transparent as possible:
+* paging
+* selecting/checking/marking
+* filtering
+* batch actions
+
+h2.Example
+
+h3.Models
+
+We suppose we have a couple of models
+* tags has and belong to many products
+* vendors have many products
+* products belong to vendors and have and belong to many tags
+  
+h3.Controller
+
+In the products controllers index action we have:
+
+def index
+  @products = Product.find_for_table(params)
+end
+
+the find_for_table method is injected into ActiveRecord by Tabulatr, it retrieves all relevant data from the params hash automagically.
+
+h3.View
+
+To get a simple Table, all we need to do is
+
+<h1>Listing products</h1>
+
+<%= table_for @products do 
+  t.column :id
+  t.column :title
+  t.column :price
+  t.column :active
+  t.association :vendor, :name
+  t.association :tags, :title
+end %>
+
+<%= link_to 'New Product', new_product_path %>
+
+but the result is pretty fancy, already:
+
+...
+
