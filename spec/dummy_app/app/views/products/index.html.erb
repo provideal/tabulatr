@@ -1,8 +1,7 @@
 <h1>Listing products</h1>
 
 <%= table_for @products, 
-  :paginate => true, 
-  :after_table_controls => [:paginator, "Hahaha!", :info_text],
+  #:after_table_controls => [:paginator, "Hahaha!", :info_text],
   :control_div_class_after => nil,
   # :translate => proc {|x| "`#{x}`"},  
   :batch_actions_type => :buttons,
