@@ -21,8 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'angry_hash/angry_hash'
 require 'tabulatr/tabulatr'
+require 'whiny_hash'
 
 #--
 # Mainly Monkey Patching...

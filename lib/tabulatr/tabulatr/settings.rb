@@ -21,11 +21,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
+require 'whiny_hash'
+
 class Tabulatr
 
   # Hash keeping the defaults for the table options, may be overriden in the
   # table_for call
-  TABLE_OPTIONS = ::AngryHash.new({ # ActiveSupport::HashWithIndifferentAccess.new({
+  TABLE_OPTIONS = WhinyHash.new({ # ActiveSupport::HashWithIndifferentAccess.new({
     remote: false,                               # add data-remote="true" to form
     
     form_class: 'tabulatr_form',                 # class of the overall form
@@ -100,7 +102,7 @@ class Tabulatr
   # these settings are considered constant for the whole application, can not be overridden
   # on a per-table basis.
   # That's necessary to allow find_for_table to work properly
-  TABLE_FORM_OPTIONS = AngryHash.new({
+  TABLE_FORM_OPTIONS = WhinyHash.new({
     batch_action_name: 'batch_action',       # name of the batch action param
     sort_by_key: 'sort_by_key',              # name of key which to search, format is 'id asc'
     pagination_postfix: '_pagination',       # name of the param w/ the pagination infos
@@ -123,7 +125,7 @@ class Tabulatr
   })
 
   # Hash keeping the defaults for the column options
-  COLUMN_OPTIONS = AngryHash.new({
+  COLUMN_OPTIONS = WhinyHash.new({
     header: false,                   # a string to write into the header cell
     width: false,                    # the width of the cell
     align: false,                    # horizontal alignment
