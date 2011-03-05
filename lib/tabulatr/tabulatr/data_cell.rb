@@ -48,11 +48,11 @@ class Tabulatr
         if block_given?
           concat(yield(@record))
         else
-          val = h(@record.send(opts[:method] || name))
+          val = @record.send(opts[:method] || name)
           val = opts[:format].call(val) if opts[:format].is_a?(Proc)
           val = (opts[:format] % val)   if opts[:format].is_a?(String)
           val = Tabulatr::Formattr.format(opts[:format], val) if opts[:format].is_a?(Symbol)
-          concat(val.to_s)
+          concat(h(val.to_s))
         end # block_given?
       end # </a>
     end # </td>
