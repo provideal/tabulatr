@@ -27,7 +27,7 @@ class Tabulatr
 
   # Hash keeping the defaults for the table options, may be overriden in the
   # table_for call
-  TABLE_OPTIONS = WhinyHash.new({ # ActiveSupport::HashWithIndifferentAccess.new({
+  TABLE_OPTIONS = WhinyHash.new({ # WhinyHash.new({
     remote: false,                               # add data-remote="true" to form
     
     form_class: 'tabulatr_form',                 # class of the overall form
@@ -90,7 +90,7 @@ class Tabulatr
     header_html: false,                         # a hash with html attributes for the header trs
     filter_html: false,                         # a hash with html attributes for the filter trs
     filter: true,                               # false for no filter row at all
-    paginate: false,                            # true to show paginator
+    paginate: true,                             # true to show paginator
     sortable: true,                             # true to allow sorting (can be specified for every sortable column)
     check_controls: true,                       # true to render "select all", "select none" and the like
     action: nil,                                # target action of the wrapping form if applicable
@@ -125,7 +125,7 @@ class Tabulatr
   })
 
   # Hash keeping the defaults for the column options
-  COLUMN_OPTIONS = WhinyHash.new({
+  COLUMN_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
     header: false,                   # a string to write into the header cell
     width: false,                    # the width of the cell
     align: false,                    # horizontal alignment
@@ -155,16 +155,22 @@ class Tabulatr
   # these settings are considered constant for the whole application, can not be overridden
   # on a per-table basis.
   # That's necessary to allow find_for_table to work properly
-  FINDER_INJECT_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
+  FINDER_INJECT_OPTIONS = WhinyHash.new({
     pagination: :__pagination,
     filters: :__filters,
     classname: :__classname,
     sorting: :__sorting,
     checked: :__checked
   })
+  
+  # defaults for the find_for_table
+  FINDER_OPTIONS = WhinyHash.new({
+    order_by_default: false,
+    pagesize_default: false
+  })
 
   # Stupid hack
-  SQL_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
+  SQL_OPTIONS = WhinyHash.new({
     like: 'LIKE'
   })
 

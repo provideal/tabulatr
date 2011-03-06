@@ -67,7 +67,6 @@ module Tabulatr::Finder
     conditions = [conditions.first] + conditions.last
 
     # secondly, find the order_by stuff
-    # FIXME: Implement me! PLEEEZE!
     sortparam = params["#{cname}#{form_options[:sort_postfix]}"]
     if sortparam
       if sortparam[:_resort]
@@ -81,16 +80,25 @@ module Tabulatr::Finder
       raise "SECURITY violation, sort field name is '#{n}'" unless /^[\d\w]+$/.match order_by
       order = "#{order_by} #{order_direction}"
     else
-      order = order_by = order_direction = nil
+      if opts[:order_by_default]
+        l = opts[:order_by_default].split(" ")
+        raise(":order_by_default parameter should be of the form 'id asc' or 'name desc'.") \
+          if l.length == 0 or l.length > 2
+        order_by = l[0]
+        order_direction = l[1] || 'asc'
+        order = "#{order_by} #{order_direction}"
+      else
+        order = order_by = order_direction = nil
+      end
     end
 
     # thirdly, get the pagination data
-    paginate_options = Tabulatr.paginate_options.merge(opts).
-      merge(params["#{cname}#{form_options[:pagination_postfix]}"] || {})
+    pops = params["#{cname}#{form_options[:pagination_postfix]}"] || {}
+    paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
+    pagesize = (pops[:pagesize] || opts[:pagesize_default] || paginate_options[:pagesize]).to_f
     page = paginate_options[:page].to_i
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
-    pagesize = paginate_options[:pagesize].to_f
     c = klaz.count :conditions => conditions, :include => includes
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
