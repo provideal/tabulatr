@@ -66,7 +66,7 @@ class Tabulatr
     info_text: "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
     
     # which controls to be rendered above and below the tabel and in which order
-    before_table_controls: [:paginator, :batch_actions, :submit, :check_controls, :info_text],
+    before_table_controls: [:submit, :paginator, :batch_actions, :check_controls, :info_text],
     after_table_controls: [],
     
     # whih selecting controls to render in which order
