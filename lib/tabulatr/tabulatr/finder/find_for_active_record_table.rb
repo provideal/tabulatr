@@ -80,9 +80,9 @@ module Tabulatr::Finder
       raise "SECURITY violation, sort field name is '#{n}'" unless /^[\d\w]+$/.match order_by
       order = "#{order_by} #{order_direction}"
     else
-      if opts[:order_by_default]
-        l = opts[:order_by_default].split(" ")
-        raise(":order_by_default parameter should be of the form 'id asc' or 'name desc'.") \
+      if opts[:default_order]
+        l = opts[:default_order].split(" ")
+        raise(":default_order parameter should be of the form 'id asc' or 'name desc'.") \
           if l.length == 0 or l.length > 2
         order_by = l[0]
         order_direction = l[1] || 'asc'
@@ -95,7 +95,7 @@ module Tabulatr::Finder
     # thirdly, get the pagination data
     pops = params["#{cname}#{form_options[:pagination_postfix]}"] || {}
     paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
-    pagesize = (pops[:pagesize] || opts[:pagesize_default] || paginate_options[:pagesize]).to_f
+    pagesize = (pops[:pagesize] || opts[:default_pagesize] || paginate_options[:pagesize]).to_f
     page = paginate_options[:page].to_i
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]

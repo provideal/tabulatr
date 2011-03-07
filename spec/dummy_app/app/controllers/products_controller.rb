@@ -2,8 +2,8 @@ class ProductsController < ApplicationController
 
   def index
     @products = Product.find_for_table(params, 
-        order_by_default: "vendor_id desc",
-        pagesize_default: 10) do |batch_action|
+        default_order: "id asc",
+        default_pagesize: 10) do |batch_action|
       batch_action.activate do |ids| activate_batch_action(ids, true) end
       batch_action.deactivate do |ids| activate_batch_action(ids, false) end
       batch_action.foo do |ids| render :text => "Action Foo: #{ids.to_s}"; return end

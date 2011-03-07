@@ -165,8 +165,8 @@ class Tabulatr
   
   # defaults for the find_for_table
   FINDER_OPTIONS = WhinyHash.new({
-    order_by_default: false,
-    pagesize_default: false
+    default_order: false,
+    default_pagesize: false
   })
 
   # Stupid hack

@@ -197,7 +197,7 @@ private
     row_html = @table_options[:row_html] || {}
     row_class = row_html[:class] || ""
     @records.each_with_index do |record, i|
-      concat("<!-- Row #{i} -->")
+      #concat("<!-- Row #{i} -->")
       if row_classes.present?
         rc = row_class.present? ? row_class + " " : ''
         rc += row_classes[i % row_classes.length]
