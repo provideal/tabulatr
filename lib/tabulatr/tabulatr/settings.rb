@@ -29,7 +29,7 @@ class Tabulatr
   # table_for call
   TABLE_OPTIONS = WhinyHash.new({ # WhinyHash.new({
     remote: false,                               # add data-remote="true" to form
-    
+
     form_class: 'tabulatr_form',                 # class of the overall form
     table_class: 'tabulatr_table',               # class for the actual data table
     sortable_class: 'sortable',                  # class for the header of a sortable column
@@ -39,7 +39,7 @@ class Tabulatr
     page_right_class: 'page-right',              # class for the page right button
     page_no_class: 'page-no',                    # class for the page no <input>
     control_div_class_before: 'table-controls',  # class of the upper div containing the paging and batch action controls
-    control_div_class_after: 'table-controls',   # class of the lower div containing the paging and batch action controls 
+    control_div_class_after: 'table-controls',   # class of the lower div containing the paging and batch action controls
     paginator_div_class: 'paginator',            # class of the div containing the paging controls
     batch_actions_div_class: 'batch-actions',    # class of the div containing the batch action controls
     check_controls_div_class: 'check-controls',  # class of the div containing the check controls
@@ -52,7 +52,7 @@ class Tabulatr
     select_filtered_class: 'select-btn',         # class of the select filtered button
     unselect_filtered_class: 'select-btn',       # class of the unselect filteredbutton
     info_text_class: 'info-text',                # class of the info text div
-                                                   
+
     batch_actions_label: 'Batch Action: ',       # Text to show in front of the batch action select
     batch_actions_type: :select,                 # :select or :button depending on the kind of input you want
     batch_actions_class: 'batch-action-inputs',  # class to apply on the batch action input elements
@@ -64,17 +64,17 @@ class Tabulatr
     select_filtered_label: 'Select filtered',    # Text on the select filtered button
     unselect_filtered_label: 'Unselect filtered',# Text on the unselect filtered button
     info_text: "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
-    
+
     # which controls to be rendered above and below the tabel and in which order
     before_table_controls: [:submit, :paginator, :batch_actions, :check_controls, :info_text],
     after_table_controls: [],
-    
+
     # whih selecting controls to render in which order
-    select_controls: [:select_all, :select_none, :select_visible, :unselect_visible, 
+    select_controls: [:select_all, :select_none, :select_visible, :unselect_visible,
                       :select_filtered, :unselect_filtered],
 
-    
-    image_path_prefix: '/images/tabulatr/',      
+
+    image_path_prefix: '/images/tabulatr/',
     pager_left_button: 'left.gif',
     pager_left_button_inactive: 'left_off.gif',
     pager_right_button: 'right.gif',
@@ -160,13 +160,16 @@ class Tabulatr
     filters: :__filters,
     classname: :__classname,
     sorting: :__sorting,
-    checked: :__checked
+    checked: :__checked,
+    store_data: :__store_data
   })
-  
+
   # defaults for the find_for_table
   FINDER_OPTIONS = WhinyHash.new({
     default_order: false,
-    default_pagesize: false
+    default_pagesize: false,
+    precondition: false,
+    store_data: false
   })
 
   # Stupid hack
@@ -177,6 +180,11 @@ class Tabulatr
   def self.finder_inject_options(n=nil)
     FINDER_INJECT_OPTIONS.merge!(n) if n
     FINDER_INJECT_OPTIONS
+  end
+
+  def self.finder_options(n=nil)
+    FINDER_OPTIONS.merge!(n) if n
+    FINDER_OPTIONS
   end
 
   def self.column_options(n=nil)

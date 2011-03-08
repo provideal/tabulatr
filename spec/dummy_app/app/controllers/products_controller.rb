@@ -1,12 +1,26 @@
 class ProductsController < ApplicationController
 
   def index
-    @products = Product.find_for_table(params, 
-        default_order: "id asc",
-        default_pagesize: 10) do |batch_action|
+    @products = Product.find_for_table(params,
+        precondition: "products.id < 100",
+        default_order: "products.id asc",
+        default_pagesize: 10,
+        store_data: {:ping => 'pong'}) do |batch_action|
       batch_action.activate do |ids| activate_batch_action(ids, true) end
       batch_action.deactivate do |ids| activate_batch_action(ids, false) end
       batch_action.foo do |ids| render :text => "Action Foo: #{ids.to_s}"; return end
+      batch_action.select do |ids| session[:ids] = ids; redirect_to :select_variants; return end
+    end
+  end
+
+  def select_variants
+    ids = session[:ids]
+    @variants = Variant.find_for_table(params,
+        precondition: "product_id in (#{ids.join(",")})",
+        default_order: "id asc",
+        default_pagesize: 10,
+        store_data: {product_ids: ids.join(",")}) do |batch_action|
+      batch_action.select do |ids| validate_foo(ids, true) end
     end
   end
 

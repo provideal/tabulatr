@@ -28,10 +28,11 @@ module Tabulatr::Finder
   # -------------------------------------------------------------------
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
   #
-  def self.find_for_active_record_table(klaz, params, opts={}, &block)
+  def self.find_for_active_record_table(klaz, params, o={}, &block)
     form_options = Tabulatr.table_form_options
     cname = class_to_param(klaz)
     params ||= {}
+    opts = Tabulatr.finder_options.merge(o)
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
       merge(params["#{cname}#{form_options[:checked_postfix]}"] || {})
@@ -47,7 +48,8 @@ module Tabulatr::Finder
     # firstly, get the conditions from the filters
     includes = []
     filter_param = (params["#{cname}#{form_options[:filter_postfix]}"] || {})
-    conditions = filter_param.inject(["(1=1) ", []]) do |c, t|
+    precondition = opts[:precondition] || "(1=1)"
+    conditions = filter_param.inject([precondition, []]) do |c, t|
       n, v = t
       # FIXME n = name_escaping(n)
       if (n != form_options[:associations_filter])
@@ -135,7 +137,8 @@ module Tabulatr::Finder
     found.define_singleton_method(fio[:classname]) do cname end
     found.define_singleton_method(fio[:pagination]) do
       {:page => page, :pagesize => pagesize, :count => c, :pages => pages,
-        :pagesizes => paginate_options[:pagesizes], :total => klaz.count }
+        :pagesizes => paginate_options[:pagesizes],
+        :total => klaz.count(:conditions => precondition) }
     end
     found.define_singleton_method(fio[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
@@ -148,6 +151,9 @@ module Tabulatr::Finder
         :checked_ids => checked_ids,
         :visible => visible_ids
       }
+    end
+    found.define_singleton_method(fio[:store_data]) do
+      opts[:store_data] || {}
     end
 
     found

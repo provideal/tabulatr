@@ -61,6 +61,7 @@ class Tabulatr
     @filters = @records.send(FINDER_INJECT_OPTIONS[:filters])
     @sorting = @records.send(FINDER_INJECT_OPTIONS[:sorting])
     @checked = @records.send(FINDER_INJECT_OPTIONS[:checked])
+    @store_data = @records.send(FINDER_INJECT_OPTIONS[:store_data])
     @should_translate = @table_options[:translate]
   end
 
@@ -88,7 +89,11 @@ class Tabulatr
           render_element(element)
         end
       end if @table_options[:before_table_controls].present? # </div>
-      
+
+      @store_data.each do |k,v|
+        make_tag(:input, :type => :hidden, :name => k, :value => h(v))
+      end
+
       render_element(:table, &block)
 
       make_tag(:div,  :class => @table_options[:control_div_class_after]) do
@@ -104,7 +109,7 @@ class Tabulatr
   def render_element(element, &block)
     case element
     when :paginator then render_paginator if @table_options[:paginate]
-    when :hidden_submit then 
+    when :hidden_submit then
     when :submit then   make_tag(:input, :type => 'submit',
         :class => @table_options[:submit_class],
         :value => t(@table_options[:submit_label]))
@@ -116,7 +121,7 @@ class Tabulatr
           @records.count, @pagination[:total], @checked[:selected].length, @pagination[:count]))
       end if @table_options[:info_text]
     when :table then render_table &block
-    else 
+    else
       if element.is_a?(String)
         concat(element)
       else

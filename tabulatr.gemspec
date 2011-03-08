@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
   s.summary = %q{Tables for Rails Backends}
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.version = "0.0.1" # MmCms::VERSION
+  s.add_dependency('whiny_hash', '>= 0.0.2')
 end

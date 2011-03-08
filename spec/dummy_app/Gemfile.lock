@@ -3,6 +3,7 @@ PATH
   specs:
     tabulatr (0.0.1)
       rails (~> 3.0.3)
+      whiny_hash (>= 0.0.2)
 
 GEM
   remote: http://rubygems.org/
@@ -94,4 +95,3 @@ DEPENDENCIES
   ruby-debug19
   sqlite3-ruby
   tabulatr!
-  whiny_hash
