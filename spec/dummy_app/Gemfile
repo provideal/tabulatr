@@ -32,3 +32,4 @@ group :development, :test do
 end
 
 gem 'tabulatr', :path => File.expand_path('../../')
+gem 'id_stuffer'

@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.version = "0.0.1" # MmCms::VERSION
   s.add_dependency('whiny_hash', '>= 0.0.2')
+  s.add_dependency('id_stuffer', '>= 0.0.1')
 end
