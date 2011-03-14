@@ -2,7 +2,12 @@ DummyApp::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-  resources :products
+  resources :products do
+    collection do
+       get :index_simple
+    end
+  end
+
   resources :vendors
 
   # Sample of regular route:

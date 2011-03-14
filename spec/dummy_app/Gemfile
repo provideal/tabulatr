@@ -29,6 +29,9 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 group :development, :test do
   # gem 'ruby-debug'
   gem 'ruby-debug19'
+  gem 'rspec-rails'
+  gem 'capybara'
+  gem 'launchy'
 end
 
 gem 'tabulatr', :path => File.expand_path('../../')

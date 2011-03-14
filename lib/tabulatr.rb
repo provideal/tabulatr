@@ -23,6 +23,7 @@
 
 require 'tabulatr/tabulatr'
 require 'whiny_hash'
+require 'id_stuffer'
 
 #--
 # Mainly Monkey Patching...
