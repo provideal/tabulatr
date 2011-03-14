@@ -49,7 +49,7 @@ module Tabulatr::Finder
     includes = []
     filter_param = (params["#{cname}#{form_options[:filter_postfix]}"] || {})
     precondition = opts[:precondition] || "(1=1)"
-    conditions = filter_param.inject([precondition, []]) do |c, t|
+    conditions = filter_param.inject([precondition.dup, []]) do |c, t|
       n, v = t
       # FIXME n = name_escaping(n)
       if (n != form_options[:associations_filter])
@@ -136,7 +136,7 @@ module Tabulatr::Finder
     found.define_singleton_method(fio[:filters]) do filter_param end
     found.define_singleton_method(fio[:classname]) do cname end
     found.define_singleton_method(fio[:pagination]) do
-      {:page => page, :pagesize => pagesize, :count => c, :pages => pages,
+      { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes],
         :total => klaz.count(:conditions => precondition) }
     end

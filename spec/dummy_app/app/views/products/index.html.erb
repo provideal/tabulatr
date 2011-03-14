@@ -1,9 +1,9 @@
 <h1>Listing products</h1>
 
-<%= table_for @products, 
+<%= table_for @products,
   # :after_table_controls => [:paginator, "Hahaha!", :info_text],
   :control_div_class_after => nil,
-  # :translate => proc {|x| "`#{x}`"},  
+  # :translate => proc {|x| "`#{x}`"},
   :batch_actions_type => :buttons,
   # :select_controls => [:select_all, :select_none],
   :batch_actions => {
@@ -16,7 +16,7 @@
   t.column :title, :filter => :like, :link => :product_url
   t.column :price, :align => :right, :format => :euro, #"%.2f&thinsp;&euro;",
     :filter => :range, :filter_width => '20px', :range_filter_symbol => ' bis '
-  t.column :active, :filter => { 'ja' => 1, 'nein' => 0 }
+  t.column :active, :filter => { 'ja' => 't', 'nein' => 'f' }
   t.column :description do |record|
     record.description[0..40]
   end
