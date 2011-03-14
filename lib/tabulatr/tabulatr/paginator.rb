@@ -39,6 +39,7 @@ class Tabulatr
         make_tag(:input, :type => 'image', 
           :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_left_button]),
           :class => @table_options[:page_left_class],
+          :id => "#{pagination_name}_page_left",
           :name => "#{pagination_name}[page_left]")
       else
         make_tag(:img, 
@@ -61,6 +62,7 @@ class Tabulatr
         make_tag(:input, :type => 'image', 
           :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_right_button]),
           :class => @table_options[:page_right_class],
+          :id => "#{pagination_name}_page_right",
           :name => "#{pagination_name}[page_right]")
       else
         make_tag(:img, :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_right_button_inactive]),

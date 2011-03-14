@@ -77,15 +77,67 @@ describe "Tabulatrs" do
       end
     end
 
-    it "pages" do
+    it "pages up and down" do
       visit index_simple_products_path
-      visit index_simple_products_path
-      k = names.length/10
+      k = 1+names.length/10
       k.times do |i|
-        ((i*10)..(i*10+1)).times do |j|
+        ((i*10)...[names.length, ((i+1)*10)].min).each do |j|
           page.should have_content(names[j])
         end
-        click_button(:page_right)
+        if i==0
+          page.should have_no_button('product_pagination_page_left')
+        else
+          page.should have_button('product_pagination_page_left')
+        end
+        if i==k-1
+          page.should have_no_button('product_pagination_page_right')
+        else
+          page.should have_button('product_pagination_page_right')
+          click_button('product_pagination_page_right')
+        end
+      end
+      # ...and down
+      k.times do |ii|
+        i = k-ii-1
+        ((i*10)...[names.length, ((i+1)*10)].min).each do |j|
+          page.should have_content(names[j])
+        end
+        if i==k-1
+          page.should have_no_button('product_pagination_page_right')
+        else
+          page.should have_button('product_pagination_page_right')
+        end
+        if i==0
+          page.should have_no_button('product_pagination_page_left')
+        else
+          page.should have_button('product_pagination_page_left')
+          click_button('product_pagination_page_left')
+        end
+      end
+
+    end
+
+    it "jumps to the correct page" do
+      visit index_simple_products_path
+      k = 1+names.length/10
+      l = (1..k).entries.shuffle
+      l.each do |ii|
+        i = ii-1
+        fill_in("product_pagination[page]", :with => ii.to_s)
+        click_button("Apply")
+        ((i*10)...[names.length, ((i+1)*10)].min).each do |j|
+          page.should have_content(names[j])
+        end
+        if i==0
+          page.should have_no_button('product_pagination_page_left')
+        else
+          page.should have_button('product_pagination_page_left')
+        end
+        if i==k-1
+          page.should have_no_button('product_pagination_page_right')
+        else
+          page.should have_button('product_pagination_page_right')
+        end
       end
     end
 
