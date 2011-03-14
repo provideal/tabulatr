@@ -48,6 +48,28 @@ describe "Tabulatrs" do
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, 1, 0, 1))
     end
 
+    it "contains the actual data multiple" do
+      9.times do |i|
+        product = Product.create!(:title => names[i], :active => i.even?, :price => 11.0+i, 
+          :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
+        visit index_simple_products_path
+        page.should have_content(names[i])
+        page.should have_content((11.0+i).to_s)
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], i+2, i+2, 0, i+2))
+      end
+    end
+
+    it "contains the further data on the further pages" do
+      names.each_with_index do |n,i|
+        product = Product.create!(:title => n, :active => i.even?, :price => 30.0+i, 
+          :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
+        visit index_simple_products_path
+        page.should_not have_content((30.0+i).to_s)
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, i+11, 0, i+11))
+      end
+    end
+
+
   end
 
   describe "GET /products empty" do
