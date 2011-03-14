@@ -107,7 +107,7 @@ module Tabulatr::Finder
 
     # then, we obey any "select" buttons if pushed
     if checked_param[:select_all]
-      all = klaz.find :all, :select => :id
+      all = klaz.find :all, ,:conditions => precondition, :select => :id
       selected_ids = all.map { |r| r.id.to_s }
     elsif checked_param[:select_none]
       selected_ids = []

@@ -2,7 +2,14 @@ require 'spec_helper'
 
 describe "Tabulatrs" do
 
-  names = %w{lorem ipsum dolor sit amet consectetur adipisicing elit sed eiusmod tempor incididunt labore dolore magna aliqua enim minim veniam, quis nostrud exercitation ullamco laboris nisi aliquip commodo consequat duis aute irure dolor reprehenderit voluptate velit esse cillum dolore fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim est laborum}
+  names = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
+  "adipisicing", "elit", "sed", "eiusmod", "tempor", "incididunt", "labore",
+  "dolore", "magna", "aliqua", "enim", "minim", "veniam,", "quis", "nostrud",
+  "exercitation", "ullamco", "laboris", "nisi", "aliquip", "commodo",
+  "consequat", "duis", "aute", "irure", "reprehenderit", "voluptate", "velit",
+  "esse", "cillum", "fugiat", "nulla", "pariatur", "excepteur", "sint",
+  "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui",
+  "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
   vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
   vendor2 = Vendor.create!(:name => 'producer', :active => true)
@@ -39,9 +46,9 @@ describe "Tabulatrs" do
     end
 
     it "contains the actual data" do
-      product = Product.create!(:title => 'Fred', :active => true, :price => 10.0, :description => 'blah blah', :vendor => vendor1)
+      product = Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah', :vendor => vendor1)
       visit index_simple_products_path
-      page.should have_content("Fred")
+      page.should have_content(names[0])
       page.should have_content("true")
       page.should have_content("10.0")
       page.should have_content("ven d'or")
@@ -50,7 +57,7 @@ describe "Tabulatrs" do
 
     it "contains the actual data multiple" do
       9.times do |i|
-        product = Product.create!(:title => names[i], :active => i.even?, :price => 11.0+i, 
+        product = Product.create!(:title => names[i+1], :active => i.even?, :price => 11.0+i, 
           :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
         visit index_simple_products_path
         page.should have_content(names[i])
@@ -60,12 +67,23 @@ describe "Tabulatrs" do
     end
 
     it "contains the further data on the further pages" do
-      names.each_with_index do |n,i|
+      names[10..-1].each_with_index do |n,i|
         product = Product.create!(:title => n, :active => i.even?, :price => 30.0+i, 
           :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
         visit index_simple_products_path
+        page.should_not have_content(n)
         page.should_not have_content((30.0+i).to_s)
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, i+11, 0, i+11))
+      end
+    end
+
+    it "pages" do
+      visit index_simple_products_path
+      k = names.length/10
+        visit index_simple_products_path
+        click_button(:page_right)
+        
+      k.times do |i|
       end
     end
 
