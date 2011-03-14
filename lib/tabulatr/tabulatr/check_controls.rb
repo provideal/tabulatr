@@ -30,9 +30,12 @@ class Tabulatr
         raise "Invalid check control '#{name}' requested." unless [:select_all,
           :select_none, :select_visible, :unselect_visible,
           :select_filtered, :unselect_filtered].member?(name)
-        make_tag(:input, :type => 'submit',
+        topts = {
+          :type => 'submit',
           :value => t(@table_options["#{name}_label"]),
-          :name => "#{iname}[#{name}]");
+          :name => "#{iname}[#{name}]" }
+        topts[:class] = @table_options["#{name}_class"] if @table_options["#{name}_class"]
+        make_tag(:input, topts)
       end
     end # </div>
   end
