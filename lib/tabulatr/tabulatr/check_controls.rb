@@ -23,23 +23,18 @@
 
 class Tabulatr
 
-  def render_check_controls
-    make_tag(:div, :class => @table_options[:check_controls_div_class]) do
+  def render_select_controls
+    make_tag(:div, :class => @table_options[:select_controls_div_class]) do
       iname = "#{@classname}#{TABLE_FORM_OPTIONS[:checked_postfix]}"
       @table_options[:select_controls].each do |name|
-        raise "Invalid check control '#{name}' requested." unless [:select_all, 
-          :select_none, :select_visible, :unselect_visible, 
+        raise "Invalid check control '#{name}' requested." unless [:select_all,
+          :select_none, :select_visible, :unselect_visible,
           :select_filtered, :unselect_filtered].member?(name)
-        make_tag(:input, :type => 'submit', 
-          :value => t(@table_options["#{name}_label"]), 
+        make_tag(:input, :type => 'submit',
+          :value => t(@table_options["#{name}_label"]),
           :name => "#{iname}[#{name}]");
       end
-      # make_tag(:input, :type => 'submit', :value => t(@table_options[:select_none_label]), :name => "#{iname}[select_none]")
-      # make_tag(:input, :type => 'submit', :value => t(@table_options[:select_visible_label]), :name => "#{iname}[select_visible]")
-      # make_tag(:input, :type => 'submit', :value => t(@table_options[:unselect_visible_label]), :name => "#{iname}[unselect_visible]")
-      # make_tag(:input, :type => 'submit', :value => t(@table_options[:select_filtered_label]), :name => "#{iname}[select_filtered]")
-      # make_tag(:input, :type => 'submit', :value => t(@table_options[:unselect_filtered_label]), :name => "#{iname}[unselect_filtered]")
     end # </div>
   end
-  
+
 end

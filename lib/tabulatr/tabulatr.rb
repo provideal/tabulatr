@@ -114,7 +114,7 @@ class Tabulatr
         :class => @table_options[:submit_class],
         :value => t(@table_options[:submit_label]))
     when :batch_actions then render_batch_actions if @table_options[:batch_actions]
-    when :check_controls then render_check_controls if @table_options[:check_controls]
+    when :select_controls then render_select_controls if @table_options[:selectable]
     when :info_text
       make_tag(:div, :class => @table_options[:info_text_class]) do
         concat(format(t(@table_options[:info_text]),
