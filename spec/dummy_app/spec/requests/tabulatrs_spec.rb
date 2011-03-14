@@ -79,11 +79,13 @@ describe "Tabulatrs" do
 
     it "pages" do
       visit index_simple_products_path
+      visit index_simple_products_path
       k = names.length/10
-        visit index_simple_products_path
-        click_button(:page_right)
-        
       k.times do |i|
+        ((i*10)..(i*10+1)).times do |j|
+          page.should have_content(names[j])
+        end
+        click_button(:page_right)
       end
     end
 
