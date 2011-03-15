@@ -141,6 +141,32 @@ describe "Tabulatrs" do
       end
     end
 
+    it "filters" do
+      visit index_simple_products_path
+      #save_and_open_page
+      fill_in("product_filter[title]", :with => "lorem")
+      click_button("Apply")
+      page.should have_content("lorem")
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, names.length, 0, 1))
+      fill_in("product_filter[title]", :with => "loreem")
+      click_button("Apply")
+      page.should_not have_content("lorem")
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, names.length, 0, 0))
+    end
+
+    it "filters with like" do
+      visit index_filters_products_path
+      %w{a o lo lorem}.each do |str|
+        fill_in("product_filter[title][like]", :with => str)
+        click_button("Apply")
+        save_and_open_page
+        page.should have_content(str)
+        tot = (names.select do |s| s.match Regexp.new(str) end).length
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, names.length, 0, tot))
+      end
+    end
+
+
 
   end
 

@@ -17,6 +17,10 @@ class ProductsController < ApplicationController
     @products = Product.find_for_table(params)
   end
 
+  def index_filters
+    @products = Product.find_for_table(params)
+  end
+
   def select_variants
     ids = session[:ids]
     @variants = Variant.find_for_table(params,

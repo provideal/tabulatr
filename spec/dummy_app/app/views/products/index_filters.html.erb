@@ -1,0 +1,8 @@
+<%= table_for @products do |t|
+  t.column :id
+  t.column :title, :filter => :like
+  t.column :price, :filter => :range
+  t.column :active
+  t.association :vendor, :name, :filter => :like
+  t.association :tags, :title
+end %>

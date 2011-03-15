@@ -5,6 +5,7 @@ DummyApp::Application.routes.draw do
   resources :products do
     collection do
        get :index_simple
+       get :index_filters
     end
   end
 
