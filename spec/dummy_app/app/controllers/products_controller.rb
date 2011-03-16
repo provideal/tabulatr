@@ -21,15 +21,21 @@ class ProductsController < ApplicationController
     @products = Product.find_for_table(params)
   end
 
-  def select_variants
-    ids = session[:ids]
-    @variants = Variant.find_for_table(params,
-        precondition: "product_id in (#{ids.join(",")})",
-        default_order: "id asc",
-        default_pagesize: 10,
-        store_data: {product_ids: ids.join(",")}) do |batch_action|
-      batch_action.select do |ids| validate_foo(ids, true) end
+  def index_select
+    @products = Product.find_for_table(params) do |batch_actions|
+      batch_actions.delete do |ids|
+        ids.each do |id|
+          Product.find(id).destroy
+        end
+        redirect_to index_select_products_path()
+        return
+      end
     end
+  end
+
+  def index_sort
+    @products = Product.find_for_table(params, :default_order => 'price desc')
+    render :index_select
   end
 
   def show

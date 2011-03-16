@@ -6,6 +6,8 @@ DummyApp::Application.routes.draw do
     collection do
        get :index_simple
        get :index_filters
+       get :index_select
+       get :index_sort
     end
   end
 

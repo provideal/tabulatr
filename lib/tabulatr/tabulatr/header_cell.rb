@@ -34,12 +34,14 @@ class Tabulatr
   def header_column(name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
     sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}"
+    bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
     opts = normalize_column_options opts
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || name.to_s.capitalize), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
         if @sorting and @sorting[:by].to_s == name.to_s
           pname = "#{sortparam}[_resort][#{name}][#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}]"
+          bid = "#{bid}_#{name}_#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}"
           psrc = File.join(@table_options[:image_path_prefix], @table_options[@sorting[:direction] == 'desc' ?
             :sort_down_button : :sort_up_button])
           make_tag(:input, :type => :hidden,
@@ -47,9 +49,11 @@ class Tabulatr
             :value => "#{@sorting[:direction]}")
         else
           pname = "#{sortparam}[_resort][#{name}][desc]"
+          bid = "#{bid}_#{name}_desc"
           psrc = File.join(@table_options[:image_path_prefix], @table_options[:sort_down_button_inactive])
         end
         make_tag(:input, :type => 'image',
+          :id => bid,
           :src => psrc,
           :name => pname)
       end

@@ -98,6 +98,7 @@ class Tabulatr
     make_tag(:td, opts[:td_html]) do
       checked = @checked[:selected].member?(@record.id.to_s) ? :checked : nil
       make_tag(:input, :type => 'checkbox', :name => iname,
+        :id => "#{@classname}#{@table_form_options[:checked_postfix]}_#{@record.id.to_s}",
         :value => @record.id, :checked => checked)
     end
   end
