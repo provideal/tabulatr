@@ -79,7 +79,7 @@ To get a simple Table, all we need to do is
 
 but the result is pretty fancy, already:
 
-<img src="assets/simple_table.png" />
+<img src="tabulatr/assets/simple_table.png" />
 
 To add a column with ckeckboxes (thus giving all the "Select ..." buttons a reasonable semantics), we simply add a
 <pre>
