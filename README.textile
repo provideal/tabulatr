@@ -1,6 +1,6 @@
-h1.Tabulatr - Index Tables made easy, finally
+h1. Tabulatr - Index Tables made easy, finally
 
-h2.Mission Objective
+h2. Mission Objective
 
 Tabulatr aims at making the ever-recurring task of creating listings of ActiveRecord models simple and uniform.
 
@@ -13,7 +13,7 @@ We found ourselves reinventing the wheel in every project we made, by using
 
 We finally thought that whilst gems like Formtastic or SimpleForm provide a really cool, uniform, and concise way to implement forms, it's time for a table builder. During a project with Magento (*shiver*) we decided that their general tables are quite reasonable, and enterprise-proven -- so that's our starting point. 
 
-h3.Visual Components
+h3. Visual Components
 
 Every Tabulatr table consists of the following components:
 
@@ -33,7 +33,7 @@ Every Tabulatr table consists of the following components:
   
 Whilst this is a strong decision, we made everything as-configurable-as-possible, there are roughly 150 options you can use to tweak almost every aspect of Tabulatr.
 
-h3.Features
+h3. Features
 
 Tabulatr tries to make these common tasks as simple/transparent as possible:
 * paging
@@ -41,16 +41,16 @@ Tabulatr tries to make these common tasks as simple/transparent as possible:
 * filtering
 * batch actions
 
-h2.Example
+h2. Example
 
-h3.Models
+h3. Models
 
 We suppose we have a couple of models
 * tags has and belong to many products
 * vendors have many products
 * products belong to vendors and have and belong to many tags
   
-h3.Controller
+h3. Controller
 
 In the products controllers index action we have:
 
@@ -79,7 +79,7 @@ To get a simple Table, all we need to do is
 
 but the result is pretty fancy, already:
 
-<form class="hooray" method="get"><div class="table-controls"><input class="submit-table" type="submit" value="Apply" /><div class="paginator"><img class="page-left" src="/images/tabulatr/pager_arrow_left_off.gif" /><input name="product_pagination[current_page]" type="hidden" value="1" /><input name="product_pagination[page]" size="2" type="text" value="1" />/12<input class="page-right" id="product_pagination_page_right" name="product_pagination[page_right]" src="/images/tabulatr/pager_arrow_right.gif" type="image" /><select class="pagesize_select" name="product_pagination[pagesize]"><option selected="selected" value="10">10</option><option value="20">20</option><option value="50">50</option></select></div><div class="check-controls"><input class="select-btn" name="product_checked[select_all]" type="submit" value="Select All" /><input class="select-btn" name="product_checked[select_none]" type="submit" value="Select None" /><input class="select-btn" name="product_checked[select_visible]" type="submit" value="Select visible" /><input class="select-btn" name="product_checked[unselect_visible]" type="submit" value="Unselect visible" /><input class="select-btn" name="product_checked[select_filtered]" type="submit" value="Select filtered" /><input class="select-btn" name="product_checked[unselect_filtered]" type="submit" value="Unselect filtered" /></div><div class="info-text">Showing 10, total 120, selected 0, matching 120</div></div><table class="tabulatr_table"><thead><tr><th>Id<input id="product_sort_id_desc" name="product_sort[_resort][id][desc]" src="/images/tabulatr/sort_arrow_down_off.gif" type="image" /></th><th>Title<input id="product_sort_title_desc" name="product_sort[_resort][title][desc]" src="/images/tabulatr/sort_arrow_down_off.gif" type="image" /></th><th>Price<input id="product_sort_price_desc" name="product_sort[_resort][price][desc]" src="/images/tabulatr/sort_arrow_down_off.gif" type="image" /></th><th>Active<input id="product_sort_active_desc" name="product_sort[_resort][active][desc]" src="/images/tabulatr/sort_arrow_down_off.gif" type="image" /></th><th>Vendor Name</th><th>Tags Title</th></tr><tr><td><input name="product_filter[id]" style="width:97%" type="text" /></td><td><input name="product_filter[title]" style="width:97%" type="text" /></td><td><input name="product_filter[price]" style="width:97%" type="text" /></td><td><input name="product_filter[active]" style="width:97%" type="text" /></td><td><input name="product_filter[__association][vendor.name]" style="width:97%" type="text" /></td><td><input name="product_filter[__association][tags.title]" style="width:97%" type="text" /></td></tr></thead><tbody><tr class="odd"><td>1</td><td>laborum &lt;b&gt; deserunt anim mollit</td><td>3.07</td><td>true</td><td>IBM Inc.</td><td>news, foo</td></tr><tr class="even"><td>2</td><td>lorem deserunt elit anim</td><td>5.95</td><td>true</td><td>Raclette</td><td>bugs, rails, unix</td></tr><tr class="odd"><td>3</td><td>consectetur adipisicing mollit lorem sit</td><td>2.84</td><td>true</td><td>37 Signal</td><td>foo</td></tr><tr class="even"><td>4</td><td>amet anim lorem culpa</td><td>4.5</td><td>true</td><td>Aldi Nord</td><td>foo, rails, unix</td></tr><tr class="odd"><td>5</td><td>culpa ipsum mollit</td><td>8.98</td><td>true</td><td>IBM Inc.</td><td>rails, news</td></tr><tr class="even"><td>6</td><td>anim ipsum lorem amet</td><td>2.71</td><td>true</td><td>Raclette</td><td>bugs, moo</td></tr><tr class="odd"><td>7</td><td>elit elit amet</td><td>9.24</td><td>true</td><td>37 Signal</td><td></td></tr><tr class="even"><td>8</td><td>anim sit lorem ipsum dolor</td><td>6.8</td><td>true</td><td>Aldi Nord</td><td></td></tr><tr class="odd"><td>9</td><td>amet laborum mollit officia officia</td><td>2.4</td><td>true</td><td>IBM Inc.</td><td>foo, bugs, rails</td></tr><tr class="even"><td>10</td><td>laborum deserunt lorem ipsum lorem</td><td>6.4</td><td>false</td><td>Raclette</td><td>rails</td></tr></tbody></table></form>
+<img src="assets/simple_table.png" />
 
 To add a column with ckeckboxes (thus giving all the "Select ..." buttons a reasonable semantics), we simply add a
 <pre>
@@ -118,11 +118,11 @@ to handle the actual batch action, we have to add a block to the <tt>find_for_ta
 </pre>
 where the <tt>ids</tt> parameter to the block is actually an Array containing the numeric ids of the currently selected rows.
 
-h2.Options
+h2. Options
 
 Literally every aspect of Tabulatr can be tweaked to fit your needs. You may add or remove components, change the class or other html attributes of the generated html nodes. There are options of several types:
 
-h3.Table Options
+h3. Table Options
 
 These options are to be specified at the form_for level and change the appearance and behaviour of the table. This is taken from <tt>lib/tabulatr/tabulatr/settings.rb</tt>
 

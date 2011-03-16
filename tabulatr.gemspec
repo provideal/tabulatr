@@ -5,11 +5,12 @@
 Gem::Specification.new do |s|
   s.add_runtime_dependency('rails', '~> 3.0.3')
 
-  s.authors = ["René Sprotte", "Dr. Peter Horn"]
-  s.description = %q{tabulatr is a tool to auto create tables for admin backends}
+  s.authors = ["Peter Horn"]
+  s.summary = %q{tabulatr is a tool to auto create tables for admin backends}
   s.email = ['team@metaminded.com']
   #s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   #s.extra_rdoc_files = ['README.mkd']
+  s.description "Tabulatr enable you to create fancy tables with filtering, pagination, batch action, bells, AND whistles mainly by specifying the names of the columns. See the README for details."
   s.files = `git ls-files`.split("\n")
   s.homepage = 'http://github.com/provideal/tabulatr'
   s.name = 'tabulatr'
