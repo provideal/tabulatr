@@ -26,9 +26,6 @@ describe "Tabulatrs" do
   # selecting and batch actions
   KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS = tralse
 
-  # CONTAINS_ACTUAL_DATA = 
-  # CONTAINS_ACTUAL_DATA_MULTIPLE = CONTAINS_DATA_ON_FURTHER_PAGES = KNOWS_HOW_TO_SELECT = true
-
   vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
   vendor2 = Vendor.create!(:name => 'producer', :active => true)
   tag1 = Tag.create!(:title => 'foo')
