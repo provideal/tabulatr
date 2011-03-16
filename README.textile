@@ -112,7 +112,7 @@ to handle the actual batch action, we have to add a block to the <tt>find_for_ta
       return
     end
     batch_actions.foo do |ids|
-      # do whatever is foo-ish to the records
+      ... do whatever is foo-ish to the records
     end
   end
 </pre>
