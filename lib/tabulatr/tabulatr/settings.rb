@@ -135,7 +135,6 @@ class Tabulatr
     td_html: false,                  # a hash with html attributes for the cells
     th_html: false,                  # a hash with html attributes for the header cell
     filter_html: false,              # a hash with html attributes for the filter cell
-    filter_html: false,              # a hash with html attributes for the filter cell
     filter: true,                    # false for no filter field,
                                      # container for options_for_select
                                      # String from options_from_collection_for_select or the like
