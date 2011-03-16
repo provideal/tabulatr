@@ -269,14 +269,14 @@ To override these, you should, in an initializer, call
   pagesizes: [10, 20, 50]
 </pre>
 
-h2.Dependencies
+h2. Dependencies
 
 We use
 * <a href="http://github.com/providel/whiny_hash">WhinyHash</a> to handle the options in a fail-early-manner,
 * <a href="http://github.com/providel/id_stuffer">IdStuffer</a> to compress the _remembered_ ids.
 * And... eh... It's an extension for rails, so it might be handy to have a version of rails 3 and ruby 1.9.
 
-h2.Bugs
+h2. Bugs
 
 There are, definitely, roughly 1000 bugs in Tabulatr, although we do some testing (see <tt>spec/dummy_app/spec</tt>). So if you hunt them, please let me know.
 
