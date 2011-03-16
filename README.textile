@@ -82,12 +82,14 @@ but the result is pretty fancy, already:
 <img src="https://github.com/provideal/tabulatr/raw/master/assets/simple_table.png" />
 
 To add a column with ckeckboxes (thus giving all the "Select ..." buttons a reasonable semantics), we simply add a
+
 <pre>
   t.checkbox  
 </pre>
 row.
 
 To add e.g. edit-buttons, we specify
+
 <pre>
   t.action do |record|
     link_to "Edit", edit_product_path(record)
@@ -95,6 +97,7 @@ To add e.g. edit-buttons, we specify
 </pre>
 
 To add a select-popup with batch-actions (i.e., actions that are to be perfored on all selected rows), we add an option to the table_for:
+
 <pre>
   <%= table_for @products, :batch_actions => {'foo' => 'Foo', 'delete' => "Delete"} do |t|
     ...
@@ -102,6 +105,7 @@ To add a select-popup with batch-actions (i.e., actions that are to be perfored 
 </pre>
 
 to handle the actual batch action, we have to add a block to the <tt>find_for_table</tt> call in the controller:
+
 <pre>
   @products = Product.find_for_table(params) do |batch_actions|
     batch_actions.delete do |ids|
@@ -116,6 +120,7 @@ to handle the actual batch action, we have to add a block to the <tt>find_for_ta
     end
   end
 </pre>
+
 where the <tt>ids</tt> parameter to the block is actually an Array containing the numeric ids of the currently selected rows.
 
 h2. Options
@@ -232,6 +237,7 @@ These settings are *not* supposed to be changed on a per-table basis. This is ne
 h4. Table Form Options
 
 This hash contains all the information about the naming of the generated form elements. To override them, you should, in an initializer, call 
+
 <pre>
   Tabulatr.table_form_options(my_options_hash)
 </pre>
@@ -252,6 +258,7 @@ This hash contains all the information about the naming of the generated form el
 h4. Paginate options
 
 To override these, you should, in an initializer, call 
+
 <pre>
   Tabulatr.paginate_options(my_options_hash)
 </pre>
