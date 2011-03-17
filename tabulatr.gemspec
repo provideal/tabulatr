@@ -3,7 +3,7 @@
 #require File.expand_path('../lib/tabulatr/version', __FILE__)
 
 Gem::Specification.new do |s|
-  s.add_runtime_dependency('rails', '~> 3.0.3')
+  s.add_runtime_dependency('rails', '~> 3.0')
   s.authors = ["Peter Horn"]
   s.summary = "Tabulatr is a DSL to easily create tables for e.g. admin backends."
   s.email = ['team@metaminded.com']
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new('>= 1.3.6') if s.respond_to? :required_rubygems_version=
   s.rubyforge_project = 'tabulatr'
   s.test_files = [] # `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.version = "0.0.1" # MmCms::VERSION
+  s.version = "0.0.1"
   s.add_dependency('whiny_hash', '>= 0.0.2')
   s.add_dependency('id_stuffer', '>= 0.0.1')
 end

@@ -1,9 +1,9 @@
 PATH
-  remote: /Users/hornp/Development/tabulatr
+  remote: /Users/renspr/Code/Projects/metaminded/tabulatr
   specs:
     tabulatr (0.0.1)
       id_stuffer (>= 0.0.1)
-      rails (~> 3.0.3)
+      rails (~> 3.0)
       whiny_hash (>= 0.0.2)
 
 GEM
@@ -139,7 +139,7 @@ DEPENDENCIES
   capybara
   id_stuffer
   launchy
-  rails (= 3.0.3)
+  rails (~> 3.0)
   rspec-rails
   ruby-debug19
   sqlite3-ruby
