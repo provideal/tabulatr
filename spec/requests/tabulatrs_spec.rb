@@ -72,7 +72,7 @@ describe "Tabulatrs" do
 
     it "contains the actual data multiple" do
       9.times do |i|
-        product = Product.create!(:title => names[i+1], :active => i.even?, :price => 11.0+i, 
+        product = Product.create!(:title => names[i+1], :active => i.even?, :price => 11.0+i,
           :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
         visit index_simple_products_path
         page.should have_content(names[i])
@@ -83,7 +83,7 @@ describe "Tabulatrs" do
 
     it "contains the further data on the further pages" do
       names[10..-1].each_with_index do |n,i|
-        product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i, 
+        product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i,
           :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
         visit index_simple_products_path
         page.should_not have_content(n)
@@ -92,7 +92,7 @@ describe "Tabulatrs" do
       end
     end if CONTAINS_DATA_ON_FURTHER_PAGES
   end
-  
+
   describe "Pagination" do
     it "pages up and down" do
       visit index_simple_products_path
@@ -169,7 +169,7 @@ describe "Tabulatrs" do
       end
     end if CHANGES_PAGE_SIZE
   end
-  
+
   describe "Filters" do
     it "filters" do
       visit index_simple_products_path
@@ -183,7 +183,7 @@ describe "Tabulatrs" do
       page.should_not have_content("lorem")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, names.length, 0, 0))
     end if FILTERS
-  
+
     it "filters with like" do
       visit index_filters_products_path
       %w{a o lo lorem}.each do |str|

@@ -6,7 +6,6 @@ class CreateVendors < ActiveRecord::Migration
       t.string :url
       t.boolean :active
       t.text :description
-
       t.timestamps
     end
   end
