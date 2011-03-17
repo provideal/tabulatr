@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   #s.extra_rdoc_files = ['README.mkd']
   s.description = "Tabulatr enables you to create fancy tables with filtering, pagination, batch action, bells, AND whistles. " +
     "You do this mainly by specifying the names of the columns. See the README for details."
-  s.files = (`git ls-files`.split("\n").select { |f| !f.start_with? "spec/"})
+  s.files = `git ls-files`.split("\n")
   s.homepage = 'http://github.com/provideal/tabulatr'
   s.name = 'tabulatr'
   s.platform = Gem::Platform::RUBY
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.required_rubygems_version = Gem::Requirement.new('>= 1.3.6') if s.respond_to? :required_rubygems_version=
   s.rubyforge_project = 'tabulatr'
-  s.test_files = [] # `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.version = "0.0.1"
   s.add_dependency('whiny_hash', '>= 0.0.2')
   s.add_dependency('id_stuffer', '>= 0.0.1')
