@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new('>= 1.3.6') if s.respond_to? :required_rubygems_version=
   s.rubyforge_project = 'tabulatr'
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.version = "0.0.1"
+  s.version = File.open("VERSION", "r").read.strip
   s.add_dependency('whiny_hash', '>= 0.0.2')
   s.add_dependency('id_stuffer', '>= 0.0.1')
 end

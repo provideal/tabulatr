@@ -6,7 +6,7 @@ module Tabulatr
       class_option :template_engine
 
       def copy_initializers
-        puts "hooray1"
+        puts "hooray!!!1111elf"
         #copy_file 'simple_form.rb', 'config/initializers/simple_form.rb'
       end
       
