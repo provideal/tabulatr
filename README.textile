@@ -11,7 +11,7 @@ We found ourselves reinventing the wheel in every project we made, by using
 * difterent ways of implementing selecting and batch actions,
 * different layouts.
 
-We finally thought that whilst gems like Formtastic or SimpleForm provide a really cool, uniform, and concise way to implement forms, it's time for a table builder. During a project with Magento (*shiver*) we decided that their general tables are quite reasonable, and enterprise-proven -- so that's our starting point. 
+We finally thought that whilst gems like Formtastic or SimpleForm provide a really cool, uniform, and concise way to implement forms, it's time for a table builder. During a project with Magento (*shiver*) we decided that their general tables are quite reasonable, and enterprise-proven -- so that's our starting point.
 
 h3. Visual Components
 
@@ -19,10 +19,10 @@ Every Tabulatr table consists of the following components:
 
 * a wrapping form
 * a 'Controls Container' containing the table-controls as
-  * the paginator, 
-  * the batch_actions, 
-  * the submit button, 
-  * controls to manage selecting/checking/marking, 
+  * the paginator,
+  * the batch_actions,
+  * the submit button,
+  * controls to manage selecting/checking/marking,
   * an info_text
 * The actual table consisting of
   * A header row,
@@ -30,7 +30,7 @@ Every Tabulatr table consists of the following components:
   * data rows,
   * possibly a selecting/checking/marking column
   * possibly action links/buttons
-  
+
 Whilst this is a strong decision, we made everything as-configurable-as-possible, there are roughly 150 options you can use to tweak almost every aspect of Tabulatr.
 
 h3. Features
@@ -49,7 +49,7 @@ We suppose we have a couple of models
 * tags has and belong to many products
 * vendors have many products
 * products belong to vendors and have and belong to many tags
-  
+
 h3. Controller
 
 In the products controllers index action we have:
@@ -62,7 +62,7 @@ In the products controllers index action we have:
 
 the find_for_table method is injected into ActiveRecord by Tabulatr, it retrieves all relevant data from the params hash automagically.
 
-h3.View
+h3. View
 
 To get a simple Table, all we need to do is
 
@@ -84,8 +84,9 @@ but the result is pretty fancy, already:
 To add a column with ckeckboxes (thus giving all the "Select ..." buttons a reasonable semantics), we simply add a
 
 <pre>
-  t.checkbox  
+  t.checkbox
 </pre>
+
 row.
 
 To add e.g. edit-buttons, we specify
@@ -132,40 +133,40 @@ h3. Table Options
 These options are to be specified at the form_for level and change the appearance and behaviour of the table. This is taken from <tt>lib/tabulatr/tabulatr/settings.rb</tt>
 
 <pre>
-  remote: false,                               # add data-remote="true" to form
-  form_class: 'tabulatr_form',                 # class of the overall form
-  table_class: 'tabulatr_table',               # class for the actual data table
-  sortable_class: 'sortable',                  # class for the header of a sortable column
-  sorting_asc_class: 'sorting-asc',            # class for the currently asc sorting column
-  sorting_desc_class: 'sorting-desc',          # class for the currently desc sorting column
-  page_left_class: 'page-left',                # class for the page left button
-  page_right_class: 'page-right',              # class for the page right button
-  page_no_class: 'page-no',                    # class for the page no <input>
-  control_div_class_before: 'table-controls',  # class of the upper div containing the paging and batch action controls
-  control_div_class_after: 'table-controls',   # class of the lower div containing the paging and batch action controls
-  paginator_div_class: 'paginator',            # class of the div containing the paging controls
-  batch_actions_div_class: 'batch-actions',    # class of the div containing the batch action controls
+  remote: false,                                # add data-remote="true" to form
+  form_class: 'tabulatr_form',                  # class of the overall form
+  table_class: 'tabulatr_table',                # class for the actual data table
+  sortable_class: 'sortable',                   # class for the header of a sortable column
+  sorting_asc_class: 'sorting-asc',             # class for the currently asc sorting column
+  sorting_desc_class: 'sorting-desc',           # class for the currently desc sorting column
+  page_left_class: 'page-left',                 # class for the page left button
+  page_right_class: 'page-right',               # class for the page right button
+  page_no_class: 'page-no',                     # class for the page no <input>
+  control_div_class_before: 'table-controls',   # class of the upper div containing the paging and batch action controls
+  control_div_class_after: 'table-controls',    # class of the lower div containing the paging and batch action controls
+  paginator_div_class: 'paginator',             # class of the div containing the paging controls
+  batch_actions_div_class: 'batch-actions',     # class of the div containing the batch action controls
   select_controls_div_class: 'check-controls',  # class of the div containing the check controls
-  submit_class: 'submit-table',                # class of submit button
-  pagesize_select_class: 'pagesize_select',    # class of the pagesize select element
-  select_all_class: 'select-btn',              # class of the select all button
-  select_none_class: 'select-btn',             # class of the select none button
-  select_visible_class: 'select-btn',          # class of the select visible button
-  unselect_visible_class: 'select-btn',        # class of the unselect visible button
-  select_filtered_class: 'select-btn',         # class of the select filtered button
-  unselect_filtered_class: 'select-btn',       # class of the unselect filteredbutton
-  info_text_class: 'info-text',                # class of the info text div
+  submit_class: 'submit-table',                 # class of submit button
+  pagesize_select_class: 'pagesize_select',     # class of the pagesize select element
+  select_all_class: 'select-btn',               # class of the select all button
+  select_none_class: 'select-btn',              # class of the select none button
+  select_visible_class: 'select-btn',           # class of the select visible button
+  unselect_visible_class: 'select-btn',         # class of the unselect visible button
+  select_filtered_class: 'select-btn',          # class of the select filtered button
+  unselect_filtered_class: 'select-btn',        # class of the unselect filteredbutton
+  info_text_class: 'info-text',                 # class of the info text div
 
-  batch_actions_label: 'Batch Action: ',       # Text to show in front of the batch action select
-  batch_actions_type: :select,                 # :select or :button depending on the kind of input you want
-  batch_actions_class: 'batch-action-inputs',  # class to apply on the batch action input elements
-  submit_label: 'Apply',                       # Text on the submit button
-  select_all_label: 'Select All',              # Text on the select all button
-  select_none_label: 'Select None',            # Text on the select none button
-  select_visible_label: 'Select visible',      # Text on the select visible button
-  unselect_visible_label: 'Unselect visible',  # Text on the unselect visible button
-  select_filtered_label: 'Select filtered',    # Text on the select filtered button
-  unselect_filtered_label: 'Unselect filtered',# Text on the unselect filtered button
+  batch_actions_label: 'Batch Action: ',        # Text to show in front of the batch action select
+  batch_actions_type: :select,                  # :select or :button depending on the kind of input you want
+  batch_actions_class: 'batch-action-inputs',   # class to apply on the batch action input elements
+  submit_label: 'Apply',                        # Text on the submit button
+  select_all_label: 'Select All',               # Text on the select all button
+  select_none_label: 'Select None',             # Text on the select none button
+  select_visible_label: 'Select visible',       # Text on the select visible button
+  unselect_visible_label: 'Unselect visible',   # Text on the unselect visible button
+  select_filtered_label: 'Select filtered',     # Text on the select filtered button
+  unselect_filtered_label: 'Unselect filtered', # Text on the unselect filtered button
   info_text: "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
 
   # which controls to be rendered above and below the tabel and in which order
@@ -229,13 +230,13 @@ h3. Column Options
   sortable: true                   # if set, sorting-stuff is added to the header cell
 </pre>
 
-h3. Global settings 
+h3. Global settings
 
 These settings are *not* supposed to be changed on a per-table basis. This is necessary, because the <tt>find_for_table</tt> method needs to rely on a priori information.
 
 h4. Table Form Options
 
-This hash contains all the information about the naming of the generated form elements. To override them, you should, in an initializer, call 
+This hash contains all the information about the naming of the generated form elements. To override them, you should, in an initializer, call
 
 <pre>
   Tabulatr.table_form_options(my_options_hash)
@@ -256,7 +257,7 @@ This hash contains all the information about the naming of the generated form el
 
 h4. Paginate options
 
-To override these, you should, in an initializer, call 
+To override these, you should, in an initializer, call
 
 <pre>
   Tabulatr.paginate_options(my_options_hash)
@@ -271,9 +272,9 @@ To override these, you should, in an initializer, call
 h2. Dependencies
 
 We use
-* <a href="http://github.com/providel/whiny_hash">WhinyHash</a> to handle the options in a fail-early-manner,
-* <a href="http://github.com/providel/id_stuffer">IdStuffer</a> to compress the _remembered_ ids.
-* And... eh... It's an extension for rails, so it might be handy to have a version of rails 3 and ruby 1.9.
+* <a href="http://github.com/provideal/whiny_hash">WhinyHash</a> to handle the options in a fail-early-manner,
+* <a href="http://github.com/provideal/id_stuffer">IdStuffer</a> to compress the _remembered_ ids.
+* And... eh... It's an extension for Rails 3, so it might be handy to have a version of Rails 3 and Ruby 1.9.2.
 
 h2. Bugs
 
