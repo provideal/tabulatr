@@ -124,6 +124,40 @@ to handle the actual batch action, we have to add a block to the <tt>find_for_ta
 
 where the <tt>ids</tt> parameter to the block is actually an Array containing the numeric ids of the currently selected rows.
 
+h2. Installation
+
+Installation is pretty straightforward. Just include a line
+
+<pre>
+  gem 'tabulatr', '...current version here'
+</pre>
+
+in your applications <tt>Gemfile</tt>, then run <tt>bundle install</tt>.
+
+If you want to use a predefined stylesheet and the images for sorting and paging, just issue
+
+<pre>
+  $ rails g tabulatr:install
+       create  public/stylesheets/tabulatr.css
+       create  public/images/tabulatr/buttons_lite_background.png
+       create  public/images/tabulatr/pager_arrow_left.gif
+       create  public/images/tabulatr/pager_arrow_left_off.gif
+       create  public/images/tabulatr/pager_arrow_right.gif
+       create  public/images/tabulatr/pager_arrow_right_off.gif
+       create  public/images/tabulatr/sort_arrow_down.gif
+       create  public/images/tabulatr/sort_arrow_down_off.gif
+       create  public/images/tabulatr/sort_arrow_up.gif
+       create  public/images/tabulatr/sort_arrow_up_off.gif
+  -------------------------------------------------------
+  Please note: We have copied a sample stylesheet to 
+    public/stylesheets/tabulatr.css
+  to actually use it in your application, please include 
+  it in your layout file. You may use s/th like
+    <%= stylesheet_link_tag :tabulatr %>
+  for that.
+  -------------------------------------------------------
+</pre>
+
 h2. Options
 
 Literally every aspect of Tabulatr can be tweaked to fit your needs. You may add or remove components, change the class or other html attributes of the generated html nodes. There are options of several types:
