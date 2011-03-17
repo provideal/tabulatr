@@ -1,31 +1,53 @@
-puts "a"
-
+#--
+# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
 class Tabulatr
-  puts "b"
-  
   module Generators
-    puts "c"
-    
     class InstallGenerator < Rails::Generators::Base
-      puts "d"
       desc "Copy Tabulatr default files"
-      source_root File.expand_path('../../../assets/', __FILE__)
+      @@rootpath = File.expand_path('../../../../assets/', __FILE__)
+      source_root @@rootpath
 
-      def copy_initializers
-        puts "lala1"
-#        copy_file 'simple_form.rb', 'config/initializers/simple_form.rb'
+      def copy_stylesheet
+        copy_file 'tabulatr.css', 'public/stylesheets/tabulatr.css'
       end
 
-      def copy_locale_file
-        puts "lala2"
-#        copy_file 'en.yml', 'config/locales/simple_form.en.yml'
-      end
-
-      def copy_scaffold_template
-        puts "lala3"
-#        copy_file "_form.html.#{engine}", "lib/templates/#{engine}/scaffold/_form.html.#{engine}"
-      end
+      def copy_images
+        Dir[@@rootpath+"/images/*"].each do |fname|
+          f = File.basename(fname)
+          copy_file "images/#{f}", "public/images/tabulatr/#{f}"
+        end
+      end  
       
+      def print_info
+        puts %q{--------------------------------------------------------
+Please note: We have copied a sample stylesheet to 
+  public/stylesheets/tabulatr.css
+to actually use it in your application, please include 
+it in your layout file. You may use s/th like
+  <%= stylesheet_link_tag :tabulatr %>
+for that.
+--------------------------------------------------------}
+      end
     end
   end
 end
