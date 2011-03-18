@@ -23,7 +23,7 @@
 
 class Tabulatr
 
-  # render the select tag for batch actions
+  # render the select tag or the buttons for batch actions
   def render_batch_actions
     make_tag(:div, :class => @table_options[:batch_actions_div_class]) do
       concat(t(@table_options[:batch_actions_label])) if @table_options[:batch_actions_label]

@@ -81,7 +81,7 @@ but the result is pretty fancy, already:
 
 <img src="https://github.com/provideal/tabulatr/raw/master/assets/simple_table.png" />
 
-To add a column with ckeckboxes (thus giving all the "Select ..." buttons a reasonable semantics), we simply add a
+To add a column with checkboxes (thus giving all the "Select ..." buttons a reasonable semantics), we simply add a
 
 <pre>
   t.checkbox
@@ -97,7 +97,7 @@ To add e.g. edit-buttons, we specify
   end
 </pre>
 
-To add a select-popup with batch-actions (i.e., actions that are to be perfored on all selected rows), we add an option to the table_for:
+To add a select-popup with batch-actions (i.e., actions that are to be performed on all selected rows), we add an option to the table_for:
 
 <pre>
   <%= table_for @products, :batch_actions => {'foo' => 'Foo', 'delete' => "Delete"} do |t|

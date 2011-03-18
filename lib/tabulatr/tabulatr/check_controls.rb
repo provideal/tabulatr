@@ -23,6 +23,7 @@
 
 class Tabulatr
 
+  # render the buttons to (de-)select multiple rows
   def render_select_controls
     make_tag(:div, :class => @table_options[:select_controls_div_class]) do
       iname = "#{@classname}#{TABLE_FORM_OPTIONS[:checked_postfix]}"

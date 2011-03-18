@@ -68,7 +68,7 @@ class Tabulatr
   # <tt>:td_html</tt>:: a hash with html-attributes added to the <ts>s created
   # <tt>:method</tt>:: the actual method invoked on the record to retrieve the
   #                    value for the column, or false if name is to be used.
-  # <tt>:fromat</tt>:: either a String by which the value is <tt>sprinf</tt>ed,
+  # <tt>:format</tt>:: either a String by which the value is <tt>sprinf</tt>ed,
   #                    a proc/lambda to which the value is passed or false if
   #                    no specific formatting is desired.
   def data_association(relation, name, opts={}, &block)
