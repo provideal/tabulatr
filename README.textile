@@ -308,7 +308,7 @@ h2. Dependencies
 We use
 * <a href="http://github.com/provideal/whiny_hash">WhinyHash</a> to handle the options in a fail-early-manner,
 * <a href="http://github.com/provideal/id_stuffer">IdStuffer</a> to compress the _remembered_ ids.
-* And... eh... It's an extension for Rails 3, so it might be handy to have a version of Rails 3 and Ruby 1.9.2.
+* And... eh... It's an extension for Rails 3, so it might be handy to have a version of Rails 3 and Ruby 1.8.? or 1.9.?.
 
 h2. Bugs
 
