@@ -46,7 +46,7 @@ module Tabulatr::Finder
 
     def method_missing(name, *args, &block)
       if @batch_action == name
-        yield(@ids, args)
+        yield(@ids)
       end
     end
   end

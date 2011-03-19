@@ -254,7 +254,7 @@ describe "Tabulatrs" do
       click_button("Apply")
       tot = n-3*(n/10)
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, tot, 0, tot))
-      save_and_open_page
+      #save_and_open_page
     end if KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS
   end
 
