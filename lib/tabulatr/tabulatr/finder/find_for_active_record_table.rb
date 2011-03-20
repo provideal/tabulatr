@@ -29,6 +29,19 @@ module Tabulatr::Finder
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
   #
   def self.find_for_active_record_table(klaz, params, o={}, &block)
+    unless Tabulatr::SQL_OPTIONS[:like]
+      # get the correct like db-operator, can still be ovrrridden
+      case ActiveRecord::Base.connection.class.to_s
+        when "ActiveRecord::ConnectionAdapters::MysqlAdapter" then Tabulatr.sql_options(:like => 'LIKE')
+        when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter" then Tabulatr.sql_options(:like => 'ILIKE')
+        when "ActiveRecord::ConnectionAdapters::SQLiteAdapter" then Tabulatr.sql_options(:like => 'LIKE')
+        when "ActiveRecord::ConnectionAdapters::SQLite3Adapter" then Tabulatr.sql_options(:like => 'LIKE')
+        else 
+          warn("Tabulatr Warning: Don't know which LIKE operator to use for the ConnectionAdapter '#{ActiveRecord::Base.connection.class}'.\n" +
+            "Please specify by `Tabulatr.sql_options(:like => '<likeoperator>')`")
+          Tabulatr.sql_options(:like => 'LIKE')
+      end
+    end
     form_options = Tabulatr.table_form_options
     cname = class_to_param(klaz)
     params ||= {}

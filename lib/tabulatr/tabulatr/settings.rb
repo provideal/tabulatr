@@ -173,7 +173,7 @@ class Tabulatr
 
   # Stupid hack
   SQL_OPTIONS = WhinyHash.new({
-    :like => 'LIKE'
+    :like => nil
   })
 
   def self.finder_inject_options(n=nil)
