@@ -11,7 +11,7 @@ We found ourselves reinventing the wheel in every project we made, by using
 * difterent ways of implementing selecting and batch actions,
 * different layouts.
 
-We finally thought that whilst gems like Formtastic or SimpleForm provide a really cool, uniform, and concise way to implement forms, it's time for a table builder. During a project with Magento (*shiver*) we decided that their general tables are quite reasonable, and enterprise-proven -- so that's our starting point.
+We finally thought that whilst gems like Formtastic or SimpleForm provide a really cool, uniform, and concise way to implement forms, it's time for a table builder. During a project with Magento, we decided that their general tables are quite reasonable, and enterprise-proven -- so that's our starting point.
 
 h3. Visual Components
 
