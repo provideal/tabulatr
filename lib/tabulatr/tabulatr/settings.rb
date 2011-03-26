@@ -53,7 +53,7 @@ class Tabulatr
     :unselect_filtered_class => 'select-btn',       # class of the unselect filteredbutton
     :info_text_class => 'info-text',                # class of the info text div
 
-    :batch_actions_label => 'Batch :Action => ',       # Text to show in front of the batch action select
+    :batch_actions_label => 'Batch Action: ',       # Text to show in front of the batch action select
     :batch_actions_type => :select,                 # :select or :button depending on the kind of input you want
     :batch_actions_class => 'batch-action-inputs',  # class to apply on the batch action input elements
     :submit_label => 'Apply',                       # Text on the submit button
@@ -112,6 +112,8 @@ class Tabulatr
     :associations_filter => '__association',    # name of the associations in the filter hash
     :method => 'post',                          # http method for that form if applicable
     :batch_postfix => '_batch',                 # postfix for name of the batch action select
+    :state_session_postfix => '_table_state',   # postfix for the state hash in the sessions
+    :reset_state_postfix => '_reset_state',     # postfix for the name of the input to reset state
     :checked_separator => ','                   # symbol to separate the checked ids
   })
 
@@ -168,7 +170,8 @@ class Tabulatr
     :default_order => false,
     :default_pagesize => false,
     :precondition => false,
-    :store_data => false
+    :store_data => false,
+    :stateful => false
   })
 
   # Stupid hack
