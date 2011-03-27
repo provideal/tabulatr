@@ -53,7 +53,7 @@ class Tabulatr
     :unselect_filtered_class => 'select-btn',       # class of the unselect filteredbutton
     :info_text_class => 'info-text',                # class of the info text div
 
-    :batch_actions_label => 'Batch :Action => ',       # Text to show in front of the batch action select
+    :batch_actions_label => 'Batch Actions: ',      # Text to show in front of the batch action select
     :batch_actions_type => :select,                 # :select or :button depending on the kind of input you want
     :batch_actions_class => 'batch-action-inputs',  # class to apply on the batch action input elements
     :submit_label => 'Apply',                       # Text on the submit button
@@ -73,16 +73,15 @@ class Tabulatr
     :select_controls => [:select_all, :select_none, :select_visible, :unselect_visible,
                       :select_filtered, :unselect_filtered],
 
-
-    :image_path_prefix => '/images/tabulatr/',
-    :pager_left_button => 'left.gif',
-    :pager_left_button_inactive => 'left_off.gif',
-    :pager_right_button => 'right.gif',
-    :pager_right_button_inactive => 'right_off.gif',
-    :sort_up_button => 'up.gif',
-    :sort_up_button_inactive => 'up_off.gif',
-    :sort_down_button => 'down.gif',
-    :sort_down_button_inactive => 'down_off.gif',
+    :image_path_prefix => '/images/tabulatr/',      
+    :pager_left_button => 'pager_arrow_left.gif',
+    :pager_left_button_inactive => 'pager_arrow_left_off.gif',
+    :pager_right_button => 'pager_arrow_right.gif',
+    :pager_right_button_inactive => 'pager_arrow_right_off.gif',
+    :sort_up_button => 'sort_arrow_up.gif',
+    :sort_up_button_inactive => 'sort_arrow_up_off.gif',
+    :sort_down_button => 'sort_arrow_down.gif',
+    :sort_down_button_inactive => 'sort_arrow_down_off.gif',
 
     :make_form => true,                            # whether or not to wrap the whole table (incl. controls) in a form
     :table_html => false,                          # a hash with html attributes for the table
