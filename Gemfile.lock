@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tabulatr (0.0.3)
+    tabulatr (0.0.4)
       id_stuffer (>= 0.0.1)
       rails (~> 3.0)
       whiny_hash (>= 0.0.2)
