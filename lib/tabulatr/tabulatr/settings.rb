@@ -73,7 +73,7 @@ class Tabulatr
     :select_controls => [:select_all, :select_none, :select_visible, :unselect_visible,
                       :select_filtered, :unselect_filtered],
 
-    :image_path_prefix => '/images/tabulatr/',      
+    :image_path_prefix => '/images/tabulatr/',
     :pager_left_button => 'pager_arrow_left.gif',
     :pager_left_button_inactive => 'pager_arrow_left_off.gif',
     :pager_right_button => 'pager_arrow_right.gif',
@@ -147,6 +147,7 @@ class Tabulatr
     :method => false,                   # if you want to get the column by a different method than its name
     :link => false,                     # proc or symbol to make the content a link
     :join_symbol => ', ',               # symbol used to join the elements of 'many' associations
+    :map => true,                       # whether to map the call on individual records (true) or call on the list (false)
     :sortable => true                   # if set, sorting-stuff is added to the header cell
   })
 

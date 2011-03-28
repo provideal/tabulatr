@@ -16,7 +16,7 @@ describe "Tabulatrs" do
   # General stuf
   WORKS_IN_GENERAL = CONTAINS_BUTTONS = CONTAINS_COLUMN_HEADERS = CONTAINS_OTHER_CONTROLS = tralse
   # This fills in the data, so rather not cmment this out
-  CONTAINS_ACTUAL_DATA = CONTAINS_ACTUAL_DATA_MULTIPLE = CONTAINS_DATA_ON_FURTHER_PAGES = true
+  CONTAINS_ACTUAL_DATA = CONTAINS_ASSOC_DATA = CONTAINS_ACTUAL_DATA_MULTIPLE = CONTAINS_DATA_ON_FURTHER_PAGES = true
   # Paginatione
   PAGES_UP_AND_DOWN = JUMPS_TO_CORRECT_PAGE = CHANGES_PAGE_SIZE = tralse
   # Filters
@@ -49,7 +49,7 @@ describe "Tabulatrs" do
 
     it "contains column headers" do
       visit index_simple_products_path
-      ['Id','Title','Price','Active','Vendor Name','Tags Title'].each do |n|
+      ['Id','Title','Price','Active','Vendor Name','Tags Title','Tags Count'].each do |n|
         page.should have_content(n)
       end
     end if CONTAINS_COLUMN_HEADERS
@@ -66,8 +66,19 @@ describe "Tabulatrs" do
       page.should have_content("true")
       page.should have_content("10.0")
       page.should have_content("ven d'or")
+      page.should have_content("--0--")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, 1, 0, 1))
     end if CONTAINS_ACTUAL_DATA
+
+    it "correctly contains the association data" do
+      product = Product.first
+      [tag1, tag2, tag3].each_with_index do |tag, i|
+        product.tags << tag
+        visit index_simple_products_path
+        page.should have_content tag.title
+        page.should have_content(sprintf("--%d--", i+1))
+      end
+    end if CONTAINS_ASSOC_DATA
 
     it "contains the actual data multiple" do
       9.times do |i|

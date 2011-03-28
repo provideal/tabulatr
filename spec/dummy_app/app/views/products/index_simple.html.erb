@@ -5,6 +5,7 @@
   t.column :active
   t.association :vendor, :name
   t.association :tags, :title
+  t.association :tags, :count, :map => false, :format => '--%d--'
 end %>
 
 
