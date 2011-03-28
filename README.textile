@@ -1,3 +1,5 @@
+<a href="http://metaminded.com"><img src="https://github.com/provideal/tabulatr/raw/master/assets/company_logos.png" align="right" /></a>
+
 h1. Tabulatr - Index Tables made easy, finally
 
 h2. Mission Objective
@@ -313,7 +315,7 @@ We use
 
 h2. Bugs
 
-There are, definitely, roughly 1000 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know.
+There are, definitely, roughly 999 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know.
 
 h2. License
 
