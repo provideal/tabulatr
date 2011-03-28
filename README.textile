@@ -149,9 +149,9 @@ If you want to use a predefined stylesheet and the images for sorting and paging
        create  public/images/tabulatr/sort_arrow_up.gif
        create  public/images/tabulatr/sort_arrow_up_off.gif
   -------------------------------------------------------
-  Please note: We have copied a sample stylesheet to 
+  Please note: We have copied a sample stylesheet to
     public/stylesheets/tabulatr.css
-  to actually use it in your application, please include 
+  to actually use it in your application, please include
   it in your layout file. You may use s/th like
     <%= stylesheet_link_tag :tabulatr %>
   for that.
@@ -260,6 +260,7 @@ h3. Column Options
   format: false,                   # a sprintf-string or a proc to do special formatting
   method: false,                   # if you want to get the column by a different method than its name
   link: false,                     # proc or symbol to make the content a link
+  map: true,                       # whether to map the call on individual records (true) of an association or call on the list (false)
   join_symbol: ', ',               # symbol used to join the elements of 'many' associations
   sortable: true                   # if set, sorting-stuff is added to the header cell
 </pre>
@@ -312,7 +313,7 @@ We use
 
 h2. Bugs
 
-There are, definitely, roughly 1000 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know.
+There are, definitely, roughly 999 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know using the <a href="https://github.com/provideal/tabulatr/issues">GitHub Bugtracker</a>.
 
 h2. License
 

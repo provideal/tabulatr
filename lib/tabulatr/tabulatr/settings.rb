@@ -149,6 +149,7 @@ class Tabulatr
     :method => false,                   # if you want to get the column by a different method than its name
     :link => false,                     # proc or symbol to make the content a link
     :join_symbol => ', ',               # symbol used to join the elements of 'many' associations
+    :map => true,                       # whether to map the call on individual records (true) or call on the list (false)
     :sortable => true                   # if set, sorting-stuff is added to the header cell
   })
 

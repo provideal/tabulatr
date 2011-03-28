@@ -1,0 +1,18 @@
+h1. Changelog for tabulatr
+
+h2. v0.0.5 (2011-03-28)
+
+* new column option :map (defaults to true) to disable automatic mapping on the enries of the association as in
+
+  <pre>
+  <%= table_for @products do |t|
+    ...
+    t.association :tags, :title # mapped to all tags
+    t.association :tags, :count, :map => false # called on the list-of-tags
+  end %>
+  </pre>
+
+
+h2. v0.0.4 (2011-03-27)
+
+* fixed the path to paging/sorting images installed by generator. Thanks to <a href="https://github.com/sdsykes" target="_blank">sdsykes</a>!
