@@ -73,7 +73,7 @@ class Tabulatr
     :select_controls => [:select_all, :select_none, :select_visible, :unselect_visible,
                       :select_filtered, :unselect_filtered],
 
-    :image_path_prefix => '/images/tabulatr/',      
+    :image_path_prefix => '/images/tabulatr/',
     :pager_left_button => 'pager_arrow_left.gif',
     :pager_left_button_inactive => 'pager_arrow_left_off.gif',
     :pager_right_button => 'pager_arrow_right.gif',
@@ -111,6 +111,8 @@ class Tabulatr
     :associations_filter => '__association',    # name of the associations in the filter hash
     :method => 'post',                          # http method for that form if applicable
     :batch_postfix => '_batch',                 # postfix for name of the batch action select
+    :state_session_postfix => '_table_state',   # postfix for the state hash in the sessions
+    :reset_state_postfix => '_reset_state',     # postfix for the name of the input to reset state
     :checked_separator => ','                   # symbol to separate the checked ids
   })
 
@@ -167,7 +169,8 @@ class Tabulatr
     :default_order => false,
     :default_pagesize => false,
     :precondition => false,
-    :store_data => false
+    :store_data => false,
+    :stateful => false
   })
 
   # Stupid hack

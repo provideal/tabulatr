@@ -29,8 +29,8 @@ module Tabulatr::Finder
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
   #
   def self.find_for_active_record_table(klaz, params, o={}, &block)
+    # on the first run, get the correct like db-operator, can still be ovrrridden
     unless Tabulatr::SQL_OPTIONS[:like]
-      # get the correct like db-operator, can still be ovrrridden
       case ActiveRecord::Base.connection.class.to_s
         when "ActiveRecord::ConnectionAdapters::MysqlAdapter" then Tabulatr.sql_options(:like => 'LIKE')
         when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter" then Tabulatr.sql_options(:like => 'ILIKE')
@@ -42,25 +42,58 @@ module Tabulatr::Finder
           Tabulatr.sql_options(:like => 'LIKE')
       end
     end
+
     form_options = Tabulatr.table_form_options
-    cname = class_to_param(klaz)
-    params ||= {}
     opts = Tabulatr.finder_options.merge(o)
+    params ||= {} # just to be sure
+    cname           = class_to_param(klaz)
+    pagination_name = "#{cname}#{form_options[:pagination_postfix]}"
+    sort_name       = "#{cname}#{form_options[:sort_postfix]}"
+    filter_name     = "#{cname}#{form_options[:filter_postfix]}"
+    batch_name      = "#{cname}#{form_options[:batch_postfix]}"
+    check_name      = "#{cname}#{form_options[:checked_postfix]}"]
+    
+
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
-      merge(params["#{cname}#{form_options[:checked_postfix]}"] || {})
+      merge(params[check_name] || {})
     checked_ids = uncompress_id_list(checked_param[:checked_ids])
     new_ids = checked_param[:current_page]
     selected_ids = checked_ids + new_ids
-    batch_param = params["#{cname}#{form_options[:batch_postfix]}"]
+    batch_param = params[batch_name]
     if batch_param.present? and block_given?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       yield(Invoker.new(batch_param, selected_ids))
     end
 
+    # store the state if appropriate
+    if opts[:stateful]
+      session = opts[:stateful]
+      raise "give the session as the :stateful parameter in find_for_table" unless session.is_a?(ActionDispatch::Session::AbstractStore::SessionHash)
+      sname = "#{cname}#{form_options[:state_session_postfix]}"
+      pnames = ["#{cname}#{form_options[:pagination_postfix]}",
+        "#{cname}#{form_options[:sort_postfix]}",
+        "#{cname}#{form_options[:filter_postfix]}",
+        "#{cname}#{form_options[:batch_postfix]}",
+        "#{cname}#{form_options[:checked_postfix]}"]
+      pp = params.inject({}) do |h,c|
+        k,v = c
+        puts "#{h}, #{k}, #{v}"
+        if pnames.member?(k.to_s) then h[k] = v end
+        h
+      end
+      if pp.count == 0 and session[sname]
+        puts "A"
+        params = session[sname]
+      else
+        puts "B"
+        session[sname] = pp
+      end
+    end
+
     # firstly, get the conditions from the filters
     includes = []
-    filter_param = (params["#{cname}#{form_options[:filter_postfix]}"] || {})
+    filter_param = (params[filter_name] || {})
     precondition = opts[:precondition] || "(1=1)"
     conditions = filter_param.inject([precondition.dup, []]) do |c, t|
       n, v = t
@@ -82,7 +115,7 @@ module Tabulatr::Finder
     conditions = [conditions.first] + conditions.last
 
     # secondly, find the order_by stuff
-    sortparam = params["#{cname}#{form_options[:sort_postfix]}"]
+    sortparam = params[sort_name]
     if sortparam
       if sortparam[:_resort]
         order_by = sortparam[:_resort].first.first
@@ -108,7 +141,7 @@ module Tabulatr::Finder
     end
 
     # thirdly, get the pagination data
-    pops = params["#{cname}#{form_options[:pagination_postfix]}"] || {}
+    pops = params[pagination_name] || {}
     paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
     pagesize = (pops[:pagesize] || opts[:default_pagesize] || paginate_options[:pagesize]).to_f
     page = paginate_options[:page].to_i
