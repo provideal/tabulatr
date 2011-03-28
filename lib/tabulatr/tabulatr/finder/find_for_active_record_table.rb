@@ -51,7 +51,7 @@ module Tabulatr::Finder
     sort_name       = "#{cname}#{form_options[:sort_postfix]}"
     filter_name     = "#{cname}#{form_options[:filter_postfix]}"
     batch_name      = "#{cname}#{form_options[:batch_postfix]}"
-    check_name      = "#{cname}#{form_options[:checked_postfix]}"]
+    check_name      = "#{cname}#{form_options[:checked_postfix]}"
     
 
     # before we do anything else, we find whether there's something to do for batch actions
@@ -69,25 +69,29 @@ module Tabulatr::Finder
     # store the state if appropriate
     if opts[:stateful]
       session = opts[:stateful]
-      raise "give the session as the :stateful parameter in find_for_table" unless session.is_a?(ActionDispatch::Session::AbstractStore::SessionHash)
       sname = "#{cname}#{form_options[:state_session_postfix]}"
-      pnames = ["#{cname}#{form_options[:pagination_postfix]}",
-        "#{cname}#{form_options[:sort_postfix]}",
-        "#{cname}#{form_options[:filter_postfix]}",
-        "#{cname}#{form_options[:batch_postfix]}",
-        "#{cname}#{form_options[:checked_postfix]}"]
-      pp = params.inject({}) do |h,c|
-        k,v = c
-        puts "#{h}, #{k}, #{v}"
-        if pnames.member?(k.to_s) then h[k] = v end
-        h
-      end
-      if pp.count == 0 and session[sname]
-        puts "A"
-        params = session[sname]
+      raise "give the session as the :stateful parameter in find_for_table" unless session.is_a?(ActionDispatch::Session::AbstractStore::SessionHash)
+      if params["#{cname}#{form_options[:reset_state_postfix]}"]
+        session.delete sname
       else
-        puts "B"
-        session[sname] = pp
+        pnames = ["#{cname}#{form_options[:pagination_postfix]}",
+          "#{cname}#{form_options[:sort_postfix]}",
+          "#{cname}#{form_options[:filter_postfix]}",
+          "#{cname}#{form_options[:batch_postfix]}",
+          "#{cname}#{form_options[:checked_postfix]}"]
+        pp = params.inject({}) do |h,c|
+          k,v = c
+          puts "#{h}, #{k}, #{v}"
+          if pnames.member?(k.to_s) then h[k] = v end
+          h
+        end
+        if pp.count == 0 and session[sname]
+          puts "A"
+          params = session[sname]
+        else
+          puts "B"
+          session[sname] = pp
+        end
       end
     end
 
@@ -197,6 +201,9 @@ module Tabulatr::Finder
         :checked_ids => checked_ids,
         :visible => visible_ids
       }
+    end
+    found.define_singleton_method(fio[:stateful]) do
+      (opts[:stateful] ? true : false)
     end
     found.define_singleton_method(fio[:store_data]) do
       opts[:store_data] || {}

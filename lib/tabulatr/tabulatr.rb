@@ -62,6 +62,7 @@ class Tabulatr
     @sorting = @records.send(FINDER_INJECT_OPTIONS[:sorting])
     @checked = @records.send(FINDER_INJECT_OPTIONS[:checked])
     @store_data = @records.send(FINDER_INJECT_OPTIONS[:store_data])
+    @stateful = @records.send(FINDER_INJECT_OPTIONS[:stateful])
     @should_translate = @table_options[:translate]
   end
 
@@ -109,10 +110,14 @@ class Tabulatr
   def render_element(element, &block)
     case element
     when :paginator then render_paginator if @table_options[:paginate]
-    when :hidden_submit then
+    when :hidden_submit then "IMPLEMENT ME!"
     when :submit then   make_tag(:input, :type => 'submit',
         :class => @table_options[:submit_class],
         :value => t(@table_options[:submit_label]))
+    when :reset then   make_tag(:input, :type => 'submit',
+        :class => @table_options[:reset_class],
+        :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
+        :value => t(@table_options[:reset_label]))
     when :batch_actions then render_batch_actions if @table_options[:batch_actions]
     when :select_controls then render_select_controls if @table_options[:selectable]
     when :info_text
