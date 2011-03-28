@@ -316,7 +316,6 @@ h2. Bugs
 There are, definitely, roughly 999 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know.
 
 h2. License
-
 <a href="http://metaminded.com"><img src="https://github.com/provideal/tabulatr/raw/master/assets/company_logos.png" align="right" /></a>
 
 Copyright (c) 2010-2011 Peter Horn, <a href="http://www.provideal.net" target="_blank">Provideal GmbH</a>
