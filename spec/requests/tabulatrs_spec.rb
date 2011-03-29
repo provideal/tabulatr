@@ -12,7 +12,7 @@ describe "Tabulatrs" do
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
   # control which tests to run. Just to spped testing up
-  tralse = true
+  tralse = false
   # General stuf
   WORKS_IN_GENERAL = CONTAINS_BUTTONS = CONTAINS_COLUMN_HEADERS = CONTAINS_OTHER_CONTROLS = tralse
   # This fills in the data, so rather not cmment this out
@@ -23,6 +23,8 @@ describe "Tabulatrs" do
   FILTERS = FILTERS_WITH_LIKE = FILTERS_WITH_RANGE = tralse
   # Sorting
   KNOWS_HOW_TO_SORT = tralse
+  # Statful
+  SORTS_STATEFULLY = FILTERS_STATEFULLY = SELECTS_STATEFULLY = true
   # selecting and batch actions
   KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS = tralse
 
@@ -247,6 +249,57 @@ describe "Tabulatrs" do
       end
     end if KNOWS_HOW_TO_SORT
   end
+
+  describe "statefulness" do
+    it "sorts statefully" do
+      visit index_stateful_products_path
+      click_button("product_sort_title_desc")
+      snames = names.sort
+      (1..10).each do |i|
+        page.should have_content snames[-i]
+      end
+      visit index_stateful_products_path
+      (1..10).each do |i|
+        page.should have_content snames[-i]
+      end
+      click_button("Reset")
+      (1..10).each do |i|
+        page.should have_content names[i-1]
+      end
+    end if SORTS_STATEFULLY
+
+    it "filters statefully" do
+      visit index_stateful_products_path
+      fill_in("product_filter[title]", :with => "lorem")
+      click_button("Apply")
+      visit index_stateful_products_path
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, names.length, 0, 1))
+      click_button("Reset")
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
+    end if FILTERS_STATEFULLY
+    
+    it "selects statefully" do
+      visit index_stateful_products_path
+      n = names.length
+      (n/10).times do |i|
+        (1..3).each do |j|
+          check("product_checked_#{10*i+j}")
+        end
+        click_button("Apply")
+        tot = 3*(i+1)
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
+        click_button('product_pagination_page_right')
+      end
+      visit index_stateful_products_path
+      tot = 3*(n/10)
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], names.length % 10, n, tot, n))
+      click_button("Reset")
+      save_and_open_page
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
+    end if SELECTS_STATEFULLY
+
+  end
+
 
   describe "Select and Batch actions" do
     it "knows how to select and apply batch actions" do

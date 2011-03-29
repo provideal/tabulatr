@@ -8,6 +8,7 @@ DummyApp::Application.routes.draw do
        get :index_filters
        get :index_select
        get :index_sort
+       get :index_stateful
     end
   end
 
