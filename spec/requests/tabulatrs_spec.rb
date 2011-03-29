@@ -12,7 +12,7 @@ describe "Tabulatrs" do
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
   # control which tests to run. Just to spped testing up
-  tralse = false
+  tralse = true
   # General stuf
   WORKS_IN_GENERAL = CONTAINS_BUTTONS = CONTAINS_COLUMN_HEADERS = CONTAINS_OTHER_CONTROLS = tralse
   # This fills in the data, so rather not cmment this out
@@ -47,6 +47,7 @@ describe "Tabulatrs" do
       ].each do |n|
         page.should have_button(Tabulatr::TABLE_OPTIONS[n])
       end
+      page.should_not have_button(Tabulatr::TABLE_OPTIONS[:reset_label])
     end if CONTAINS_BUTTONS
 
     it "contains column headers" do
@@ -294,7 +295,6 @@ describe "Tabulatrs" do
       tot = 3*(n/10)
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], names.length % 10, n, tot, n))
       click_button("Reset")
-      save_and_open_page
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
     end if SELECTS_STATEFULLY
 

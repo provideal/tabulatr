@@ -117,7 +117,7 @@ class Tabulatr
     when :reset then   make_tag(:input, :type => 'submit',
         :class => @table_options[:reset_class],
         :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
-        :value => t(@table_options[:reset_label]))
+        :value => t(@table_options[:reset_label])) if @stateful
     when :batch_actions then render_batch_actions if @table_options[:batch_actions]
     when :select_controls then render_select_controls if @table_options[:selectable]
     when :info_text
