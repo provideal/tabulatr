@@ -38,6 +38,7 @@ class Tabulatr
     :page_left_class => 'page-left',                # class for the page left button
     :page_right_class => 'page-right',              # class for the page right button
     :page_no_class => 'page-no',                    # class for the page no <input>
+    :reset_class => 'reset',                        # class for the reset button
     :control_div_class_before => 'table-controls',  # class of the upper div containing the paging and batch action controls
     :control_div_class_after => 'table-controls',   # class of the lower div containing the paging and batch action controls
     :paginator_div_class => 'paginator',            # class of the div containing the paging controls
@@ -63,10 +64,11 @@ class Tabulatr
     :unselect_visible_label => 'Unselect visible',  # Text on the unselect visible button
     :select_filtered_label => 'Select filtered',    # Text on the select filtered button
     :unselect_filtered_label => 'Unselect filtered',# Text on the unselect filtered button
+    :reset_label => 'Reset',                        # Text on the reset button
     :info_text => "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:submit, :paginator, :batch_actions, :select_controls, :info_text],
+    :before_table_controls => [:submit, :reset, :paginator, :batch_actions, :select_controls, :info_text],
     :after_table_controls => [],
 
     # whih selecting controls to render in which order
@@ -83,19 +85,20 @@ class Tabulatr
     :sort_down_button => 'sort_arrow_down.gif',
     :sort_down_button_inactive => 'sort_arrow_down_off.gif',
 
-    :make_form => true,                            # whether or not to wrap the whole table (incl. controls) in a form
-    :table_html => false,                          # a hash with html attributes for the table
-    :row_html => false,                            # a hash with html attributes for the normal trs
-    :header_html => false,                         # a hash with html attributes for the header trs
-    :filter_html => false,                         # a hash with html attributes for the filter trs
-    :filter => true,                               # false for no filter row at all
-    :paginate => true,                             # true to show paginator
-    :sortable => true,                             # true to allow sorting (can be specified for every sortable column)
-    :selectable => true,                           # true to render "select all", "select none" and the like
-    :action => nil,                                # target action of the wrapping form if applicable
-    :batch_actions => false,                       # :name => value hash of batch action stuff
-    :translate => false,                           # call t() for all 'labels' and stuff, possible values are true/:translate or :localize
-    :row_classes => ['odd', 'even']                # class for the trs
+    :make_form => true,                # whether or not to wrap the whole table (incl. controls) in a form
+    :table_html => false,              # a hash with html attributes for the table
+    :row_html => false,                # a hash with html attributes for the normal trs
+    :header_html => false,             # a hash with html attributes for the header trs
+    :filter_html => false,             # a hash with html attributes for the filter trs
+    :filter => true,                   # false for no filter row at all
+    :paginate => true,                 # true to show paginator
+    :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
+    :selectable => true,               # true to render "select all", "select none" and the like
+    :reset => false,                   # true to render a reset button. Only reasonable in 'stateful' case
+    :action => nil,                    # target action of the wrapping form if applicable
+    :batch_actions => false,           # :name => value hash of batch action stuff
+    :translate => false,               # call t() for all 'labels' and stuff, possible values are true/:translate or :localize
+    :row_classes => ['odd', 'even']    # class for the trs
   })
 
   # these settings are considered constant for the whole application, can not be overridden
@@ -111,6 +114,8 @@ class Tabulatr
     :associations_filter => '__association',    # name of the associations in the filter hash
     :method => 'post',                          # http method for that form if applicable
     :batch_postfix => '_batch',                 # postfix for name of the batch action select
+    :state_session_postfix => '_table_state',   # postfix for the state hash in the sessions
+    :reset_state_postfix => '_reset_state',     # postfix for the name of the input to reset state
     :checked_separator => ','                   # symbol to separate the checked ids
   })
 
@@ -160,7 +165,8 @@ class Tabulatr
     :classname => :__classname,
     :sorting => :__sorting,
     :checked => :__checked,
-    :store_data => :__store_data
+    :store_data => :__store_data,
+    :stateful => :__stateful
   })
 
   # defaults for the find_for_table
@@ -168,7 +174,8 @@ class Tabulatr
     :default_order => false,
     :default_pagesize => false,
     :precondition => false,
-    :store_data => false
+    :store_data => false,
+    :stateful => false
   })
 
   # Stupid hack
