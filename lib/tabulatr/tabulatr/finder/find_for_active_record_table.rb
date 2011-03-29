@@ -29,8 +29,8 @@ module Tabulatr::Finder
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
   #
   def self.find_for_active_record_table(klaz, params, o={}, &block)
+    # on the first run, get the correct like db-operator, can still be ovrrridden
     unless Tabulatr::SQL_OPTIONS[:like]
-      # get the correct like db-operator, can still be ovrrridden
       case ActiveRecord::Base.connection.class.to_s
         when "ActiveRecord::ConnectionAdapters::MysqlAdapter" then Tabulatr.sql_options(:like => 'LIKE')
         when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter" then Tabulatr.sql_options(:like => 'ILIKE')
@@ -42,25 +42,88 @@ module Tabulatr::Finder
           Tabulatr.sql_options(:like => 'LIKE')
       end
     end
+
     form_options = Tabulatr.table_form_options
-    cname = class_to_param(klaz)
-    params ||= {}
     opts = Tabulatr.finder_options.merge(o)
+    params ||= {} # just to be sure
+    cname           = class_to_param(klaz)
+    pagination_name = "#{cname}#{form_options[:pagination_postfix]}"
+    sort_name       = "#{cname}#{form_options[:sort_postfix]}"
+    filter_name     = "#{cname}#{form_options[:filter_postfix]}"
+    batch_name      = "#{cname}#{form_options[:batch_postfix]}"
+    check_name      = "#{cname}#{form_options[:checked_postfix]}"
+    
+
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
-      merge(params["#{cname}#{form_options[:checked_postfix]}"] || {})
+      merge(params[check_name] || {})
     checked_ids = uncompress_id_list(checked_param[:checked_ids])
     new_ids = checked_param[:current_page]
     selected_ids = checked_ids + new_ids
-    batch_param = params["#{cname}#{form_options[:batch_postfix]}"]
+    batch_param = params[batch_name]
     if batch_param.present? and block_given?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       yield(Invoker.new(batch_param, selected_ids))
     end
+    
+    # then, we obey any "select" buttons if pushed
+    if checked_param[:select_all]
+      all = klaz.find :all, :conditions => precondition, :select => :id
+      selected_ids = all.map { |r| r.id.to_s }
+    elsif checked_param[:select_none]
+      selected_ids = []
+    elsif checked_param[:select_visible]
+      visible_ids = uncompress_id_list(checked_param[:visible])
+      selected_ids = (selected_ids + visible_ids).sort.uniq
+    elsif checked_param[:unselect_visible]
+      visible_ids = uncompress_id_list(checked_param[:visible])
+      selected_ids = (selected_ids - visible_ids).sort.uniq
+    elsif checked_param[:select_filtered]
+      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
+      selected_ids = (selected_ids + all.map { |r| r.id.to_s }).sort.uniq
+    elsif checked_param[:unselect_filtered]
+      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
+      selected_ids = (selected_ids - all.map { |r| r.id.to_s }).sort.uniq
+    end
+
+    # at this point, we've retrieved the filter settings, the sorting setting, the pagination settings and 
+    # the selected_ids.
+    filter_param = (params[filter_name] || {})
+    sortparam = params[sort_name]
+    pops = params[pagination_name] || {}
+
+    # store the state if appropriate
+    if opts[:stateful]
+      session = opts[:stateful]
+      sname = "#{cname}#{form_options[:state_session_postfix]}"
+      raise "give the session as the :stateful parameter in find_for_table" unless session.is_a?(ActionDispatch::Session::AbstractStore::SessionHash)
+      session[sname] ||= {}
+      
+      if params["#{cname}#{form_options[:reset_state_postfix]}"]
+        # clicked reset button, reset all and clear session
+        selected_ids = []
+        filter_param = {}
+        sortparam = nil
+        pops = {}
+        session.delete sname
+      elsif !pops.present? && !selected_ids.present? && !sortparam.present? && !filter_param.present?
+        # we're supposed to retrieve the state from the session if applicable
+        state = session[sname]
+        selected_ids = state[:selected_ids] || []
+        filter_param = state[:filter_param] || {}
+        sortparam    = state[:sortparam]
+        pops         = state[:paging_param] || {}
+      else
+        # store the current settings into the session to be stateful ;)
+        session[sname][:selected_ids] = selected_ids
+        session[sname][:filter_param] = filter_param
+        session[sname][:sortparam]    = sortparam
+        session[sname][:paging_param] = pops
+      end
+    end
 
     # firstly, get the conditions from the filters
     includes = []
-    filter_param = (params["#{cname}#{form_options[:filter_postfix]}"] || {})
     precondition = opts[:precondition] || "(1=1)"
     conditions = filter_param.inject([precondition.dup, []]) do |c, t|
       n, v = t
@@ -82,7 +145,6 @@ module Tabulatr::Finder
     conditions = [conditions.first] + conditions.last
 
     # secondly, find the order_by stuff
-    sortparam = params["#{cname}#{form_options[:sort_postfix]}"]
     if sortparam
       if sortparam[:_resort]
         order_by = sortparam[:_resort].first.first
@@ -108,7 +170,6 @@ module Tabulatr::Finder
     end
 
     # thirdly, get the pagination data
-    pops = params["#{cname}#{form_options[:pagination_postfix]}"] || {}
     paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
     pagesize = (pops[:pagesize] || opts[:default_pagesize] || paginate_options[:pagesize]).to_f
     page = paginate_options[:page].to_i
@@ -117,27 +178,6 @@ module Tabulatr::Finder
     c = klaz.count :conditions => conditions, :include => includes
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
-
-    # then, we obey any "select" buttons if pushed
-    if checked_param[:select_all]
-      all = klaz.find :all, :conditions => precondition, :select => :id
-      selected_ids = all.map { |r| r.id.to_s }
-    elsif checked_param[:select_none]
-      selected_ids = []
-    elsif checked_param[:select_visible]
-      visible_ids = uncompress_id_list(checked_param[:visible])
-      selected_ids = (selected_ids + visible_ids).sort.uniq
-    elsif checked_param[:unselect_visible]
-      visible_ids = uncompress_id_list(checked_param[:visible])
-      selected_ids = (selected_ids - visible_ids).sort.uniq
-    elsif checked_param[:select_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
-      selected_ids = (selected_ids + all.map { |r| r.id.to_s }).sort.uniq
-    elsif checked_param[:unselect_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
-      selected_ids = (selected_ids - all.map { |r| r.id.to_s }).sort.uniq
-    end
-
 
     # Now, actually find the stuff
     found = klaz.find :all, :conditions => conditions,
@@ -164,6 +204,9 @@ module Tabulatr::Finder
         :checked_ids => checked_ids,
         :visible => visible_ids
       }
+    end
+    found.define_singleton_method(fio[:stateful]) do
+      (opts[:stateful] ? true : false)
     end
     found.define_singleton_method(fio[:store_data]) do
       opts[:store_data] || {}

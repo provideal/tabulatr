@@ -40,6 +40,7 @@ Tabulatr tries to make these common tasks as simple/transparent as possible:
 * selecting/checking/marking
 * filtering
 * batch actions
+* stateful index pages
 
 h2. Example
 
@@ -60,7 +61,7 @@ In the products controllers index action we have:
   end
 </pre>
 
-the find_for_table method is injected into ActiveRecord by Tabulatr, it retrieves all relevant data from the params hash automagically.
+the <tt>find_for_table</tt> method is injected into ActiveRecord by Tabulatr, it retrieves all relevant data from the <tt>params</tt> hash automagically. If you want the the table to be stateful, i.e. remembering its sorting/filtering/selecting settings (very useful when processing a certain selection of entries), you can pass the option <tt>:stateful => session</tt> to the <tt>find_for_table</tt> call and the data will be stored. Also, a _Reset_ button will be rendered to get rid of the state.
 
 h3. View
 
@@ -203,6 +204,7 @@ These options are to be specified at the form_for level and change the appearanc
   unselect_visible_label: 'Unselect visible',   # Text on the unselect visible button
   select_filtered_label: 'Select filtered',     # Text on the select filtered button
   unselect_filtered_label: 'Unselect filtered', # Text on the unselect filtered button
+  reset_label: 'Reset',                         # Text on the reset button
   info_text: "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
 
   # which controls to be rendered above and below the tabel and in which order
