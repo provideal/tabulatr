@@ -8,7 +8,7 @@ We found ourselves reinventing the wheel in every project we made, by using
 
 * different paging mechanisms,
 * different ways of implementing filtering/searching,
-* difterent ways of implementing selecting and batch actions,
+* different ways of implementing selecting and batch actions,
 * different layouts.
 
 We finally thought that whilst gems like Formtastic or SimpleForm provide a really cool, uniform, and concise way to implement forms, it's time for a table builder. During a project with Magento, we decided that their general tables are quite reasonable, and enterprise-proven -- so that's our starting point.
@@ -19,17 +19,17 @@ Every Tabulatr table consists of the following components:
 
 * a wrapping form
 * a 'Controls Container' containing the table-controls as
-  * the paginator,
-  * the batch_actions,
-  * the submit button,
-  * controls to manage selecting/checking/marking,
-  * an info_text
+** the paginator,
+** the batch_actions,
+** the submit button,
+** controls to manage selecting/checking/marking,
+** an info_text
 * The actual table consisting of
-  * A header row,
-  * A filter row,
-  * data rows,
-  * possibly a selecting/checking/marking column
-  * possibly action links/buttons
+** A header row,
+** A filter row,
+** data rows,
+** possibly a selecting/checking/marking column
+** possibly action links/buttons
 
 Whilst this is a strong decision, we made everything as-configurable-as-possible, there are roughly 150 options you can use to tweak almost every aspect of Tabulatr.
 
@@ -105,7 +105,9 @@ To add a select-popup with batch-actions (i.e., actions that are to be performed
   end %>
 </pre>
 
-to handle the actual batch action, we have to add a block to the <tt>find_for_table</tt> call in the controller:
+If you prefer individual buttons for the batch actions over a select input, give the option <tt>:batch_actions_type => :button</tt> to the <tt>table_for</tt> call.
+
+To handle the actual batch action, we have to add a block to the <tt>find_for_table</tt> call in the controller:
 
 <pre>
   @products = Product.find_for_table(params) do |batch_actions|
