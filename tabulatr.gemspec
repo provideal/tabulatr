@@ -6,12 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "tabulatr"
   s.version     = Tabulatr::VERSION.dup
   s.platform    = Gem::Platform::RUBY
-  s.summary     = "Tabulatr is a DSL to easily create tables for e.g. admin backends."
+  s.summary     = "A tight DSL to build tables of ActiveRecord models with sorting, pagination, finding/filtering, selecting and batch actions."
   s.email       = "info@provideal.net"
   s.homepage    = "http://github.com/provideal/tabulatr"
-  s.description = "Tabulatr enables you to create fancy tables with filtering, pagination, " +
-                  "batch action, bells, AND whistles. You do this mainly by specifying the " +
-                  "names of the columns. See the README for details."
+  s.description = "A tight DSL to build tables of ActiveRecord models with sorting, pagination, finding/filtering, selecting and batch actions. " +
+                  "Tries to do for tables what formtastic and simple_form did for forms."
   s.authors     = ['Peter Horn', 'René Sprotte']
 
   s.files         = `git ls-files`.split("\n")
