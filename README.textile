@@ -1,5 +1,7 @@
 h1. Tabulatr - Index Tables made easy, finally
 
+(there is a <a href="https://github.com/provideal/tabulatr-demo">demo app repository</a>)
+
 h2. Mission Objective
 
 Tabulatr aims at making the ever-recurring task of creating listings of ActiveRecord models simple and uniform.
