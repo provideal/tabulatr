@@ -1,5 +1,20 @@
 h1. Changelog for tabulatr
 
+h2. 0.1.1
+
+* Fixed bug with "Select ..." buttons introduced in 0.1.0. 
+* Added tests for these buttons.
+
+h2. v0.1.0
+
+* new <tt>find_for_table</tt> option <tt>:stateful</tt>. If 
+
+<pre>
+  MyFancyModel.find_for_table params, :stateful => session
+</pre>
+
+is given, the current sorting, filtering, selecting and paging information is stored to the session and restored when reopened. Great for procession specifically filtered lists. 
+
 h2. v0.0.5 (2011-03-28)
 
 * new column option :map (defaults to true) to disable automatic mapping on the enries of the association as in
