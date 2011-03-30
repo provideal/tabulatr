@@ -52,7 +52,6 @@ module Tabulatr::Finder
     filter_name     = "#{cname}#{form_options[:filter_postfix]}"
     batch_name      = "#{cname}#{form_options[:batch_postfix]}"
     check_name      = "#{cname}#{form_options[:checked_postfix]}"
-    
 
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
@@ -67,6 +66,7 @@ module Tabulatr::Finder
     end
     
     # then, we obey any "select" buttons if pushed
+    precondition = opts[:precondition] || "(1=1)"
     if checked_param[:select_all]
       all = klaz.find :all, :conditions => precondition, :select => :id
       selected_ids = all.map { |r| r.id.to_s }
@@ -78,14 +78,8 @@ module Tabulatr::Finder
     elsif checked_param[:unselect_visible]
       visible_ids = uncompress_id_list(checked_param[:visible])
       selected_ids = (selected_ids - visible_ids).sort.uniq
-    elsif checked_param[:select_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
-      selected_ids = (selected_ids + all.map { |r| r.id.to_s }).sort.uniq
-    elsif checked_param[:unselect_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
-      selected_ids = (selected_ids - all.map { |r| r.id.to_s }).sort.uniq
     end
-
+    
     # at this point, we've retrieved the filter settings, the sorting setting, the pagination settings and 
     # the selected_ids.
     filter_param = (params[filter_name] || {})
@@ -143,6 +137,15 @@ module Tabulatr::Finder
       end
     end
     conditions = [conditions.first] + conditions.last
+
+    # more button handling
+    if checked_param[:select_filtered]
+      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
+      selected_ids = (selected_ids + all.map { |r| r.id.to_s }).sort.uniq
+    elsif checked_param[:unselect_filtered]
+      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
+      selected_ids = (selected_ids - all.map { |r| r.id.to_s }).sort.uniq
+    end
 
     # secondly, find the order_by stuff
     if sortparam

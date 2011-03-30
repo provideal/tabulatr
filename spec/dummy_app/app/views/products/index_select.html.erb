@@ -1,6 +1,6 @@
 <%= table_for @products, :batch_actions => {'delete' => "Delete"} do |t|
   t.checkbox  
   t.column :id
-  t.column :title
+  t.column :title, :filter => :like
   t.column :price
 end %>

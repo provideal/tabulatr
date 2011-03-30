@@ -26,7 +26,7 @@ describe "Tabulatrs" do
   # Statful
   SORTS_STATEFULLY = FILTERS_STATEFULLY = SELECTS_STATEFULLY = true
   # selecting and batch actions
-  KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS = tralse
+  SELECT_BUTTONS_WORK = KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS = tralse
 
   vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
   vendor2 = Vendor.create!(:name => 'producer', :active => true)
@@ -300,8 +300,46 @@ describe "Tabulatrs" do
 
   end
 
-
   describe "Select and Batch actions" do
+    it "knows how to interpret the select_... buttons" do
+      # Showing 10, total 54, selected 54, matching 54
+      n = names.length
+      visit index_select_products_path
+      click_button('Select All')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n, n))
+      click_button('Select None')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, n))
+      click_button('Select visible')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 10, n))
+      click_button('Select None')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, n))
+      fill_in("product_filter[title][like]", :with => "a")
+      click_button("Apply")
+      tot = (names.select do |s| s.match /a/ end).length
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, tot))
+      click_button('Select filtered')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, tot))
+      fill_in("product_filter[title][like]", :with => "")
+      click_button("Apply")
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
+      click_button("Unselect visible")
+      tot -= (names[0..9].select do |s| s.match /a/ end).length
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
+      click_button('Select None')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, n))
+      click_button('Select All')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n, n))
+      fill_in("product_filter[title][like]", :with => "a")
+      click_button("Apply")
+      tot = (names.select do |s| s.match /a/ end).length
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n, tot))
+      click_button('Unselect filtered')
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n-tot, tot))
+      fill_in("product_filter[title][like]", :with => "")
+      click_button("Apply")
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n-tot, n))
+    end if SELECT_BUTTONS_WORK
+    
     it "knows how to select and apply batch actions" do
       visit index_select_products_path
       n = names.length
