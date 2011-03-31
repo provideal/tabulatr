@@ -321,6 +321,17 @@ h2. Bugs
 
 There are, definitely, roughly 999 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know using the <a href="https://github.com/provideal/tabulatr/issues">GitHub Bugtracker</a>.
 
+h2. Contributing to tabulatr
+ 
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+* Check out the <a href="https://github.com/provideal/tabulatr/issues">issue tracker</a> to make sure someone already hasn't requested it and/or contributed it
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+* Feel free to send a pull request if you think others (me, for example) would like to have your change incorporated into future versions of tabulatr.
+
 h2. License
 
 Copyright (c) 2010-2011 Peter Horn, <a href="http://www.provideal.net" target="_blank">Provideal GmbH</a>
