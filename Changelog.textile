@@ -1,5 +1,9 @@
 h1. Changelog for tabulatr
 
+h2. 0.1.2
+
+* Fixed bug with nil exception on 'empty' belongs_to association
+
 h2. 0.1.1
 
 * Fixed bug with "Select ..." buttons introduced in 0.1.0. 

@@ -90,7 +90,9 @@ class Tabulatr
           end
         end.join(opts[:join_symbol])
       else
-        val = h(@record.send(relation.to_sym).send(opts[:method] || name))
+        ass = @record.send(relation.to_sym)
+        return '' unless ass
+        val = h(ass.send(opts[:method] || name))
         val = if format.is_a?(Proc) then format.call(val)
         elsif format.is_a?(String) then h(format % val)
         elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)

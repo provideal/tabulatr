@@ -63,14 +63,17 @@ describe "Tabulatrs" do
     end if CONTAINS_OTHER_CONTROLS
 
     it "contains the actual data" do
-      product = Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah', :vendor => vendor1)
+      product = Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah')
       visit index_simple_products_path
       page.should have_content(names[0])
       page.should have_content("true")
       page.should have_content("10.0")
-      page.should have_content("ven d'or")
       page.should have_content("--0--")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, 1, 0, 1))
+      product.vendor = vendor1
+      product.save!
+      visit index_simple_products_path
+      page.should have_content("ven d'or")
     end if CONTAINS_ACTUAL_DATA
 
     it "correctly contains the association data" do
