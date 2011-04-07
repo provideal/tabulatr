@@ -74,7 +74,7 @@ class Tabulatr
       # change classes accordingly
     end
     make_tag(:th, opts[:th_html]) do
-      concat(t(opts[:header] || "#{relation.to_s.capitalize} #{name.to_s.capitalize}"), :escape_html)
+      concat(t(opts[:header] || "#{relation.to_s.humanize.titlecase} #{name.to_s.humanize.titlecase}"), :escape_html)
     end # </th>
   end
 
