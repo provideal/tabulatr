@@ -3,6 +3,7 @@
   t.column :title
   t.column :price
   t.column :active
+	t.column :created_at
   t.association :vendor, :name
   t.association :tags, :title
   t.association :tags, :count, :map => false, :format => '--%d--'
