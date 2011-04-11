@@ -1,3 +1,4 @@
 pkg
 tabulatr-*.gem
 Gemfile.lock
+.bundle
