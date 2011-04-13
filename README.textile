@@ -313,16 +313,22 @@ To override these, you should, in an initializer, call
 h2. Dependencies
 
 We use
-* <a href="http://github.com/provideal/whiny_hash">WhinyHash</a> to handle the options in a fail-early-manner,
-* <a href="http://github.com/provideal/id_stuffer">IdStuffer</a> to compress the _remembered_ ids.
+* <a href="http://github.com/provideal/whiny_hash">whiny_hash</a> to handle the options in a fail-early-manner,
+* <a href="http://github.com/provideal/id_stuffer">id_stuffer</a> to compress the _remembered_ ids.
 * And... eh... It's an extension for Rails 3, so it might be handy to have a version of Rails 3 and Ruby 1.8.? or 1.9.?.
 
 h2. Bugs
 
-There are, definitely, roughly 999 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know using the <a href="https://github.com/provideal/tabulatr/issues">GitHub Bugtracker</a>.
+h3. Request-URI Too Large error
+
+Since everyhing about the state of the table is intentionally encoded in the URI, the URI may become somewhat bloated if fancy selecting is used. By using <a href="http://github.com/provideal/id_stuffer">id_stuffer</a>, we drastically reduced the size of the URI (that's the reason we actually made it), but it may still become rather large. This is a problem particulary when using WEBrick, because WEBricks URIs must not exceed 2048 characters. And this limit is hard-coded IIRC. So – If you run into this limitation – please consider using another server. (Thanks to <a href="https://github.com/stepheneb">stepheneb</a> for calling my attention back to this.)
+
+h3. Other, new bugs
+
+There are roughly another 997 bugs in Tabulatr, although we do some testing (see <tt>spec/</tt>). So if you hunt them, please let me know using the <a href="https://github.com/provideal/tabulatr/issues">GitHub Bugtracker</a>.
 
 h2. Contributing to tabulatr
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the <a href="https://github.com/provideal/tabulatr/issues">issue tracker</a> to make sure someone already hasn't requested it and/or contributed it
 * Fork the project

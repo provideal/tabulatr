@@ -1,5 +1,7 @@
 h1. Changelog for tabulatr
 
+* Added note on "Request-URI Too Large error" to README
+
 h2. 0.1.3
 
 * nicer table headers. Thanks to <a href="https://github.com/troya2" target="_blank">troya2 (Troy Anderson)</a>!
