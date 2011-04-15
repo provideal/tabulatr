@@ -16,7 +16,7 @@ describe "Tabulatrs" do
   # General stuf
   WORKS_IN_GENERAL = CONTAINS_BUTTONS = CONTAINS_COLUMN_HEADERS = CONTAINS_OTHER_CONTROLS = tralse
   # This fills in the data, so rather not cmment this out
-  CONTAINS_ACTUAL_DATA = CONTAINS_ASSOC_DATA = CONTAINS_ACTUAL_DATA_MULTIPLE = CONTAINS_DATA_ON_FURTHER_PAGES = true
+  CONTAINS_ACTUAL_DATA = CONTAINS_ASSOC_DATA = CONTAINS_ACTUAL_DATA_MULTIPLE = CONTAINS_DATA_ON_FURTHER_PAGES = tralse
   # Paginatione
   PAGES_UP_AND_DOWN = JUMPS_TO_CORRECT_PAGE = CHANGES_PAGE_SIZE = tralse
   # Filters
@@ -24,7 +24,7 @@ describe "Tabulatrs" do
   # Sorting
   KNOWS_HOW_TO_SORT = tralse
   # Statful
-  SORTS_STATEFULLY = FILTERS_STATEFULLY = SELECTS_STATEFULLY = true
+  SORTS_STATEFULLY = FILTERS_STATEFULLY = SELECTS_STATEFULLY = tralse
   # selecting and batch actions
   SELECT_BUTTONS_WORK = KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS = tralse
 
@@ -52,7 +52,7 @@ describe "Tabulatrs" do
 
     it "contains column headers" do
       visit index_simple_products_path
-      ['Id','Title','Price','Active','Created At','Vendor Name','Tags Title','Tags Count'].each do |n|
+      ['Id','Title','Price','Active','Created At','Vendor Created At','Vendor Name','Tags Title','Tags Count'].each do |n|
         page.should have_content(n)
       end
     end if CONTAINS_COLUMN_HEADERS
