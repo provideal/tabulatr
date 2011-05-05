@@ -41,6 +41,7 @@ class Tabulatr
   include ActionView::Helpers::FormTagHelper
   include ActionView::Helpers::FormOptionsHelper
   include ActionView::Helpers::TranslationHelper
+  include ActionView::Helpers::RecordTagHelper
 
   # Constructor of Tabulatr
   #
@@ -214,7 +215,7 @@ private
       else
         rc = nil
       end
-      make_tag(:tr, row_html.merge(:class => rc)) do
+      make_tag(:tr, row_html.merge(:class => rc, :id => dom_id(record))) do
         yield(data_row_builder(record))
       end # </tr>
     end

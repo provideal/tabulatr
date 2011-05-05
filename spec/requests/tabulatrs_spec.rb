@@ -76,6 +76,16 @@ describe "Tabulatrs" do
       page.should have_content("ven d'or")
     end if CONTAINS_ACTUAL_DATA
 
+    it "contains row identifiers" do
+      products = []
+      products << Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah')
+      products << Product.create!(:title => names[1], :active => true, :price => 10.0, :description => 'blah blah')
+      visit index_simple_products_path
+      products.each do |product|
+        page.should have_css("#product_#{product.id}")
+      end
+    end if CONTAINS_ACTUAL_DATA
+
     it "correctly contains the association data" do
       product = Product.first
       [tag1, tag2, tag3].each_with_index do |tag, i|
