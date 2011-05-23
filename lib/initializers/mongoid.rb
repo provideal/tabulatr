@@ -22,12 +22,13 @@
 #++
 
 # buggy like hell
-if Object.const_defined? "Mongoid"
+require 'mongoid'
+if true ||  Object.const_defined?("Mongoid")
   # This is hopefully wrong soonish: raise "Mongoid support is buggy like hell as of now"
   module Mongoid::Document
     module ClassMethods
       def find_for_table(params, opts={}, &block)
-        Tabulatr.find_for_mongoid_table(self, params, opts, &block)
+        Tabulatr::Finder.find_for_mongoid_table(self, params, opts, &block)
       end
     end
   end
