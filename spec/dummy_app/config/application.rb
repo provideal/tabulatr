@@ -40,3 +40,6 @@ module DummyApp
     config.filter_parameters += [:password]
   end
 end
+
+USE_MONGOID = File.exists?(File.join(Rails::root, 'tmp', 'use_mongoid.txt'))
+puts("Using #{USE_MONGOID ? 'Mongoid' : 'ActiveRecord'}")

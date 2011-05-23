@@ -1,5 +1,8 @@
 h1. Changelog for tabulatr
 
+h2. 0.1.4
+
+* Added dom_id to tables tr. Thanks to <a href="https://github.com/sterrym">sterrym (Tim Glen)</a>!
 * Added note on "Request-URI Too Large error" to README
 
 h2. 0.1.3

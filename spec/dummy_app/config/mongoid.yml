@@ -1,0 +1,17 @@
+defaults: &defaults
+  host: localhost
+  # slaves:
+  #   - host: slave1.local
+  #     port: 27018
+  #   - host: slave2.local
+  #     port: 27019
+  persist_in_safe_mode: true
+
+development:
+  <<: *defaults
+  database: tabulatr_development
+
+test:
+  <<: *defaults
+  database: tabulatr_test
+
