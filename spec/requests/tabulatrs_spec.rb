@@ -76,16 +76,6 @@ describe "Tabulatrs" do
       page.should have_content("ven d'or")
     end if CONTAINS_ACTUAL_DATA
 
-    it "contains row identifiers" do
-      products = []
-      products << Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah')
-      products << Product.create!(:title => names[1], :active => true, :price => 10.0, :description => 'blah blah')
-      visit index_simple_products_path
-      products.each do |product|
-        page.should have_css("#product_#{product.id}")
-      end
-    end if CONTAINS_ACTUAL_DATA
-
     it "correctly contains the association data" do
       product = Product.first
       [tag1, tag2, tag3].each_with_index do |tag, i|
@@ -106,6 +96,13 @@ describe "Tabulatrs" do
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], i+2, i+2, 0, i+2))
       end
     end if CONTAINS_ACTUAL_DATA_MULTIPLE
+
+    it "contains row identifiers" do
+      visit index_simple_products_path
+      Product.all.each do |product|
+        page.should have_css("#product_#{product.id}")
+      end
+    end if CONTAINS_ACTUAL_DATA
 
     it "contains the further data on the further pages" do
       names[10..-1].each_with_index do |n,i|
@@ -291,7 +288,7 @@ describe "Tabulatrs" do
       click_button("Reset")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
     end if FILTERS_STATEFULLY
-    
+
     it "selects statefully" do
       visit index_stateful_products_path
       n = names.length
@@ -352,7 +349,7 @@ describe "Tabulatrs" do
       click_button("Apply")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n-tot, n))
     end if SELECT_BUTTONS_WORK
-    
+
     it "knows how to select and apply batch actions" do
       visit index_select_products_path
       n = names.length
