@@ -197,30 +197,29 @@ module Tabulatr::Finder
       :order  => order, :include => includes
 
     # finally, inject methods to retrieve the current 'settings'
-    fio = Tabulatr.finder_inject_options
-    found.define_singleton_method(fio[:filters]) do filter_param end
-    found.define_singleton_method(fio[:classname]) do cname end
-    found.define_singleton_method(fio[:pagination]) do
+    found.define_singleton_method(:__filters) do filter_param end
+    found.define_singleton_method(:__classinfo) do [cname, id, id_type] end
+    found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes],
         :total => klaz.count(:conditions => precondition) }
     end
-    found.define_singleton_method(fio[:sorting]) do
+    found.define_singleton_method(:__sorting) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
     visible_ids = (found.map { |r| r.send(id) })
     checked_ids = compress_id_list(selected_ids - visible_ids)
     visible_ids = compress_id_list(visible_ids)
-    found.define_singleton_method(fio[:checked]) do
+    found.define_singleton_method(:__checked) do
       { :selected => selected_ids,
         :checked_ids => checked_ids,
         :visible => visible_ids
       }
     end
-    found.define_singleton_method(fio[:stateful]) do
+    found.define_singleton_method(:__stateful) do
       (opts[:stateful] ? true : false)
     end
-    found.define_singleton_method(fio[:store_data]) do
+    found.define_singleton_method(:__store_data) do
       opts[:store_data] || {}
     end
 

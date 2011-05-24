@@ -156,19 +156,6 @@ class Tabulatr
     :sortable => true                   # if set, sorting-stuff is added to the header cell
   })
 
-  # these settings are considered constant for the whole application, can not be overridden
-  # on a per-table basis.
-  # That's necessary to allow find_for_table to work properly
-  FINDER_INJECT_OPTIONS = WhinyHash.new({
-    :pagination => :__pagination,
-    :filters => :__filters,
-    :classname => :__classname,
-    :sorting => :__sorting,
-    :checked => :__checked,
-    :store_data => :__store_data,
-    :stateful => :__stateful
-  })
-
   # defaults for the find_for_table
   FINDER_OPTIONS = WhinyHash.new({
     :default_order => false,
@@ -182,11 +169,6 @@ class Tabulatr
   SQL_OPTIONS = WhinyHash.new({
     :like => nil
   })
-
-  def self.finder_inject_options(n=nil)
-    FINDER_INJECT_OPTIONS.merge!(n) if n
-    FINDER_INJECT_OPTIONS
-  end
 
   def self.finder_options(n=nil)
     FINDER_OPTIONS.merge!(n) if n

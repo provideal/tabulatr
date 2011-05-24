@@ -57,13 +57,13 @@ class Tabulatr
     @val = []
     @record = nil
     @row_mode = false
-    @classname = @records.send(FINDER_INJECT_OPTIONS[:classname])
-    @pagination = @records.send(FINDER_INJECT_OPTIONS[:pagination])
-    @filters = @records.send(FINDER_INJECT_OPTIONS[:filters])
-    @sorting = @records.send(FINDER_INJECT_OPTIONS[:sorting])
-    @checked = @records.send(FINDER_INJECT_OPTIONS[:checked])
-    @store_data = @records.send(FINDER_INJECT_OPTIONS[:store_data])
-    @stateful = @records.send(FINDER_INJECT_OPTIONS[:stateful])
+    @classname, @id, @id_type = @records.__classinfo
+    @pagination = @records.__pagination
+    @filters = @records.__filters
+    @sorting = @records.__sorting
+    @checked = @records.__checked
+    @store_data = @records.__store_data
+    @stateful = @records.__stateful
     @should_translate = @table_options[:translate]
   end
 

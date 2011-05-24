@@ -27,7 +27,7 @@ class Tabulatr
   def render_paginator
     # get the current pagination state
     pagination_name = "#{@classname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"
-    pparams = @records.send(FINDER_INJECT_OPTIONS[:pagination])
+    pparams = @records.__pagination
     page = pparams[:page].to_i
     pages = pparams[:pages].to_i
     pagesize = pparams[:pagesize].to_i
