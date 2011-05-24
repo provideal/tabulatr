@@ -75,9 +75,9 @@ module Tabulatr::Finder
     end
     
     # then, we obey any "select" buttons if pushed
-    precondition = opts[:precondition] || "(1=1)"
+    precon = rel.dup.where(opts[:precondition] || "(1=1)")
     if checked_param[:select_all]
-      all = klaz.find :all, :conditions => precondition, :select => :id
+      all = precon.all # TODO: get only the primary key .select(id)
       selected_ids = all.map { |r| r.send(id) }
     elsif checked_param[:select_none]
       selected_ids = []
@@ -127,32 +127,31 @@ module Tabulatr::Finder
 
     # firstly, get the conditions from the filters
     includes = []
-    precondition = opts[:precondition] || "(1=1)"
-    conditions = filter_param.inject([precondition.dup, []]) do |c, t|
+    rel = rel.where(opts[:precondition]) if opts[:precondition]
+    conditions = filter_param.each do |t|
       n, v = t
       # FIXME n = name_escaping(n)
       if (n != form_options[:associations_filter])
-        condition_from("#{klaz.table_name}.#{n}",v,c)
+        rel = condition_from(rel, typ, "#{klaz.table_name}.#{n}", v)
       else
-        v.inject(c) do |c,t|
+        v.each do |t|
           n,v = t
           assoc, att = n.split(".").map(&:to_sym)
           r = klaz.reflect_on_association(assoc)
           includes << assoc
           tname = r.table_name
           nn = "#{tname}.#{att}"
-          condition_from(nn,v,c)
+          rel = condition_from(rel, typ, nn, v)
         end
       end
     end
-    conditions = [conditions.first] + conditions.last
 
     # more button handling
     if checked_param[:select_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
+      all = rel.dup.all
       selected_ids = (selected_ids + all.map { |r| r.send(id) }).sort.uniq
     elsif checked_param[:unselect_filtered]
-      all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
+      all = rel.dup.all
       selected_ids = (selected_ids - all.map { |r| r.send(id) }).sort.uniq
     end
 
@@ -187,14 +186,13 @@ module Tabulatr::Finder
     page = paginate_options[:page].to_i
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
-    c = klaz.count :conditions => conditions, :include => includes
+    c = rel.count
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
 
     # Now, actually find the stuff
-    found = klaz.find :all, :conditions => conditions,
-      :limit => pagesize.to_i, :offset => ((page-1)*pagesize).to_i,
-      :order  => order, :include => includes
+    found = rel.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i)
+      .order(order).to_a #, :include => includes
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(:__filters) do filter_param end
@@ -202,7 +200,7 @@ module Tabulatr::Finder
     found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes],
-        :total => klaz.count(:conditions => precondition) }
+        :total => precon.count }
     end
     found.define_singleton_method(:__sorting) do
       order ? { :by => order_by, :direction => order_direction } : nil

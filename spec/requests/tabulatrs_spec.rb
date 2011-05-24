@@ -298,7 +298,6 @@ describe "Tabulatrs" do
         end
         click_button("Apply")
         tot = 3*(i+1)
-        save_and_open_page
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
         click_button('product_pagination_page_right')
       end

@@ -106,10 +106,10 @@ class Tabulatr
     raise "Whatever that's for!" if block_given?
     iname = "#{@classname}#{@table_form_options[:checked_postfix]}[current_page][]"
     make_tag(:td, opts[:td_html]) do
-      checked = @checked[:selected].member?(@record.id) ? :checked : nil
+      checked = @checked[:selected].member?(@record.send(@id)) ? :checked : nil
       make_tag(:input, :type => 'checkbox', :name => iname,
-        :id => "#{@classname}#{@table_form_options[:checked_postfix]}_#{@record.id.to_s}",
-        :value => @record.id, :checked => checked)
+        :id => "#{@classname}#{@table_form_options[:checked_postfix]}_#{@record.send(@id).to_s}",
+        :value => @record.send(@id), :checked => checked)
     end
   end
 
