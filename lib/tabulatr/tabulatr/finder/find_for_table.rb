@@ -29,13 +29,14 @@ module Tabulatr::Finder
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
   #
   def self.find_for_table(klaz, params, o={}, &block)
+    rel = klaz
     typ = if klaz.is_a?(Mongoid::Document) then :mongoid 
-      elsif klaz.is_a?(ActiveRecord::Base) then :activerecord
+      elsif klaz.respond_to?(:descends_from_active_record?) and klaz.descends_from_active_record? then :ar
       else raise("Don't know how to deal with class '#{klaz}'")
     end
       
     # on the first run, get the correct like db-operator, can still be ovrrridden
-    unless typ != :activerecord || Tabulatr::SQL_OPTIONS[:like]
+    unless typ != :ar || Tabulatr::SQL_OPTIONS[:like]
       case ActiveRecord::Base.connection.class.to_s
         when "ActiveRecord::ConnectionAdapters::MysqlAdapter" then Tabulatr.sql_options(:like => 'LIKE')
         when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter" then Tabulatr.sql_options(:like => 'ILIKE')
@@ -61,11 +62,11 @@ module Tabulatr::Finder
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
       merge(params[check_name] || {})
-    if typ ....
-      ,....
-      continue here!
+    id = (typ==:ar ? klaz.primary_key.to_sym : :id)
+    id_type = (typ==:ar ? klaz.columns_hash[id.to_s].type : :string)
     checked_ids = uncompress_id_list(checked_param[:checked_ids])
     new_ids = checked_param[:current_page]
+    new_ids.map!(&:to_i) if id_type==:integer
     selected_ids = checked_ids + new_ids
     batch_param = params[batch_name]
     if batch_param.present? and block_given?
@@ -77,7 +78,7 @@ module Tabulatr::Finder
     precondition = opts[:precondition] || "(1=1)"
     if checked_param[:select_all]
       all = klaz.find :all, :conditions => precondition, :select => :id
-      selected_ids = all.map { |r| r.id.to_s }
+      selected_ids = all.map { |r| r.send(id) }
     elsif checked_param[:select_none]
       selected_ids = []
     elsif checked_param[:select_visible]
@@ -149,10 +150,10 @@ module Tabulatr::Finder
     # more button handling
     if checked_param[:select_filtered]
       all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
-      selected_ids = (selected_ids + all.map { |r| r.id.to_s }).sort.uniq
+      selected_ids = (selected_ids + all.map { |r| r.send(id) }).sort.uniq
     elsif checked_param[:unselect_filtered]
       all = klaz.find :all, :conditions => conditions, :select => :id, :include => includes
-      selected_ids = (selected_ids - all.map { |r| r.id.to_s }).sort.uniq
+      selected_ids = (selected_ids - all.map { |r| r.send(id) }).sort.uniq
     end
 
     # secondly, find the order_by stuff
@@ -207,7 +208,7 @@ module Tabulatr::Finder
     found.define_singleton_method(fio[:sorting]) do
       order ? { :by => order_by, :direction => order_direction } : nil
     end
-    visible_ids = (found.map { |r| r.id.to_s })
+    visible_ids = (found.map { |r| r.send(id) })
     checked_ids = compress_id_list(selected_ids - visible_ids)
     visible_ids = compress_id_list(visible_ids)
     found.define_singleton_method(fio[:checked]) do

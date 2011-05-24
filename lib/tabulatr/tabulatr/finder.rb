@@ -26,16 +26,32 @@ module Tabulatr::Finder
 
   require File.join(File.dirname(__FILE__), 'finder', 'find_for_active_record_table')
   require File.join(File.dirname(__FILE__), 'finder', 'find_for_mongoid_table')
+  require File.join(File.dirname(__FILE__), 'finder', 'find_for_table')
 
   # compress the list of ids as good as I could imagine ;)
   # uses fancy base twisting
   def self.compress_id_list(list)
-    IdStuffer.stuff(list)
+    if list.length == 0
+      ""
+    elsif list.first.is_a?(Fixnum)
+      IdStuffer.stuff(list)
+    else
+      "GzB" + Base64.encode64s(
+        Zlib::Deflate.deflate(
+          list.join(Tabulatr.table_form_options[:checked_separator])))
+    end
   end
 
   # inverse of compress_id_list
   def self.uncompress_id_list(str)
-    IdStuffer.unstuff(str).map &:to_s
+    if !str.present?
+      []
+    elsif str.starts_with?("GzB")
+      Zlib::Inflate.inflate(Base64.decode64(str[3..-1]))
+        .split(Tabulatr.table_form_options[:checked_separator])
+    else
+      IdStuffer.unstuff(str)
+    end
   end
 
   class Invoker
