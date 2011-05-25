@@ -256,7 +256,7 @@ describe "Tabulatrs" do
   describe "Sorting" do
     it "knows how to sort" do
       visit index_sort_products_path
-      save_and_open_page
+      # save_and_open_page
       (1..10).each do |i|
         page.should have_content names[-i]
       end
