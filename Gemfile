@@ -14,5 +14,5 @@ group :development, :test do
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'
-  gem 'mongoid'
+  #gem 'mongoid'
 end

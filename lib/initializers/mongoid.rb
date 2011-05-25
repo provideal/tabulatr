@@ -21,9 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-# buggy like hell
-require 'mongoid'
-if true ||  Object.const_defined?("Mongoid")
+#require 'mongoid'
+if Object.const_defined?("Mongoid")
   # This is hopefully wrong soonish: raise "Mongoid support is buggy like hell as of now"
   module Mongoid::Document
     module ClassMethods
