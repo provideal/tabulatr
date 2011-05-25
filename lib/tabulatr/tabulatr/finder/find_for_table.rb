@@ -30,7 +30,7 @@ module Tabulatr::Finder
   #
   def self.find_for_table(klaz, params, o={}, &block)
     rel = klaz
-    typ = if klaz.is_a?(Mongoid::Document) then :mongoid 
+    typ = if klaz.include?(Mongoid::Document) then :mongoid 
       elsif klaz.respond_to?(:descends_from_active_record?) and klaz.descends_from_active_record? then :ar
       else raise("Don't know how to deal with class '#{klaz}'")
     end
@@ -75,10 +75,10 @@ module Tabulatr::Finder
     end
     
     # then, we obey any "select" buttons if pushed
-    precon = rel.dup.where(opts[:precondition] || "(1=1)")
+    precon = rel
+    precon = precon.where(opts[:precondition]) if opts[:precondition].present?
     if checked_param[:select_all]
-      all = precon.all # TODO: get only the primary key .select(id)
-      selected_ids = all.map { |r| r.send(id) }
+      selected_ids = (typ==:ar ? precon.select(:id) : precon.only(:id) ).to_a.map { |r| r.send(id) }
     elsif checked_param[:select_none]
       selected_ids = []
     elsif checked_param[:select_visible]
@@ -130,17 +130,19 @@ module Tabulatr::Finder
     rel = rel.where(opts[:precondition]) if opts[:precondition]
     conditions = filter_param.each do |t|
       n, v = t
+      next unless v.present?
       # FIXME n = name_escaping(n)
       if (n != form_options[:associations_filter])
-        rel = condition_from(rel, typ, "#{klaz.table_name}.#{n}", v)
+        table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize)
+        rel = condition_from(rel, typ, "#{table_name}.#{n}", v)
       else
         v.each do |t|
           n,v = t
           assoc, att = n.split(".").map(&:to_sym)
           r = klaz.reflect_on_association(assoc)
           includes << assoc
-          tname = r.table_name
-          nn = "#{tname}.#{att}"
+          table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize)
+          nn = "#{table_name}.#{att}"
           rel = condition_from(rel, typ, nn, v)
         end
       end
@@ -148,11 +150,11 @@ module Tabulatr::Finder
 
     # more button handling
     if checked_param[:select_filtered]
-      all = rel.dup.all
-      selected_ids = (selected_ids + all.map { |r| r.send(id) }).sort.uniq
+      all = rel.all
+      selected_ids = (selected_ids + all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
     elsif checked_param[:unselect_filtered]
       all = rel.dup.all
-      selected_ids = (selected_ids - all.map { |r| r.send(id) }).sort.uniq
+      selected_ids = (selected_ids - all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
     end
 
     # secondly, find the order_by stuff
@@ -166,7 +168,6 @@ module Tabulatr::Finder
       end
       raise "SECURITY violation, sort field name is '#{n}'" unless /^[\w]+$/.match order_direction
       raise "SECURITY violation, sort field name is '#{n}'" unless /^[\d\w]+$/.match order_by
-      order = "#{order_by} #{order_direction}"
     else
       if opts[:default_order]
         l = opts[:default_order].split(" ")
@@ -174,11 +175,11 @@ module Tabulatr::Finder
           if l.length == 0 or l.length > 2
         order_by = l[0]
         order_direction = l[1] || 'asc'
-        order = "#{order_by} #{order_direction}"
       else
         order = order_by = order_direction = nil
       end
     end
+    order = (typ==:ar ? "#{order_by} #{order_direction}" : [order_by.to_s, order_direction.to_s]) if order_by
 
     # thirdly, get the pagination data
     paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
@@ -189,7 +190,10 @@ module Tabulatr::Finder
     c = rel.count
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
-
+    total = klaz
+    total = total.where(opts[:precondition]) if opts[:precondition]
+    total = total.count
+    
     # Now, actually find the stuff
     found = rel.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i)
       .order(order).to_a #, :include => includes
@@ -200,7 +204,7 @@ module Tabulatr::Finder
     found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes],
-        :total => precon.count }
+        :total => total }
     end
     found.define_singleton_method(:__sorting) do
       order ? { :by => order_by, :direction => order_direction } : nil

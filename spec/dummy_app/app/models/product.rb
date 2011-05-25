@@ -4,11 +4,14 @@ if USE_MONGOID
 
     has_and_belongs_to_many :tags
     belongs_to :vendor
+
     field :name,        :type => String
     field :url,         :type => String
     field :active,      :type => Boolean
     field :description, :type => String
     field :price,       :type => Fixnum
+    field :created_at,  :type => Time
+    field :updated_at,  :type => Time
   end
 else
   class Product < ActiveRecord::Base

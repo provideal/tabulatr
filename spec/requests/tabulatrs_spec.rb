@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe "Tabulatrs" do
+  
+  Mongoid.master.collections.select do |collection|
+    collection.name !~ /system/
+  end.each(&:drop)
 
   names = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
   "adipisicing", "elit", "sed", "eiusmod", "tempor", "incididunt", "labore",
@@ -33,6 +37,7 @@ describe "Tabulatrs" do
   tag1 = Tag.create!(:title => 'foo')
   tag2 = Tag.create!(:title => 'bar')
   tag3 = Tag.create!(:title => 'fubar')
+  ids = []
 
   describe "General data" do
     it "works in general" do
@@ -69,9 +74,11 @@ describe "Tabulatrs" do
       page.should have_content("true")
       page.should have_content("10.0")
       page.should have_content("--0--")
+      #save_and_open_page
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, 1, 0, 1))
       product.vendor = vendor1
       product.save!
+      ids << product.id
       visit index_simple_products_path
       page.should have_content("ven d'or")
     end if CONTAINS_ACTUAL_DATA
@@ -90,6 +97,7 @@ describe "Tabulatrs" do
       9.times do |i|
         product = Product.create!(:title => names[i+1], :active => i.even?, :price => 11.0+i,
           :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
+        ids << product.id
         visit index_simple_products_path
         page.should have_content(names[i])
         page.should have_content((11.0+i).to_s)
@@ -108,6 +116,7 @@ describe "Tabulatrs" do
       names[10..-1].each_with_index do |n,i|
         product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i,
           :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
+        ids << product.id
         visit index_simple_products_path
         page.should_not have_content(n)
         page.should_not have_content((30.0+i).to_s)
@@ -214,6 +223,7 @@ describe "Tabulatrs" do
         click_button("Apply")
         page.should have_content(str)
         tot = (names.select do |s| s.match Regexp.new(str) end).length
+        #save_and_open_page
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, names.length, 0, tot))
       end
     end if FILTERS_WITH_LIKE
@@ -246,6 +256,7 @@ describe "Tabulatrs" do
   describe "Sorting" do
     it "knows how to sort" do
       visit index_sort_products_path
+      save_and_open_page
       (1..10).each do |i|
         page.should have_content names[-i]
       end
@@ -280,10 +291,12 @@ describe "Tabulatrs" do
     end if SORTS_STATEFULLY
 
     it "filters statefully" do
+      Capybara.reset_sessions!
       visit index_stateful_products_path
       fill_in("product_filter[title]", :with => "lorem")
       click_button("Apply")
       visit index_stateful_products_path
+      #save_and_open_page
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, names.length, 0, 1))
       click_button("Reset")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
@@ -291,10 +304,12 @@ describe "Tabulatrs" do
 
     it "selects statefully" do
       visit index_stateful_products_path
+      fill_in("product_filter[title]", :with => "")
+      click_button("Apply")
       n = names.length
       (n/10).times do |i|
         (1..3).each do |j|
-          check("product_checked_#{10*i+j}")
+          check("product_checked_#{ids[10*i+j]}")
         end
         click_button("Apply")
         tot = 3*(i+1)
@@ -355,7 +370,7 @@ describe "Tabulatrs" do
       n = names.length
       (n/10).times do |i|
         (1..3).each do |j|
-          check("product_checked_#{10*i+j}")
+          check("product_checked_#{ids[10*i+j]}")
         end
         click_button("Apply")
         tot = 3*(i+1)

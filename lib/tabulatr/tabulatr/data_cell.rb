@@ -80,8 +80,9 @@ class Tabulatr
     assoc = @record.class.reflect_on_association(relation)
     make_tag(:td, opts[:td_html]) do
       format = opts[:format]
-      concat(if assoc.collection? and opts[:map]
-        @record.send(relation.to_sym).map do |r|
+      ass = @record.send(relation.to_sym)
+      concat(if (ass.is_a?(Array) or assoc.collection?) and opts[:map]
+        ass.map do |r|
           val = h(r.send(opts[:method] || name))
           if format.is_a?(Proc) then format.call(val)
           elsif format.is_a?(String) then h(format % val)
@@ -90,8 +91,8 @@ class Tabulatr
           end
         end.join(opts[:join_symbol])
       else
-        ass = @record.send(relation.to_sym)
         return '' unless ass
+        #puts ass.to_s
         val = h(ass.send(opts[:method] || name))
         val = if format.is_a?(Proc) then format.call(val)
         elsif format.is_a?(String) then h(format % val)

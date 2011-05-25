@@ -24,8 +24,6 @@
 # These are extensions for use from ActionController instances
 module Tabulatr::Finder
 
-  require File.join(File.dirname(__FILE__), 'finder', 'find_for_active_record_table')
-  require File.join(File.dirname(__FILE__), 'finder', 'find_for_mongoid_table')
   require File.join(File.dirname(__FILE__), 'finder', 'find_for_table')
 
   # compress the list of ids as good as I could imagine ;)
@@ -77,24 +75,35 @@ private
     raise "SECURITY violation, field name is '#{n}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match n
     @like ||= Tabulatr.sql_options[:like]
     if v.is_a?(String)
-      rel = rel.where(n => v) if v.present?
+      if v.present?
+        if typ == :ar
+          rel = rel.where(n => v) 
+        elsif typ == :mongoid 
+          nn = n.split('.').last
+          rel = rel.where(nn => v) 
+        else raise "Unknown db type '#{typ}'"
+        end
+      end
     elsif v.is_a?(Hash)
       if v[:like]
         if v[:like].present?
           if typ==:ar
             rel = rel.where("#{n} #{@like} ?", "%#{v[:like]}%")
           elsif typ==:mongoid
-            rel = rel.where(n => Regex.new(v))
+            nn = n.split('.').last
+            rel = rel.where(nn => Regexp.new(v[:like]))
           else
             raise "Unknown db type '#{typ}'"
           end
         end
       else
-        if true or typ==:ar
+        if typ==:ar
           rel = rel.where("#{n} >= ?", "#{v[:from]}") if v[:from].present?
           rel = rel.where("#{n} <= ?", "#{v[:to]}") if v[:to].present?
         elsif typ==:mongoid
-          rel = rel.where(n => Regex.new(v))
+          nn = n.split('.').last.to_sym
+          rel = rel.where(nn.gte => v[:from]) if v[:from].present?
+          rel = rel.where(nn.lte => v[:to]) if v[:to].present?
         else
           raise "Unknown db type '#{typ}'"
         end

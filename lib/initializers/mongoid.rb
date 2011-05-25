@@ -28,7 +28,7 @@ if true ||  Object.const_defined?("Mongoid")
   module Mongoid::Document
     module ClassMethods
       def find_for_table(params, opts={}, &block)
-        Tabulatr::Finder.find_for_mongoid_table(self, params, opts, &block)
+        Tabulatr::Finder.find_for_table(self, params, opts, &block)
       end
     end
   end
