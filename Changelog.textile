@@ -1,7 +1,9 @@
 h1. Changelog for tabulatr
 
-h2. 0.1.4
+h2. 0.2.0
 
+* Mongoid can also be used in place of ActiveRecord
+* fixed handling of the primary_key column and name
 * Added dom_id to tables tr. Thanks to <a href="https://github.com/sterrym">sterrym (Tim Glen)</a>!
 * Added note on "Request-URI Too Large error" to README
 
