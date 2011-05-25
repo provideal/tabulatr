@@ -4,7 +4,7 @@ h1. Tabulatr - Index Tables made easy, finally
 
 h2. Mission Objective
 
-Tabulatr aims at making the ever-recurring task of creating listings of ActiveRecord models simple and uniform.
+Tabulatr aims at making the ever-recurring task of creating listings of ActiveRecord or Mongoid models simple and uniform.
 
 We found ourselves reinventing the wheel in every project we made, by using
 

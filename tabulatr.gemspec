@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.name        = "tabulatr"
   s.version     = Tabulatr::VERSION.dup
   s.platform    = Gem::Platform::RUBY
-  s.summary     = "A tight DSL to build tables of ActiveRecord models with sorting, pagination, finding/filtering, selecting and batch actions."
+  s.summary     = "A tight DSL to build tables of ActiveRecord or Mongoid models with sorting, pagination, finding/filtering, selecting and batch actions."
   s.email       = "info@provideal.net"
   s.homepage    = "http://github.com/provideal/tabulatr"
-  s.description = "A tight DSL to build tables of ActiveRecord models with sorting, pagination, finding/filtering, selecting and batch actions. " +
+  s.description = "A tight DSL to build tables of ActiveRecord or Mongoid models with sorting, pagination, finding/filtering, selecting and batch actions. " +
                   "Tries to do for tables what formtastic and simple_form did for forms."
   s.authors     = ['Peter Horn', 'René Sprotte']
 

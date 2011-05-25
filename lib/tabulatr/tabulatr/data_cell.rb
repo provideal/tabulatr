@@ -81,6 +81,9 @@ class Tabulatr
     make_tag(:td, opts[:td_html]) do
       format = opts[:format]
       ass = @record.send(relation.to_sym)
+      if opts[:sort_by]
+        # TODO: SORTING specified by opts[:sort_by]
+      end
       concat(if (ass.is_a?(Array) or assoc.collection?) and opts[:map]
         ass.map do |r|
           val = h(r.send(opts[:method] || name))
