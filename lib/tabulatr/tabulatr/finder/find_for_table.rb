@@ -133,7 +133,7 @@ module Tabulatr::Finder
       next unless v.present?
       # FIXME n = name_escaping(n)
       if (n != form_options[:associations_filter])
-        table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize)
+        table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize.gsub('/','_'))
         rel = condition_from(rel, typ, "#{table_name}.#{n}", v)
       else
         v.each do |t|
