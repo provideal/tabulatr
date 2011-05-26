@@ -21,10 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-#require 'mongoid'
-if Object.const_defined?("Mongoid")
-  # This is hopefully wrong soonish: raise "Mongoid support is buggy like hell as of now"
-  module Mongoid::Document
+# This is somewhat ugly, for it creates the Mongoid module, no matter 
+# whether it's about to be used. So you will find an empty Mongoid
+# module in every Tabulatr project.
+module Mongoid
+  module Document
     module ClassMethods
       def find_for_table(params, opts={}, &block)
         Tabulatr::Finder.find_for_table(self, params, opts, &block)
