@@ -1,6 +1,10 @@
 h1. Tabulatr - Index Tables made easy, finally
 
-(there is a <a href="https://github.com/provideal/tabulatr-demo">demo app repository</a>)
+<b>Notes:</b>
+<ul>
+  <li>there is a <a href="https://github.com/provideal/tabulatr-demo">demo app repository</a>)</li>
+  <li>note the spelling, it's tabulatr, not tabulat<b>o</b>r.
+</ul>
 
 h2. Mission Objective
 
