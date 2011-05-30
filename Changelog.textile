@@ -1,5 +1,9 @@
 h1. Changelog for tabulatr
 
+h2. 0.2.1
+
+* Fixed a ruby 1.8 syntax issue. Thanks to <a href="https://github.com/TBAA">TBAA</a> for reporting!
+
 h2. 0.2.0
 
 * Mongoid can also be used in place of ActiveRecord
