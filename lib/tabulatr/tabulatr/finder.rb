@@ -45,8 +45,8 @@ module Tabulatr::Finder
     if !str.present?
       []
     elsif str.starts_with?("GzB")
-      Zlib::Inflate.inflate(Base64.decode64(str[3..-1]))
-        .split(Tabulatr.table_form_options[:checked_separator])
+      Zlib::Inflate.inflate(Base64.decode64(str[3..-1])).split(
+      Tabulatr.table_form_options[:checked_separator])
     else
       IdStuffer.unstuff(str)
     end
