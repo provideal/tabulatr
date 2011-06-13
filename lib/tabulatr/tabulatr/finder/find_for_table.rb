@@ -195,7 +195,7 @@ module Tabulatr::Finder
     total = klaz
     total = total.where(opts[:precondition]) if opts[:precondition]
     # here too
-    c = total.count unless total.class == Fixnum
+    total = total.count unless total.class == Fixnum
     total = total.count
     
     # Now, actually find the stuff
