@@ -188,10 +188,14 @@ module Tabulatr::Finder
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
     c = rel.count
+    # Group statments return a hash
+    c = c.count unless c.class == Fixnum
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
     total = klaz
     total = total.where(opts[:precondition]) if opts[:precondition]
+    # here too
+    total = total.count unless total.class == Fixnum
     total = total.count
     
     # Now, actually find the stuff
