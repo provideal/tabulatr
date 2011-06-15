@@ -195,8 +195,8 @@ module Tabulatr::Finder
     total = klaz
     total = total.where(opts[:precondition]) if opts[:precondition]
     # here too
-    total = total.count unless total.class == Fixnum
     total = total.count
+    total = total.count unless total.class == Fixnum
     
     # Now, actually find the stuff
     found = rel.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i
