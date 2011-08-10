@@ -141,7 +141,7 @@ module Tabulatr::Finder
           assoc, att = n.split(".").map(&:to_sym)
           r = klaz.reflect_on_association(assoc)
           includes << assoc
-          table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize)
+          table_name = (typ==:ar ? r.table_name : r.to_s.tableize)
           nn = "#{table_name}.#{att}"
           rel = condition_from(rel, typ, nn, v)
         end
