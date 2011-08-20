@@ -75,7 +75,7 @@ class Tabulatr
     :select_controls => [:select_all, :select_none, :select_visible, :unselect_visible,
                       :select_filtered, :unselect_filtered],
 
-    :image_path_prefix => '/images/tabulatr/',
+    :image_path_prefix => (Rails::version.to_f >= 3.1 ? 'tabulatr/' : '/images/tabulatr/'),
     :pager_left_button => 'pager_arrow_left.gif',
     :pager_left_button_inactive => 'pager_arrow_left_off.gif',
     :pager_right_button => 'pager_arrow_right.gif',
