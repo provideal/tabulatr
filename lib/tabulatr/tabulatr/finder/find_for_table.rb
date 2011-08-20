@@ -205,7 +205,7 @@ module Tabulatr::Finder
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(:__filters) do filter_param end
-    found.define_singleton_method(:__classinfo) do [klaz,cname, id, id_type] end
+    found.define_singleton_method(:__classinfo) do [klaz, cname, id, id_type] end
     found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes],

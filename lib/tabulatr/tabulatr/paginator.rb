@@ -35,11 +35,11 @@ class Tabulatr
     # render the 'wrapping' div
     make_tag(:div, :class => @table_options[:paginator_div_class]) do
       # << Page Left
-      make_image_button(@table_options[:pager_left_button],
+      make_image_button(@table_options[page > 1 ? :pager_left_button : :pager_left_button_inactive],
         :class => @table_options[:page_left_class],
         :id => "#{pagination_name}_page_left",
         :name => "#{pagination_name}[page_left]",
-        :disabled => (page <= 1))
+        :inactive => (page <= 1))
       # current page number
       concat(make_tag(:input,
         :type => :hidden,
@@ -52,11 +52,11 @@ class Tabulatr
         :value => page))
       concat("/#{pages}")
       # >> Page Right
-      make_image_button(@table_options[:pager_right_button],
+      make_image_button(@table_options[page < pages ? :pager_right_button : :pager_right_button_inactive],
         :class => @table_options[:page_right_class],
         :id => "#{pagination_name}_page_right",
         :name => "#{pagination_name}[page_right]",
-        :disabled => (page >= pages))
+        :inactive => (page >= pages))
       if pagesizes.length > 1
         make_tag(:select, :name => "#{pagination_name}[pagesize]", :class => @table_options[:pagesize_select_class]) do
           pagesizes.each do |n|

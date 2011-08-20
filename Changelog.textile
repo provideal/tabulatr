@@ -1,5 +1,10 @@
 h1. Changelog for tabulatr
 
+h2. 0.3.0
+
+* Converted into a Rails 3.1 engine and moved css and images to use the new asset pipeline. Works with 3.0.x -- 'opefully. Thanks to all that reported the problem.
+* Header cells are now auto translated. Thanks to <a href="https://github.com/niedhui">niedhui</a>!
+
 h2. 0.2.1
 
 * Fixed a ruby 1.8 syntax issue. Thanks to <a href="https://github.com/TBAA">TBAA</a> for reporting!
