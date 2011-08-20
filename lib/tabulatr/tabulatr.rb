@@ -42,6 +42,8 @@ class Tabulatr
   include ActionView::Helpers::FormOptionsHelper
   include ActionView::Helpers::TranslationHelper
   include ActionView::Helpers::RecordTagHelper
+#  include ActionView::Helpers::AssetTagHelper
+#  include Rails::Application::Configurable
 
   # Constructor of Tabulatr
   #
@@ -236,6 +238,21 @@ private
       concat("<#{name}#{attrs} />")
     end
     nil
+  end
+  
+  def make_image_button(iname, options)
+    inactive = options.delete(:inactive)
+    psrc = @view.image_path File.join(@table_options[:image_path_prefix], iname)
+    if !inactive
+      make_tag(:input, 
+        options.merge(
+          :type => 'image',
+          :src => psrc
+        )
+      )
+    else
+      make_tag(:img, :src => psrc)
+    end
   end
 end
 

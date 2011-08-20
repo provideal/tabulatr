@@ -36,8 +36,7 @@ class Tabulatr
     make_tag(:div, :class => @table_options[:paginator_div_class]) do
       # << Page Left
       if page > 1
-        make_tag(:input, :type => 'image', 
-          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_left_button]),
+        make_image_button(@table_options[:pager_left_button],
           :class => @table_options[:page_left_class],
           :id => "#{pagination_name}_page_left",
           :name => "#{pagination_name}[page_left]")
@@ -59,8 +58,7 @@ class Tabulatr
       concat("/#{pages}")
       # >> Page Right
       if page < pages
-        make_tag(:input, :type => 'image', 
-          :src => File.join(@table_options[:image_path_prefix], @table_options[:pager_right_button]),
+        make_image_button(@table_options[:pager_right_button],
           :class => @table_options[:page_right_class],
           :id => "#{pagination_name}_page_right",
           :name => "#{pagination_name}[page_right]")

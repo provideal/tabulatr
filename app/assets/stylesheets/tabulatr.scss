@@ -1,0 +1,102 @@
+body {
+  font: 9pt Verdana;
+}
+
+table {
+  border-collapse: collapse;
+  width:100%;
+}
+
+td, th {
+  border: 1px solid gray;
+  padding:5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: ellipsis;
+}
+
+th {
+  background-color: #ccc;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.2);
+}
+
+div.table-controls {
+  font: 9pt Verdana;
+  width: 100%-10px;
+  border: 1px solid gray;
+  padding:5px;
+  margin-bottom: 10px;
+  background-color: #eee;
+  border-radius: 5px;
+  position: relative;
+}
+
+div.table-controls input {
+  font: 9pt Verdana;
+}
+
+div.table-controls input[type=submit] {
+  position: relative;
+  background-repeat: repeat-x;
+  color: #efefef;
+  font-weight: bold;
+  display: inline-block;
+  text-decoration: none;
+  border-width: 1px;
+  border-style: solid;
+  padding: 0 12px;
+  margin: 0;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.2);
+  -moz-box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+  -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+  box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-position: 0 -80px;
+  font-size: 11px;
+  height: 24px;
+  line-height: 24px;
+}
+
+div.table-controls input[type=submit] {
+  background-image: asset-url("buttons_lite_background.png", "image");
+  background-color: #263849;
+  border-color: #16222c;
+  color: #efefef;
+}
+
+div.table-controls input[type=submit]:hover {
+  background-color: #16222c;
+  color: #efefef;
+  text-decoration: none;
+}
+
+div.paginator {
+  display: inline-block;
+  margin-right: 40px;
+}
+
+div.batch-actions {
+  display: inline-block;
+}
+
+div.check-controls {
+  margin-top: 10px;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+div.check-controls input[type=submit] {
+  font-size: 9px;
+  height: 20px;
+  line-height: 20px;
+  margin:3px;
+}
+
+div.info-text {
+  margin-top:10px;
+  font-size: 9pt;
+}
