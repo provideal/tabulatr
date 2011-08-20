@@ -59,7 +59,7 @@ class Tabulatr
     @val = []
     @record = nil
     @row_mode = false
-    @classname, @id, @id_type = @records.__classinfo
+    @klaz,@classname, @id, @id_type = @records.__classinfo
     @pagination = @records.__pagination
     @filters = @records.__filters
     @sorting = @records.__sorting
