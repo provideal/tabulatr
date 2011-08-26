@@ -21,14 +21,16 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-# This is somewhat ugly, for it creates the Mongoid module, no matter 
-# whether it's about to be used. So you will find an empty Mongoid
-# module in every Tabulatr project.
-module Mongoid
-  module Document
-    module ClassMethods
-      def find_for_table(params, opts={}, &block)
-        Tabulatr::Finder.find_for_table(self, params, opts, &block)
+# ensure mongoid is loaded *before* monkeypatching
+begin; require 'mongoid'; rescue LoadError; end
+
+if defined? ::Mongoid
+  module Mongoid
+    module Document
+      module ClassMethods
+        def find_for_table(params, opts={}, &block)
+          Tabulatr::Finder.find_for_table(self, params, opts, &block)
+        end
       end
     end
   end
