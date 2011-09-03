@@ -39,6 +39,7 @@ module Tabulatr::Finder
     unless typ != :ar || Tabulatr::SQL_OPTIONS[:like]
       case ActiveRecord::Base.connection.class.to_s
         when "ActiveRecord::ConnectionAdapters::MysqlAdapter" then Tabulatr.sql_options(:like => 'LIKE')
+        when "ActiveRecord::ConnectionAdapters::Mysql2Adapter" then Tabulatr.sql_options(:like => 'LIKE')
         when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter" then Tabulatr.sql_options(:like => 'ILIKE')
         when "ActiveRecord::ConnectionAdapters::SQLiteAdapter" then Tabulatr.sql_options(:like => 'LIKE')
         when "ActiveRecord::ConnectionAdapters::SQLite3Adapter" then Tabulatr.sql_options(:like => 'LIKE')
