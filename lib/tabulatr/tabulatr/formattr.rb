@@ -23,7 +23,7 @@
 
 module Tabulatr::Formattr
   ALLOWED_METHODS = [:euro, :dollar, :percent, :lamp]
-  include ActionView::TagHelpers
+  #include ActionView::TagHelpers
   
   def self.format(nam, val)
     nam = nam.to_sym
