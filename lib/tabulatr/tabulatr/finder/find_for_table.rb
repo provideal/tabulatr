@@ -30,7 +30,7 @@ module Tabulatr::Finder
   #
   def self.find_for_table(klaz, params, o={}, &block)
     rel = klaz
-    typ = if klaz.respond_to?(:descends_from_active_record?) and klaz.descends_from_active_record? then :ar
+    typ = if klaz.respond_to?(:descends_from_active_record?) then :ar
       elsif klaz.include?(Mongoid::Document) then :mongoid 
       else raise("Don't know how to deal with class '#{klaz}'")
     end

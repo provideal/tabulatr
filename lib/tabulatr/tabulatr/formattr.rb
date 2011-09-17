@@ -23,6 +23,7 @@
 
 module Tabulatr::Formattr
   ALLOWED_METHODS = [:euro, :dollar, :percent, :lamp]
+  include ActionView::TagHelpers
   
   def self.format(nam, val)
     nam = nam.to_sym
@@ -45,7 +46,10 @@ module Tabulatr::Formattr
     ("%.2f&thinspace;%%" % 100.0*x).gsub(".", ",")
   end
   
-  def self.lamp(x)
-    
+  def self.lamp(x, mapping)
+    s = mapping[x].to_s
+    return "?" unless %w{g y r n}.member?(s)
+    image_tag("tabulatr/#{s}state.gif").html_safe
   end
+  
 end
