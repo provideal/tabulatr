@@ -59,14 +59,30 @@ class Tabulatr
     @val = []
     @record = nil
     @row_mode = false
-    @klaz, @classname, @id, @id_type = @records.__classinfo
-    @pagination = @records.__pagination
-    @filters = @records.__filters
-    @sorting = @records.__sorting
-    @checked = @records.__checked
-    @store_data = @records.__store_data
-    @stateful = @records.__stateful
-    @should_translate = @table_options[:translate]
+    if @records.respond_to? :__classinfo
+      @klaz, @classname, @id, @id_type = @records.__classinfo
+      @pagination = @records.__pagination
+      @filters = @records.__filters
+      @sorting = @records.__sorting
+      @checked = @records.__checked
+      @store_data = @records.__store_data
+      @stateful = @records.__stateful
+      @should_translate = @table_options[:translate]
+    else
+      @classname, @id, @id_type = nil
+      @klaz = @records.first.class
+      @pagination = { :page => 1, :pagesize => records.count, :count => records.count, :pages => 1,
+        :pagesizes => records.count, :total => records.count }
+      @table_options.merge!(
+        :paginate => false,                 # true to show paginator
+        :sortable => false,                 # true to allow sorting (can be specified for every sortable column)
+        :selectable => false,               # true to render "select all", "select none" and the like
+        :info_text => nil,
+        :filter => false
+      )
+      @store_data = []
+      @should_translate = @table_options[:translate]
+    end
   end
 
   # the actual table definition method. It takes an Array of records, a hash of
@@ -239,12 +255,12 @@ private
     end
     nil
   end
-  
+
   def make_image_button(iname, options)
     inactive = options.delete(:inactive)
     psrc = @view.image_path File.join(@table_options[:image_path_prefix], iname)
     if !inactive
-      make_tag(:input, 
+      make_tag(:input,
         options.merge(
           :type => 'image',
           :src => psrc
