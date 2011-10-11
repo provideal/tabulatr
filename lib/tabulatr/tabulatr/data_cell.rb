@@ -84,7 +84,8 @@ class Tabulatr
       if opts[:sort_by]
         # TODO: SORTING specified by opts[:sort_by]
       end
-      concat(if (ass.is_a?(Array) or assoc.collection?) and opts[:map]
+      # for ar assoc.collection? worked ,for mongoid,assoc.many? worked
+      concat(if (ass.is_a?(Array) or ([:collection?, :many?].any? {|meth| assoc.respond_to?(meth) && assoc.send(meth)})) and opts[:map]
         ass.map do |r|
           val = h(r.send(opts[:method] || name))
           if format.is_a?(Proc) then format.call(val)
