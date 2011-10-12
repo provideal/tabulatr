@@ -48,14 +48,7 @@ class Tabulatr
         if block_given?
           concat(yield(@record))
         else
-          val = @record.send(opts[:method] || name)
-          format = opts[:format]
-          concat(
-            if format.is_a?(Proc) then format.call(val)
-            elsif format.is_a?(String) then h(format % val)
-            elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
-            else h(val.to_s)
-          end)
+          concat(format_val(opts[:format],@record.send(opts[:method] || name)))
         end # block_given?
       end # </a>
     end # </td>
@@ -73,36 +66,23 @@ class Tabulatr
   #                    no specific formatting is desired.
   def data_association(relation, name, opts={}, &block)
     raise "Not in data mode!" if @row_mode != :data
-    opts = normalize_column_options opts
-    if block_given?
-      return yield(@record)
-    end
-    assoc = @record.class.reflect_on_association(relation)
     make_tag(:td, opts[:td_html]) do
-      format = opts[:format]
+      opts = normalize_column_options opts
+
+      assoc = @record.class.reflect_on_association(relation)
       ass = @record.send(relation.to_sym)
+      
       if opts[:sort_by]
         # TODO: SORTING specified by opts[:sort_by]
       end
       # for ar assoc.collection? worked ,for mongoid,assoc.many? worked
-      concat(if (ass.is_a?(Array) or ([:collection?, :many?].any? {|meth| assoc.respond_to?(meth) && assoc.send(meth)})) and opts[:map]
-        ass.map do |r|
-          val = h(r.send(opts[:method] || name))
-          if format.is_a?(Proc) then format.call(val)
-          elsif format.is_a?(String) then h(format % val)
-          elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
-          else h(val.to_s)
-          end
-        end.join(opts[:join_symbol])
+      return '' unless ass
+      concat( if block_given?
+        yield(@record)
+      elsif (ass.is_a?(Array) or ([:collection?, :many?].any? {|meth| assoc.respond_to?(meth) && assoc.send(meth)})) and opts[:map]
+        ass.map {|r| format_val(opts[:format],h(r.send(opts[:method] || name))) }.join(opts[:join_symbol])
       else
-        return '' unless ass
-        #puts ass.to_s
-        val = h(ass.send(opts[:method] || name))
-        val = if format.is_a?(Proc) then format.call(val)
-        elsif format.is_a?(String) then h(format % val)
-        elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
-        else h(val.to_s)
-        end
+        format_val(opts[:format],h(ass.send(opts[:method] || name)))
       end)
     end # </td>
   end
@@ -129,5 +109,14 @@ class Tabulatr
       end # block_given?
     end # </td>
   end
-
+  
+  private
+  
+  def format_val(format,val)
+    if format.is_a?(Proc) then format.call(val)
+    elsif format.is_a?(String) then h(format % val)
+    elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
+    else h(val.to_s)
+    end
+  end
 end
