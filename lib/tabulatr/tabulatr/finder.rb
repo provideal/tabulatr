@@ -72,7 +72,6 @@ private
   end
 
   def self.condition_from(rel, typ, n, v)
-    raise "SECURITY violation, field name is '#{n}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match n
     @like ||= Tabulatr.sql_options[:like]
     if v.is_a?(String)
       if v.present?

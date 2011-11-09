@@ -31,10 +31,10 @@ module Tabulatr::Finder
   def self.find_for_table(klaz, params, o={}, &block)
     rel = klaz
     typ = if klaz.respond_to?(:descends_from_active_record?) then :ar
-      elsif klaz.include?(Mongoid::Document) then :mongoid 
+      elsif klaz.include?(Mongoid::Document) then :mongoid
       else raise("Don't know how to deal with class '#{klaz}'")
     end
-      
+
     # on the first run, get the correct like db-operator, can still be ovrrridden
     unless typ != :ar || Tabulatr::SQL_OPTIONS[:like]
       case ActiveRecord::Base.connection.class.to_s
@@ -43,16 +43,16 @@ module Tabulatr::Finder
         when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter" then Tabulatr.sql_options(:like => 'ILIKE')
         when "ActiveRecord::ConnectionAdapters::SQLiteAdapter" then Tabulatr.sql_options(:like => 'LIKE')
         when "ActiveRecord::ConnectionAdapters::SQLite3Adapter" then Tabulatr.sql_options(:like => 'LIKE')
-        else 
+        else
           warn("Tabulatr Warning: Don't know which LIKE operator to use for the ConnectionAdapter '#{ActiveRecord::Base.connection.class}'.\n" +
             "Please specify by `Tabulatr.sql_options(:like => '<likeoperator>')`")
           Tabulatr.sql_options(:like => 'LIKE')
       end
     end
 
-    form_options = Tabulatr.table_form_options
-    opts = Tabulatr.finder_options.merge(o)
-    params ||= {} # just to be sure
+    form_options    = Tabulatr.table_form_options
+    opts            = Tabulatr.finder_options.merge(o)
+    params          ||= {} # just to be sure
     cname           = class_to_param(klaz)
     pagination_name = "#{cname}#{form_options[:pagination_postfix]}"
     sort_name       = "#{cname}#{form_options[:sort_postfix]}"
@@ -74,7 +74,7 @@ module Tabulatr::Finder
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       yield(Invoker.new(batch_param, selected_ids))
     end
-    
+
     # then, we obey any "select" buttons if pushed
     precon = rel
     precon = precon.where(opts[:precondition]) if opts[:precondition].present?
@@ -89,8 +89,8 @@ module Tabulatr::Finder
       visible_ids = uncompress_id_list(checked_param[:visible])
       selected_ids = (selected_ids - visible_ids).sort.uniq
     end
-    
-    # at this point, we've retrieved the filter settings, the sorting setting, the pagination settings and 
+
+    # at this point, we've retrieved the filter settings, the sorting setting, the pagination settings and
     # the selected_ids.
     filter_param = (params[filter_name] || {})
     sortparam = params[sort_name]
@@ -103,7 +103,7 @@ module Tabulatr::Finder
       raise "give the session as the :stateful parameter in find_for_table, not a '#{session.class}'" \
         unless session.is_a?(Rails::version.to_f >= 3.1 ? ActiveSupport::HashWithIndifferentAccess : ActionDispatch::Session::AbstractStore::SessionHash)
       session[sname] ||= {}
-      
+
       if params["#{cname}#{form_options[:reset_state_postfix]}"]
         # clicked reset button, reset all and clear session
         selected_ids = []
@@ -130,21 +130,33 @@ module Tabulatr::Finder
     # firstly, get the conditions from the filters
     includes = []
     rel = rel.where(opts[:precondition]) if opts[:precondition]
+    maps = opts[:name_mapping] || {}
     conditions = filter_param.each do |t|
       n, v = t
       next unless v.present?
       # FIXME n = name_escaping(n)
       if (n != form_options[:associations_filter])
         table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize.gsub('/','_'))
-        rel = condition_from(rel, typ, "#{table_name}.#{n}", v)
+        nn = if maps[n] then maps[n] else
+          t = "#{table_name}.#{n}"
+          raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
+          t
+        end
+        # puts ">>>>>1>> #{n} -> #{nn}"
+        rel = condition_from(rel, typ, nn, v)
       else
         v.each do |t|
           n,v = t
           assoc, att = n.split(".").map(&:to_sym)
           r = klaz.reflect_on_association(assoc)
           includes << assoc
-          table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize)
-          nn = "#{table_name}.#{att}"
+          table_name = (typ==:ar ? r.table_name : assoc.to_s.tableize)
+          nn = if maps[n] then maps[n] else
+            t = "#{table_name}.#{att}"
+            raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
+            t
+          end
+          # puts ">>>>>2>> #{n} -> #{nn}"
           rel = condition_from(rel, typ, nn, v)
         end
       end
@@ -189,6 +201,7 @@ module Tabulatr::Finder
     page = paginate_options[:page].to_i
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
+    rel = rel.includes(includes) if typ == :ar
     c = rel.count
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
@@ -199,10 +212,10 @@ module Tabulatr::Finder
     # here too
     total = total.count
     total = total.count unless total.class == Fixnum
-    
+
     # Now, actually find the stuff
     found = rel.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i
-     ).order(order).to_a #, :include => includes
+     ).order(order).to_a
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(:__filters) do filter_param end

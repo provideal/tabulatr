@@ -163,7 +163,8 @@ class Tabulatr
     :default_pagesize => false,
     :precondition => false,
     :store_data => false,
-    :stateful => false
+    :stateful => false,
+    :name_mapping => {}
   })
 
   # Stupid hack

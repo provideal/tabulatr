@@ -1,5 +1,17 @@
 h1. Changelog for tabulatr
 
+* Added a :name_mapping option to find_for_table to allow filtering by compund expressions, example:
+
+  <pre>
+  @customers = Customer.find_for_table(params,
+    name_mapping: {
+      name: '("addresses"."firstname" || \' \' || "addresses"."lastname")',
+      address: '("addresses"."street" || \' \' || "addresses"."zip_code" || \' \' || "addresses"."city")'
+    },
+    default_order: 'updated_at desc'
+  )
+  </pre>
+
 h2. 0.3.0
 
 * Converted into a Rails 3.1 engine and moved css and images to use the new asset pipeline. Works with 3.0.x -- 'opefully. Thanks to all that reported the problem.
