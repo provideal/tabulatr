@@ -132,7 +132,7 @@ class Tabulatr
     when :hidden_submit then "IMPLEMENT ME!"
     when :submit then   make_tag(:input, :type => 'submit',
         :class => @table_options[:submit_class],
-        :value => t(@table_options[:submit_label]))
+        :value => t(@table_options[:submit_label])) if @records.respond_to?(:__classinfo)
     when :reset then   make_tag(:input, :type => 'submit',
         :class => @table_options[:reset_class],
         :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
