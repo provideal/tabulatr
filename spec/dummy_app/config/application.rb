@@ -41,5 +41,5 @@ module DummyApp
   end
 end
 
-USE_MONGOID = File.exists?(File.join(Rails::root, 'tmp', 'use_mongoid.txt'))
+USE_MONGOID = ENV['USE_MONGOID']
 puts("Using #{USE_MONGOID ? 'Mongoid' : 'ActiveRecord'}")
