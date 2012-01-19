@@ -23,37 +23,22 @@
 
 # These are extensions for use from ActionController instances
 # In a seperate class call only for clearity
+
 module Tabulatr::Finder
 
   # -------------------------------------------------------------------
   # Called if SomeActveRecordSubclass::find_for_table(params) is called
   #
-  def self.find_for_table(klaz, params, o={}, &block)
-    rel = klaz
-    typ = if klaz.respond_to?(:descends_from_active_record?) then :ar
-      elsif klaz.include?(Mongoid::Document) then :mongoid
+  def self.find_for_table(klaz, params, options={}, &block)
+    adapter = if klaz.respond_to?(:descends_from_active_record?) then ::Tabulatr::Adapter::ActiveRecordAdapter.new(klaz)
+      elsif klaz.include?(Mongoid::Document) then ::Tabulatr::Adapter::MongoidAdapter.new(klaz)
       else raise("Don't know how to deal with class '#{klaz}'")
     end
 
-    # on the first run, get the correct like db-operator, can still be ovrrridden
-    unless typ != :ar || Tabulatr::SQL_OPTIONS[:like]
-      case ActiveRecord::Base.connection.class.to_s
-        when "ActiveRecord::ConnectionAdapters::MysqlAdapter" then Tabulatr.sql_options(:like => 'LIKE')
-        when "ActiveRecord::ConnectionAdapters::Mysql2Adapter" then Tabulatr.sql_options(:like => 'LIKE')
-        when "ActiveRecord::ConnectionAdapters::PostgreSQLAdapter" then Tabulatr.sql_options(:like => 'ILIKE')
-        when "ActiveRecord::ConnectionAdapters::SQLiteAdapter" then Tabulatr.sql_options(:like => 'LIKE')
-        when "ActiveRecord::ConnectionAdapters::SQLite3Adapter" then Tabulatr.sql_options(:like => 'LIKE')
-        else
-          warn("Tabulatr Warning: Don't know which LIKE operator to use for the ConnectionAdapter '#{ActiveRecord::Base.connection.class}'.\n" +
-            "Please specify by `Tabulatr.sql_options(:like => '<likeoperator>')`")
-          Tabulatr.sql_options(:like => 'LIKE')
-      end
-    end
-
     form_options    = Tabulatr.table_form_options
-    opts            = Tabulatr.finder_options.merge(o)
+    opts            = Tabulatr.finder_options.merge(options)
     params          ||= {} # just to be sure
-    cname           = class_to_param(klaz)
+    cname           = adapter.class_to_param
     pagination_name = "#{cname}#{form_options[:pagination_postfix]}"
     sort_name       = "#{cname}#{form_options[:sort_postfix]}"
     filter_name     = "#{cname}#{form_options[:filter_postfix]}"
@@ -63,11 +48,15 @@ module Tabulatr::Finder
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
       merge(params[check_name] || {})
-    id = (typ==:ar ? klaz.primary_key.to_sym : :id)
-    id_type = (typ==:ar ? klaz.columns_hash[id.to_s].type : :string)
+
+    id = adapter.primary_key
+    id_type = adapter.key_type
+
+    # checkboxes
     checked_ids = uncompress_id_list(checked_param[:checked_ids])
     new_ids = checked_param[:current_page]
     new_ids.map!(&:to_i) if id_type==:integer
+
     selected_ids = checked_ids + new_ids
     batch_param = params[batch_name]
     if batch_param.present? and block_given?
@@ -76,10 +65,8 @@ module Tabulatr::Finder
     end
 
     # then, we obey any "select" buttons if pushed
-    precon = rel
-    precon = precon.where(opts[:precondition]) if opts[:precondition].present?
     if checked_param[:select_all]
-      selected_ids = (typ==:ar ? precon.select(:id) : precon.only(:id) ).to_a.map { |r| r.send(id) }
+      selected_ids = adapter.selected_ids(opts).to_a.map { |r| r.send(id) }
     elsif checked_param[:select_none]
       selected_ids = []
     elsif checked_param[:select_visible]
@@ -129,71 +116,49 @@ module Tabulatr::Finder
 
     # firstly, get the conditions from the filters
     includes = []
-    rel = rel.where(opts[:precondition]) if opts[:precondition]
     maps = opts[:name_mapping] || {}
     conditions = filter_param.each do |t|
       n, v = t
       next unless v.present?
       # FIXME n = name_escaping(n)
       if (n != form_options[:associations_filter])
-        table_name = (typ==:ar ? klaz.table_name : klaz.to_s.tableize.gsub('/','_'))
+        table_name = adapter.table_name
         nn = if maps[n] then maps[n] else
           t = "#{table_name}.#{n}"
           raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
           t
         end
         # puts ">>>>>1>> #{n} -> #{nn}"
-        rel = condition_from(rel, typ, nn, v)
+        adapter.add_conditions_from(nn, v)
       else
         v.each do |t|
           n,v = t
           assoc, att = n.split(".").map(&:to_sym)
-          r = klaz.reflect_on_association(assoc)
           includes << assoc
-          table_name = (typ==:ar ? r.table_name : assoc.to_s.tableize)
+          table_name = adapter.table_name_for_association(assoc)
           nn = if maps[n] then maps[n] else
             t = "#{table_name}.#{att}"
             raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
             t
           end
           # puts ">>>>>2>> #{n} -> #{nn}"
-          rel = condition_from(rel, typ, nn, v)
+          adapter.add_conditions_from(nn, v)
         end
       end
     end
 
+
     # more button handling
     if checked_param[:select_filtered]
-      all = rel.all
+      all = adapter.all
       selected_ids = (selected_ids + all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
     elsif checked_param[:unselect_filtered]
-      all = rel.dup.all
+      all = adapter.dup.all
       selected_ids = (selected_ids - all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
     end
 
     # secondly, find the order_by stuff
-    if sortparam
-      if sortparam[:_resort]
-        order_by = sortparam[:_resort].first.first
-        order_direction = sortparam[:_resort].first.last.first.first
-      else
-        order_by = sortparam.first.first
-        order_direction = sortparam.first.last.first.first
-      end
-      raise "SECURITY violation, sort field name is '#{n}'" unless /^[\w]+$/.match order_direction
-      raise "SECURITY violation, sort field name is '#{n}'" unless /^[\d\w]+$/.match order_by
-    else
-      if opts[:default_order]
-        l = opts[:default_order].split(" ")
-        raise(":default_order parameter should be of the form 'id asc' or 'name desc'.") \
-          if l.length == 0 or l.length > 2
-        order_by = l[0]
-        order_direction = l[1] || 'asc'
-      else
-        order = order_by = order_direction = nil
-      end
-    end
-    order = (typ==:ar ? "#{order_by} #{order_direction}" : [order_by.to_s, order_direction.to_s]) if order_by
+    order = adapter.order_for_query(sortparam, opts[:default_order])
 
     # thirdly, get the pagination data
     paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
@@ -201,33 +166,33 @@ module Tabulatr::Finder
     page = paginate_options[:page].to_i
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
-    rel = rel.includes(includes) if typ == :ar
-    c = rel.count
+
+    c = adapter.includes(includes).count
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
+
     pages = (c/pagesize).ceil
     page = [1, [page, pages].min].max
-    total = klaz
-    total = total.where(opts[:precondition]) if opts[:precondition]
+
+    total = adapter.preconditions_scope(opts).count
     # here too
-    total = total.count
     total = total.count unless total.class == Fixnum
 
+
     # Now, actually find the stuff
-    found = rel.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i
-     ).order(order).to_a
+    found = adapter.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a
 
     # finally, inject methods to retrieve the current 'settings'
-    found.define_singleton_method(:__filters) do filter_param end
-    found.define_singleton_method(:__classinfo) do [klaz, cname, id, id_type] end
+    found.define_singleton_method(:__filters) { filter_param }
+    found.define_singleton_method(:__classinfo) { [klaz, cname, id, id_type] }
     found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => paginate_options[:pagesizes],
         :total => total }
     end
-    found.define_singleton_method(:__sorting) do
-      order ? { :by => order_by, :direction => order_direction } : nil
-    end
+
+    found.define_singleton_method(:__sorting) { adapter.order(sortparam, opts[:default_order])  }
+
     visible_ids = (found.map { |r| r.send(id) })
     checked_ids = compress_id_list(selected_ids - visible_ids)
     visible_ids = compress_id_list(visible_ids)
@@ -237,12 +202,9 @@ module Tabulatr::Finder
         :visible => visible_ids
       }
     end
-    found.define_singleton_method(:__stateful) do
-      (opts[:stateful] ? true : false)
-    end
-    found.define_singleton_method(:__store_data) do
-      opts[:store_data] || {}
-    end
+
+    found.define_singleton_method(:__stateful) { (opts[:stateful] ? true : false) }
+    found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
 
     found
   end
