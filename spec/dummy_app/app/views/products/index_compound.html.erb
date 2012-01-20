@@ -1,0 +1,5 @@
+<%= table_for @products do |t|
+  t.column [:title, :description], :filter => :like, :compound_with => :or
+  t.association :vendor, [:name, :description], :filter => :like, :compound_with => :and
+end %>
+

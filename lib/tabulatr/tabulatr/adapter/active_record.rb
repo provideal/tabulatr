@@ -31,6 +31,22 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
     context.values.join(" ") if context
   end
 
+  def add_compound_query(columns, opts, prefix=nil)
+    like ||= Tabulatr.sql_options[:like]
+
+    prefix = "#{prefix}." if prefix
+
+    if String === opts
+      query = columns.map {|field| "\"#{prefix}#{field}\" = #{opts}"}.join(" OR ")
+    elsif Hash === opts
+      query = columns.map {|field| "\"#{prefix}#{field}\" #{like} \"%#{opts[:like]}%\""}.join(" OR ") unless opts[:like].blank?
+    else
+      raise "Wrong filter type: #{opts.class}"
+    end
+
+    @relation = @relation.where(query) if query
+  end
+
   def includes(inc)
     @relation.includes(inc)
   end

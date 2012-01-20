@@ -21,6 +21,10 @@ class ProductsController < ApplicationController
     @products = Product.find_for_table(params)
   end
 
+  def index_compound
+    @products = Product.find_for_table(params)
+  end
+
   def index_stateful
     @products = Product.find_for_table(params, :stateful => session)
   end

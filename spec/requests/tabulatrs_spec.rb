@@ -15,12 +15,19 @@ describe "Tabulatrs" do
   "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui",
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
-  vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
-  vendor2 = Vendor.create!(:name => 'producer', :active => true)
-  tag1 = Tag.create!(:title => 'foo')
-  tag2 = Tag.create!(:title => 'bar')
-  tag3 = Tag.create!(:title => 'fubar')
-  ids = []
+  let(:vendor1) { Vendor.create!(:name => "ven d'or", :active => true, :description => "blarg") }
+  let(:vendor2) { Vendor.create!(:name => 'producer', :active => true, :description => "vendor extrordinare") }
+  let(:tag1)    { Tag.create!(:title => 'foo') }
+  let(:tag2)    { Tag.create!(:title => 'bar') }
+  let(:tag3)    { Tag.create!(:title => 'fubar') }
+  let(:ids)     { [] }
+  let(:total)   { names.count }
+  let(:page_size)   { 10 }
+
+  before do
+    names.each_with_index {|n,i| Product.create!(:title => n, :active => true, :price => 10.0+i,
+        :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2) }
+  end
 
   describe "General data" do
     it "works in general" do
@@ -47,22 +54,17 @@ describe "Tabulatrs" do
 
     it "contains other elements" do
       visit index_simple_products_path
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, 0, 0, 0))
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, total, 0, total))
     end
 
     it "contains the actual data" do
-      product = Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah')
       visit index_simple_products_path
       page.should have_content(names[0])
       page.should have_content("true")
       page.should have_content("10.0")
       page.should have_content("--0--")
       #save_and_open_page
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, 1, 0, 1))
-      product.vendor = vendor1
-      product.save!
-      ids << product.id
-      visit index_simple_products_path
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, total, 0, total))
       page.should have_content("ven d'or")
     end
 
@@ -76,34 +78,10 @@ describe "Tabulatrs" do
       end
     end
 
-    it "contains the actual data multiple" do
-      9.times do |i|
-        product = Product.create!(:title => names[i+1], :active => i.even?, :price => 11.0+i,
-          :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
-        ids << product.id
-        visit index_simple_products_path
-        page.should have_content(names[i])
-        page.should have_content((11.0+i).to_s)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], i+2, i+2, 0, i+2))
-      end
-    end
-
     it "contains row identifiers" do
       visit index_simple_products_path
-      Product.all.each do |product|
+      Product.limit(10).each do |product|
         page.should have_css("#product_#{product.id}")
-      end
-    end
-
-    it "contains the further data on the further pages" do
-      names[10..-1].each_with_index do |n,i|
-        product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i,
-          :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
-        ids << product.id
-        visit index_simple_products_path
-        page.should_not have_content(n)
-        page.should_not have_content((30.0+i).to_s)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, i+11, 0, i+11))
       end
     end
   end
@@ -111,7 +89,7 @@ describe "Tabulatrs" do
   describe "Pagination" do
     it "pages up and down" do
       visit index_simple_products_path
-      k = 1+names.length/10
+      k = (names.length/10)+1
       k.times do |i|
         ((i*10)...[names.length, ((i+1)*10)].min).each do |j|
           page.should have_content(names[j])
@@ -234,6 +212,33 @@ describe "Tabulatrs" do
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
       end
     end
+
+    it "filters compound keys" do
+
+      visit index_compound_products_path
+      n = names.length
+      (0..n/2).each do |i|
+        fill_in("product_filter[title,description][like]", :with => "veniam")
+        click_button("Apply")
+        tot = 1
+
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
+
+        fill_in("product_filter[title,description][like]", :with => "lab")
+        click_button("Apply")
+        tot = 3
+
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
+
+        fill_in("product_filter[title,description][like]", :with => "")
+        fill_in("product_filter[__association][vendor][name,description][like]", :with => "vendor")
+        click_button("Apply")
+        tot = n
+
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
+      end
+
+    end
   end
 
   describe "Sorting" do
@@ -258,18 +263,21 @@ describe "Tabulatrs" do
   describe "statefulness" do
     it "sorts statefully" do
       visit index_stateful_products_path
+      snames = names.sort.reverse
+
       click_button("product_sort_title_desc")
-      snames = names.sort
-      (1..10).each do |i|
-        page.should have_content snames[-i]
+      10.times do |i|
+        page.should have_content snames[i]
       end
+
       visit index_stateful_products_path
-      (1..10).each do |i|
-        page.should have_content snames[-i]
+      10.times do |i|
+        page.should have_content snames[i]
       end
+
       click_button("Reset")
-      (1..10).each do |i|
-        page.should have_content names[i-1]
+      10.times do |i|
+        page.should have_content names[i]
       end
     end
 
@@ -278,32 +286,40 @@ describe "Tabulatrs" do
       visit index_stateful_products_path
       fill_in("product_filter[title]", :with => "lorem")
       click_button("Apply")
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, total, 0, 1))
+
       visit index_stateful_products_path
-      #save_and_open_page
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, names.length, 0, 1))
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, total, 0, 1))
+
       click_button("Reset")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, total, 0, total))
     end
 
     it "selects statefully" do
       visit index_stateful_products_path
       fill_in("product_filter[title]", :with => "")
       click_button("Apply")
-      n = names.length
-      (n/10).times do |i|
-        (1..3).each do |j|
-          check("product_checked_#{ids[10*i+j]}")
+      select_per_page = 4
+
+      (total/10).times do |i|
+        1.upto(select_per_page).each do |j|
+          check("product_checked_#{Product.find((page_size*i)+j).id}")
         end
+
         click_button("Apply")
-        tot = 3*(i+1)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
+        selected = select_per_page*(i+1)
+
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, total, selected, total))
         click_button('product_pagination_page_right')
       end
+
       visit index_stateful_products_path
-      tot = 3*(n/10)
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], names.length % 10, n, tot, n))
+      selected = select_per_page * page_size
+
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, total, selected, total))
       click_button("Reset")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
+
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, total, 0, total))
     end
 
   end
@@ -349,32 +365,28 @@ describe "Tabulatrs" do
     end
 
     it "knows how to select and apply batch actions" do
+      select_per_page = 4
+
       visit index_select_products_path
-      n = names.length
-      (n/10).times do |i|
-        (1..3).each do |j|
-          check("product_checked_#{ids[10*i+j]}")
+      (total/page_size).times do |i|
+        1.upto(select_per_page).each do |j|
+          check("product_checked_#{Product.find((page_size*i)+j).id}")
         end
         click_button("Apply")
-        tot = 3*(i+1)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
+
+        selected = select_per_page*(i+1)
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, total, selected, total))
+
         click_button('product_pagination_page_right')
       end
+
       select 'Delete', :from => 'product_batch'
       click_button("Apply")
-      tot = n-3*(n/10)
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, tot, 0, tot))
-      #save_and_open_page
+      select = total-(select_per_page*(total/10))
+
+      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], page_size, select, 0, select))
     end
   end
-
-  # describe "GET /products empty" do
-  #   it "works in general" do
-  #     get products_path
-  #     response.status.should be(200)
-  #   end
-  # end
-
 
 end
 

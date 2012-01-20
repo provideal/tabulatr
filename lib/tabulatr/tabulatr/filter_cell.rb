@@ -39,7 +39,10 @@ class Tabulatr
   def filter_column(name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(opts)
+
+    name = name.map(&:to_s).join(',') if (Array === name)
     value = @filters[name]
+
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
       iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
@@ -64,10 +67,14 @@ class Tabulatr
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(opts)
     filters = (@filters[@table_form_options[:associations_filter]] || {})
+
+
+    name = name.map(&:to_s).join(',') if (Array === name)
     value = filters["#{relation}.#{name}"]
+
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
-      iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
+      iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}][#{name}]"
       filter_tag(of, iname, value, opts)
     end # </td>
   end
