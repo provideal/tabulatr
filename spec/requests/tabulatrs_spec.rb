@@ -15,14 +15,14 @@ describe "Tabulatrs" do
   "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui",
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
-  let(:vendor1) { Vendor.create!(:name => "ven d'or", :active => true, :description => "blarg") }
-  let(:vendor2) { Vendor.create!(:name => 'producer', :active => true, :description => "vendor extrordinare") }
-  let(:tag1)    { Tag.create!(:title => 'foo') }
-  let(:tag2)    { Tag.create!(:title => 'bar') }
-  let(:tag3)    { Tag.create!(:title => 'fubar') }
-  let(:ids)     { [] }
-  let(:total)   { names.count }
   let(:page_size)   { 10 }
+  let!(:vendor1) { Vendor.create!(:name => "ven d'or", :active => true, :description => "blarg") }
+  let!(:vendor2) { Vendor.create!(:name => 'producer', :active => true, :description => "vendor extrordinare") }
+  let!(:tag2)    { Tag.create!(:title => 'bar') }
+  let!(:tag3)    { Tag.create!(:title => 'fubar') }
+  let!(:ids)     { [] }
+  let!(:total)   { names.count }
+  let!(:page_size)   { 10 }
 
   before do
     names.each_with_index {|n,i| Product.create!(:title => n, :active => true, :price => 10.0+i,
