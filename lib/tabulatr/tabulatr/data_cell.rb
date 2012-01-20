@@ -36,7 +36,6 @@ class Tabulatr
   def data_column(name, opts={}, &block)
     raise "Not in data mode!" if @row_mode != :data
     opts = normalize_column_options opts
-
     make_tag(:td, opts[:td_html]) do
       href = if opts[:link].class == Symbol || opts[:link].class == String
           @view.send(opts[:link], @record)
@@ -45,17 +44,11 @@ class Tabulatr
         else
           nil
         end
-
-      name = opts[:method] if opts[:method]
       make_tag((href ? :a : nil), :href => href) do
         if block_given?
           concat(yield(@record))
-        elsif Array === name
-          name.map do |field|
-            @record.send(field)
-          end.join(", ")
         else
-          val = @record.send(name)
+          val = @record.send(opts[:method] || name)
           format = opts[:format]
           concat(
             if format.is_a?(Proc) then format.call(val)
@@ -81,45 +74,36 @@ class Tabulatr
   def data_association(relation, name, opts={}, &block)
     raise "Not in data mode!" if @row_mode != :data
     opts = normalize_column_options opts
-
     if block_given?
       return yield(@record)
     end
-
     assoc = @record.class.reflect_on_association(relation)
-
     make_tag(:td, opts[:td_html]) do
+      format = opts[:format]
       ass = @record.send(relation.to_sym)
       if opts[:sort_by]
         # TODO: SORTING specified by opts[:sort_by]
       end
-
-      if (ass.is_a?(Array) or assoc.collection?) and opts[:map]
-        results = ass.map {|r| association_format_helper(r, opts, name) }.join(opts[:join_symbol])
+      concat(if (ass.is_a?(Array) or assoc.collection?) and opts[:map]
+        ass.map do |r|
+          val = h(r.send(opts[:method] || name))
+          if format.is_a?(Proc) then format.call(val)
+          elsif format.is_a?(String) then h(format % val)
+          elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
+          else h(val.to_s)
+          end
+        end.join(opts[:join_symbol])
       else
-        results = (ass ? association_format_helper(ass, opts, name) : '')
-      end
-
-      concat(results)
+        return '' unless ass
+        #puts ass.to_s
+        val = h(ass.send(opts[:method] || name))
+        val = if format.is_a?(Proc) then format.call(val)
+        elsif format.is_a?(String) then h(format % val)
+        elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
+        else h(val.to_s)
+        end
+      end)
     end # </td>
-  end
-
-  def association_format_helper(r, opts, name)
-    format = opts[:format]
-
-    name = opts[:method] if opts[:method].present?
-
-    if Array === name
-      val = h(name.map {|field| r.send(field)}.join(', '))
-    else
-      val = h(r.send(name))
-    end
-
-    if format.is_a?(Proc) then format.call(val)
-    elsif format.is_a?(String) then h(format % val)
-    elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
-    else h(val.to_s)
-    end
   end
 
   def data_checkbox(opts={}, &block)

@@ -64,7 +64,6 @@ module Tabulatr::Finder
       yield(Invoker.new(batch_param, selected_ids))
     end
 
-
     # then, we obey any "select" buttons if pushed
     if checked_param[:select_all]
       selected_ids = adapter.selected_ids(opts).to_a.map { |r| r.send(id) }
@@ -120,47 +119,30 @@ module Tabulatr::Finder
     maps = opts[:name_mapping] || {}
     conditions = filter_param.each do |t|
       n, v = t
-
       next unless v.present?
       # FIXME n = name_escaping(n)
-
-      # TODO: Refactor. code duplication
       if (n != form_options[:associations_filter])
-        if n.include? ","
-          adapter.add_compound_query(n.split(','), v)
-        else
-          query = maps[n]
-
-          unless query
-            query ||= "#{adapter.table_name}.#{n}"
-            raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match query
-          end
-
-          adapter.add_conditions_from(query, v)
+        table_name = adapter.table_name
+        nn = if maps[n] then maps[n] else
+          t = "#{table_name}.#{n}"
+          raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
+          t
         end
+        # puts ">>>>>1>> #{n} -> #{nn}"
+        adapter.add_conditions_from(nn, v)
       else
         v.each do |t|
-          assoc, values = t
-
-
-          includes << assoc.to_sym
-          table_name = adapter.table_name_for_association(assoc.to_sym)
-
-          field = values.keys.first
-          if field.include? ","
-            adapter.add_compound_query(field.split(','), values.values.first, table_name)
-          else
-            values.each_key do |field|
-              query = maps[field]
-
-              unless query
-                query = "#{table_name}.#{field}"
-                raise "SECURITY violation, field name is '#{query}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match query
-              end
-
-              adapter.add_conditions_from(query, values)
-            end
+          n,v = t
+          assoc, att = n.split(".").map(&:to_sym)
+          includes << assoc
+          table_name = adapter.table_name_for_association(assoc)
+          nn = if maps[n] then maps[n] else
+            t = "#{table_name}.#{att}"
+            raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
+            t
           end
+          # puts ">>>>>2>> #{n} -> #{nn}"
+          adapter.add_conditions_from(nn, v)
         end
       end
     end
