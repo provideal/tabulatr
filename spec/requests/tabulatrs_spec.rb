@@ -15,9 +15,9 @@ describe "Tabulatrs" do
   "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui",
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
-  let(:page_size)   { 10 }
   let!(:vendor1) { Vendor.create!(:name => "ven d'or", :active => true, :description => "blarg") }
   let!(:vendor2) { Vendor.create!(:name => 'producer', :active => true, :description => "vendor extrordinare") }
+  let!(:tag1)    { Tag.create!(:title => 'foo') }
   let!(:tag2)    { Tag.create!(:title => 'bar') }
   let!(:tag3)    { Tag.create!(:title => 'fubar') }
   let!(:ids)     { [] }
@@ -213,31 +213,34 @@ describe "Tabulatrs" do
       end
     end
 
-    it "filters compound keys" do
+    context "filters compound keys" do
 
-      visit index_compound_products_path
-      n = names.length
-      (0..n/2).each do |i|
-        fill_in("product_filter[title,description][like]", :with => "veniam")
+      it "on column" do
+        visit index_compound_products_path
+
+        fill_in("product_filter[title,description][like]", :with => "ullamco")
         click_button("Apply")
-        tot = 1
+        found = 1
 
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], found, total, 0, found))
 
         fill_in("product_filter[title,description][like]", :with => "lab")
         click_button("Apply")
-        tot = 3
+        found = Product.where("title LIKE \"%lab%\" OR description LIKE \"%lab%\"").count
 
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,found].min, total, 0, found))
+      end
+
+      it "on association" do
+        visit index_compound_products_path
 
         fill_in("product_filter[title,description][like]", :with => "")
         fill_in("product_filter[__association][vendor][name,description][like]", :with => "vendor")
         click_button("Apply")
-        tot = n
+        found = Product.joins(:vendor).where("vendors.name LIKE \"%vendor%\" OR vendors.description LIKE \"%vendor%\"").count
 
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
+        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,found].min, total, 0, found))
       end
-
     end
   end
 

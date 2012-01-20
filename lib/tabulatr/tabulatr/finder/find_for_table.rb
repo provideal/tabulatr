@@ -127,7 +127,7 @@ module Tabulatr::Finder
       # TODO: Refactor. code duplication
       if (n != form_options[:associations_filter])
         if n.include? ","
-          adapter.add_compound_query(n.split(','), v)
+          adapter.add_compound_query(n.split(','), v, adapter.table_name)
         else
           query = maps[n]
 
@@ -185,7 +185,7 @@ module Tabulatr::Finder
     page += 1 if paginate_options[:page_right]
     page -= 1 if paginate_options[:page_left]
 
-    c = adapter.includes(includes).count
+    c = adapter.includes!(includes).count
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
 
@@ -195,7 +195,6 @@ module Tabulatr::Finder
     total = adapter.preconditions_scope(opts).count
     # here too
     total = total.count unless total.class == Fixnum
-
 
     # Now, actually find the stuff
     found = adapter.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a

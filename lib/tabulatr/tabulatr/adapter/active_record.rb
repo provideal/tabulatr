@@ -37,9 +37,9 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
     prefix = "#{prefix}." if prefix
 
     if String === opts
-      query = columns.map {|field| "\"#{prefix}#{field}\" = #{opts}"}.join(" OR ")
+      query = columns.map {|field| "#{prefix}#{field} = #{opts}"}.join(" OR ")
     elsif Hash === opts
-      query = columns.map {|field| "\"#{prefix}#{field}\" #{like} \"%#{opts[:like]}%\""}.join(" OR ") unless opts[:like].blank?
+      query = columns.map {|field| "#{prefix}#{field} #{like} \"%#{opts[:like]}%\""}.join(" OR ") unless opts[:like].blank?
     else
       raise "Wrong filter type: #{opts.class}"
     end
@@ -52,7 +52,15 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
   end
 
   def includes!(inc)
-    @relation = includes(includes)
+    @relation = includes(inc)
+  end
+
+  def joins(inc)
+    @relation.joins(inc)
+  end
+
+  def joins!(inc)
+    @relation = joins(inc)
   end
 
   def add_conditions_from(n,v)
