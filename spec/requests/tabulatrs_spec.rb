@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Tabulatrs" do
-  
+
   Mongoid.master.collections.select do |collection|
     collection.name !~ /system/
   end.each(&:drop)
@@ -15,23 +15,6 @@ describe "Tabulatrs" do
   "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui",
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
-  # control which tests to run. Just to spped testing up
-  tralse = true
-  # General stuf
-  WORKS_IN_GENERAL = CONTAINS_BUTTONS = CONTAINS_COLUMN_HEADERS = CONTAINS_OTHER_CONTROLS = tralse
-  # This fills in the data, so rather not cmment this out
-  CONTAINS_ACTUAL_DATA = CONTAINS_ASSOC_DATA = CONTAINS_ACTUAL_DATA_MULTIPLE = CONTAINS_DATA_ON_FURTHER_PAGES = tralse
-  # Paginatione
-  PAGES_UP_AND_DOWN = JUMPS_TO_CORRECT_PAGE = CHANGES_PAGE_SIZE = tralse
-  # Filters
-  FILTERS = FILTERS_WITH_LIKE = FILTERS_WITH_RANGE = tralse
-  # Sorting
-  KNOWS_HOW_TO_SORT = tralse
-  # Statful
-  SORTS_STATEFULLY = FILTERS_STATEFULLY = SELECTS_STATEFULLY = tralse
-  # selecting and batch actions
-  SELECT_BUTTONS_WORK = KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS = tralse
-
   vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
   vendor2 = Vendor.create!(:name => 'producer', :active => true)
   tag1 = Tag.create!(:title => 'foo')
@@ -43,7 +26,7 @@ describe "Tabulatrs" do
     it "works in general" do
       get index_simple_products_path
       response.status.should be(200)
-    end if WORKS_IN_GENERAL
+    end
 
     it "contains buttons" do
       visit index_simple_products_path
@@ -53,19 +36,19 @@ describe "Tabulatrs" do
         page.should have_button(Tabulatr::TABLE_OPTIONS[n])
       end
       page.should_not have_button(Tabulatr::TABLE_OPTIONS[:reset_label])
-    end if CONTAINS_BUTTONS
+    end
 
     it "contains column headers" do
       visit index_simple_products_path
       ['Id','Title','Price','Active','Created At','Vendor Created At','Vendor Name','Tags Title','Tags Count'].each do |n|
         page.should have_content(n)
       end
-    end if CONTAINS_COLUMN_HEADERS
+    end
 
     it "contains other elements" do
       visit index_simple_products_path
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, 0, 0, 0))
-    end if CONTAINS_OTHER_CONTROLS
+    end
 
     it "contains the actual data" do
       product = Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah')
@@ -81,7 +64,7 @@ describe "Tabulatrs" do
       ids << product.id
       visit index_simple_products_path
       page.should have_content("ven d'or")
-    end if CONTAINS_ACTUAL_DATA
+    end
 
     it "correctly contains the association data" do
       product = Product.first
@@ -91,7 +74,7 @@ describe "Tabulatrs" do
         page.should have_content tag.title
         page.should have_content(sprintf("--%d--", i+1))
       end
-    end if CONTAINS_ASSOC_DATA
+    end
 
     it "contains the actual data multiple" do
       9.times do |i|
@@ -103,14 +86,14 @@ describe "Tabulatrs" do
         page.should have_content((11.0+i).to_s)
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], i+2, i+2, 0, i+2))
       end
-    end if CONTAINS_ACTUAL_DATA_MULTIPLE
+    end
 
     it "contains row identifiers" do
       visit index_simple_products_path
       Product.all.each do |product|
         page.should have_css("#product_#{product.id}")
       end
-    end if CONTAINS_ACTUAL_DATA
+    end
 
     it "contains the further data on the further pages" do
       names[10..-1].each_with_index do |n,i|
@@ -122,7 +105,7 @@ describe "Tabulatrs" do
         page.should_not have_content((30.0+i).to_s)
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, i+11, 0, i+11))
       end
-    end if CONTAINS_DATA_ON_FURTHER_PAGES
+    end
   end
 
   describe "Pagination" do
@@ -163,7 +146,7 @@ describe "Tabulatrs" do
           click_button('product_pagination_page_left')
         end
       end
-    end if PAGES_UP_AND_DOWN
+    end
 
     it "jumps to the correct page" do
       visit index_simple_products_path
@@ -187,7 +170,7 @@ describe "Tabulatrs" do
           page.should have_button('product_pagination_page_right')
         end
       end
-    end if JUMPS_TO_CORRECT_PAGE
+    end
 
     it "changes the page size" do
       visit index_simple_products_path
@@ -199,7 +182,7 @@ describe "Tabulatrs" do
         end
         page.should_not have_content(names[s])
       end
-    end if CHANGES_PAGE_SIZE
+    end
   end
 
   describe "Filters" do
@@ -214,7 +197,7 @@ describe "Tabulatrs" do
       click_button("Apply")
       page.should_not have_content("lorem")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, names.length, 0, 0))
-    end if FILTERS
+    end
 
     it "filters with like" do
       visit index_filters_products_path
@@ -226,7 +209,7 @@ describe "Tabulatrs" do
         #save_and_open_page
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, names.length, 0, tot))
       end
-    end if FILTERS_WITH_LIKE
+    end
 
     it "filters with range" do
       visit index_filters_products_path
@@ -250,7 +233,7 @@ describe "Tabulatrs" do
         tot = n-i*2
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
       end
-    end if FILTERS_WITH_RANGE
+    end
   end
 
   describe "Sorting" do
@@ -269,7 +252,7 @@ describe "Tabulatrs" do
       (1..10).each do |i|
         page.should have_content snames[i-1]
       end
-    end if KNOWS_HOW_TO_SORT
+    end
   end
 
   describe "statefulness" do
@@ -288,7 +271,7 @@ describe "Tabulatrs" do
       (1..10).each do |i|
         page.should have_content names[i-1]
       end
-    end if SORTS_STATEFULLY
+    end
 
     it "filters statefully" do
       Capybara.reset_sessions!
@@ -300,7 +283,7 @@ describe "Tabulatrs" do
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, names.length, 0, 1))
       click_button("Reset")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
-    end if FILTERS_STATEFULLY
+    end
 
     it "selects statefully" do
       visit index_stateful_products_path
@@ -321,7 +304,7 @@ describe "Tabulatrs" do
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], names.length % 10, n, tot, n))
       click_button("Reset")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
-    end if SELECTS_STATEFULLY
+    end
 
   end
 
@@ -363,7 +346,7 @@ describe "Tabulatrs" do
       fill_in("product_filter[title][like]", :with => "")
       click_button("Apply")
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n-tot, n))
-    end if SELECT_BUTTONS_WORK
+    end
 
     it "knows how to select and apply batch actions" do
       visit index_select_products_path
@@ -382,7 +365,7 @@ describe "Tabulatrs" do
       tot = n-3*(n/10)
       page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, tot, 0, tot))
       #save_and_open_page
-    end if KNOWS_HOW_TO_SELECT_AND_APPLY_BATCH_ACTIONS
+    end
   end
 
   # describe "GET /products empty" do
