@@ -1,5 +1,10 @@
 h1. Changelog for tabulatr
 
+h2. 0.4.0
+
+* Mongoid now really works.
+* A lot of cleanup in the finder code (million thanks to <a href="https://github.com/plukevdh">plukevdh</a>)
+* You can use <tt>table_for</tt> for 'normal' arrays that weren't found with <tt>find_for_table</tt>.
 * Added a :name_mapping option to find_for_table to allow filtering by compund expressions, example:
 
   <pre>
@@ -11,6 +16,9 @@ h1. Changelog for tabulatr
     default_order: 'updated_at desc'
   )
   </pre>
+
+* Added Mysql2Adapter to the ActiveRecord connection list (thanks to <a href="https://github.com/AaronLasseigne">AaronLasseigne</a>).
+* Monkeypatch mongoid only if it is present. (thanks to <a href="https://github.com/rwz">rwz</a>)
 
 h2. 0.3.0
 
