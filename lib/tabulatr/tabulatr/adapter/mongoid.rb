@@ -8,11 +8,15 @@ class Tabulatr::Adapter::MongoidAdapter < Tabulatr::Adapter
   end
 
   def selected_ids(opts)
-    preconditions.only(:id)
+    preconditions_scope(opts).only(:id)
   end
 
   def table_name
-    @relation.to_s.tableize.gsub('/','_')
+    if Object.const_defined?("Mongoid") && @relation.is_a?(Mongoid::Criteria)
+      @relation.klass
+    else
+      @relation
+    end.to_s.tableize.gsub('/','_')
   end
 
   def table_name_for_association(assoc)

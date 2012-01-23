@@ -34,7 +34,7 @@ module Tabulatr::Finder
     elsif list.first.is_a?(Fixnum)
       IdStuffer.stuff(list)
     else
-      "GzB" + Base64.encode64s(
+      "GzB" + Base64.encode64(
         Zlib::Deflate.deflate(
           list.join(Tabulatr.table_form_options[:checked_separator])))
     end
