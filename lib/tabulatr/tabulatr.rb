@@ -165,6 +165,7 @@ class Tabulatr
       make_tag(:tbody) do
         render_table_rows(&block)
       end # </tbody>
+      content_for(@table_options[:footer_content]) if @table_options[:footer_content]
     end # </table>
   end
 

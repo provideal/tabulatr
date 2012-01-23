@@ -98,7 +98,8 @@ class Tabulatr
     :action => nil,                    # target action of the wrapping form if applicable
     :batch_actions => false,           # :name => value hash of batch action stuff
     :translate => false,               # call t() for all 'labels' and stuff, possible values are true/:translate or :localize
-    :row_classes => ['odd', 'even']    # class for the trs
+    :row_classes => ['odd', 'even'],   # class for the trs
+    :footer_content => false           # if given, add a <%= content_for <footer_content> %> before the </table>
   })
 
   # these settings are considered constant for the whole application, can not be overridden
