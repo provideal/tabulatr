@@ -83,6 +83,7 @@ class Tabulatr
   end
 
   def header_action(opts={}, &block)
+    opts = normalize_column_options opts
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || ""), :escape_html)
     end

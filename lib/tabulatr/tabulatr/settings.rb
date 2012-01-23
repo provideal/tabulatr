@@ -165,7 +165,7 @@ class Tabulatr
     :precondition => false,
     :store_data => false,
     :stateful => false,
-    :name_mapping => {}
+    :name_mapping => nil
   })
 
   # Stupid hack
