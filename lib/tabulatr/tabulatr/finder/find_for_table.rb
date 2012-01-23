@@ -85,10 +85,10 @@ module Tabulatr::Finder
 
     # store the state if appropriate
     if opts[:stateful]
-      session = opts[:stateful]
+      session = options[:stateful]
       sname = "#{cname}#{form_options[:state_session_postfix]}"
       raise "give the session as the :stateful parameter in find_for_table, not a '#{session.class}'" \
-        unless session.is_a?(Rails::version.to_f >= 3.1 ? ActiveSupport::HashWithIndifferentAccess : ActionDispatch::Session::AbstractStore::SessionHash)
+        unless session.respond_to? :[]
       session[sname] ||= {}
 
       if params["#{cname}#{form_options[:reset_state_postfix]}"]

@@ -257,6 +257,7 @@ describe "Tabulatrs" do
 
   describe "statefulness" do
     it "sorts statefully" do
+      Capybara.reset_sessions!
       visit index_stateful_products_path
       click_button("product_sort_title_desc")
       snames = names.sort
@@ -286,6 +287,7 @@ describe "Tabulatrs" do
     end
 
     it "selects statefully" do
+      Capybara.reset_sessions!
       visit index_stateful_products_path
       fill_in("product_filter[title]", :with => "")
       click_button("Apply")
