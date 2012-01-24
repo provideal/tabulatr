@@ -4,7 +4,7 @@ class Tabulatr::Adapter
     @relation = klaz
   end
 
-  delegate :all, :dup, :count, :limit, to: :@relation
+  delegate :all, :dup, :count, :limit, :to => :@relation
 
   def to_sql
     @relation.to_sql if @relation.respond_to? :to_sql
