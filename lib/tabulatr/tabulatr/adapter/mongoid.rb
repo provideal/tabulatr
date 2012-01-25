@@ -25,7 +25,7 @@ class Tabulatr::Adapter::MongoidAdapter < Tabulatr::Adapter
 
   def order_for_query(sortparam, default)
     context = order(sortparam, default)
-    context.values.map(&:to_s) if context
+    [context[:by], context[:direction]].map(&:to_s) if context
   end
 
   def includes(includes)

@@ -28,7 +28,7 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
 
   def order_for_query(sortparam, default)
     context = order(sortparam, default)
-    context.values.join(" ") if context
+    "#{context[:by]} #{context[:direction]}" if context
   end
 
   def includes(inc)

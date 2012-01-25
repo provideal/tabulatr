@@ -1,5 +1,9 @@
 h1. Changelog for tabulatr
 
+h2. 0.4.2
+
+* Fixed two more bugs breaking ruby 1.8 compatibility. (Thanks to <a href="https://github.com/moabite">moabite</a> for reporting)
+
 h2. 0.4.1
 
 * Fixed a "bug" breaking ruby 1.8 compatibility. (Thanks to <a href="https://github.com/moabite">moabite</a> for reporting)
