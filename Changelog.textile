@@ -1,5 +1,43 @@
 h1. Changelog for tabulatr
 
+We now allow column presets:
+
+  <pre>  
+  Tabulatr.config do |config|
+    #...
+    config.column_presets({
+    config.column_presets({
+      :action_column => {:width => '100px'},
+      :smallint => { :width =>  '55px', :filter_width =>  '30px', :align => 'right' },
+      :id  =>      :smallint,
+      :sid =>      { :width => '200px', :filter_width => '170px', :filter => :like },
+      :title =>    { :filter => :like },
+      :count =>    { :map => false, :width => '40px', :filter => false, :align => 'right' },
+      :moo =>      { :width =>  '155px', :filter_width =>  '120px', :align => 'right' }
+    })
+  end
+  </pre>
+  
+Now, every column will check whether there is as entry corresponding to its name in this table and get the content as 'default' options.
+
+  <pre>
+    <%= table_for @regions do |t|
+      t.column :id
+      t.column :sid
+      # ...
+    end %>
+  </pre>
+
+so, the :id column has all the options defined above. The :action_column entry is used for 'action' columns. 
+
+But even better, you can use arbitrary presets:
+
+  <pre>
+  t.column :foo, :preset => :moo
+  </pre>
+  
+gets the :moo preset.
+
 h2. 0.4.2
 
 * Fixed two more bugs breaking ruby 1.8 compatibility. (Thanks to <a href="https://github.com/moabite">moabite</a> for reporting)

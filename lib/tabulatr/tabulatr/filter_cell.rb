@@ -38,7 +38,7 @@ class Tabulatr
   #                               you can use ActionView#collection_select and the like
   def filter_column(name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
-    opts = normalize_column_options(opts)
+    opts = normalize_column_options(name, opts)
     value = @filters[name]
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
@@ -62,7 +62,7 @@ class Tabulatr
   #                                                                with all instances
   def filter_association(relation, name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
-    opts = normalize_column_options(opts)
+    opts = normalize_column_options(name, opts)
     filters = (@filters[@table_form_options[:associations_filter]] || {})
     value = filters["#{relation}.#{name}"]
     make_tag(:td, opts[:filter_html]) do
@@ -83,7 +83,7 @@ class Tabulatr
 
   def filter_action(opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
-    opts = normalize_column_options(opts)
+    opts = normalize_column_options(:action_column, opts)
     make_tag(:td, opts[:filter_html]) do
       concat(t(opts[:filter])) unless [true, false, nil].member?(opts[:filter])
     end # </td>

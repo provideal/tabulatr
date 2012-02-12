@@ -35,7 +35,7 @@ class Tabulatr
   #                    no specific formatting is desired.
   def data_column(name, opts={}, &block)
     raise "Not in data mode!" if @row_mode != :data
-    opts = normalize_column_options opts
+    opts = normalize_column_options(name, opts)
     make_tag(:td, opts[:td_html]) do
       href = if opts[:link].class == Symbol || opts[:link].class == String
           @view.send(opts[:link], @record)
@@ -73,7 +73,7 @@ class Tabulatr
   #                    no specific formatting is desired.
   def data_association(relation, name, opts={}, &block)
     raise "Not in data mode!" if @row_mode != :data
-    opts = normalize_column_options opts
+    opts = normalize_column_options(name, opts)
     if block_given?
       return yield(@record)
     end
@@ -119,7 +119,7 @@ class Tabulatr
 
   def data_action(opts={}, &block)
     raise "Not in data mode!" if @row_mode != :data
-    opts = normalize_column_options opts
+    opts = normalize_column_options(:action_column, opts)
     make_tag(:td, opts[:td_html]) do
       if block_given?
         concat(yield(@record))

@@ -271,6 +271,11 @@ private
       make_tag(:img, :src => psrc)
     end
   end
+  
+  def self.config(&block)
+    yield(self)
+  end
+  
 end
 
 Dir[File.join(File.dirname(__FILE__), "tabulatr", "*.rb")].each do |file|

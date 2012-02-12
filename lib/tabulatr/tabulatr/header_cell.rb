@@ -35,7 +35,7 @@ class Tabulatr
     raise "Not in header mode!" if @row_mode != :header
     sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}"
     bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
-    opts = normalize_column_options opts
+    opts = normalize_column_options(name, opts)
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || @klaz.human_attribute_name(name).titlecase), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
@@ -66,7 +66,7 @@ class Tabulatr
   #                    otherwise, the capitalized name is used
   def header_association(relation, name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
-    opts = normalize_column_options opts
+    opts = normalize_column_options(name, opts)
     if opts[:sortable] and @table_options[:sortable]
       # change classes accordingly
     end
@@ -83,7 +83,7 @@ class Tabulatr
   end
 
   def header_action(opts={}, &block)
-    opts = normalize_column_options opts
+    opts = normalize_column_options(:action_column, opts)
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || ""), :escape_html)
     end

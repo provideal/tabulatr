@@ -209,5 +209,16 @@ class Tabulatr
   end
   def sql_options(n=nil) self.class.sql_options(n) end
 
-
+  COLUMN_PRESETS = {}
+  def self.column_presets(n=nil)
+    COLUMN_PRESETS.merge!(n) if n
+    COLUMN_PRESETS
+  end
+  def column_presets(n=nil) self.class.column_presets(n) end
+  def column_preset_for(name)  
+    h = COLUMN_PRESETS[name.to_sym]
+    return {} unless h
+    return h if h.is_a? Hash
+    COLUMN_PRESETS[h] || {}
+  end
 end

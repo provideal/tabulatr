@@ -98,8 +98,9 @@ private
   end
 
   # some preprocessing of the options
-  def normalize_column_options(opts)
-    opts = Tabulatr::COLUMN_OPTIONS.merge(opts)
+  def normalize_column_options(name, opts)
+    preset = column_preset_for(opts[:preset] || name)
+    opts = Tabulatr::COLUMN_OPTIONS.merge(preset).merge(opts)
     {:width => 'width', :align => 'text-align', :valign => 'vertical-align'}.each do |key,css|
       if opts[key]
         [:th_html, :filter_html, :td_html].each do |set|
