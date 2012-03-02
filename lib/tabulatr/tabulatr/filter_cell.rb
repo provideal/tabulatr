@@ -95,7 +95,7 @@ private
     if !of
       ""
     elsif of.is_a?(Hash) or of.is_a?(Array) or of.is_a?(String)
-      make_tag(:select, :name => iname) do
+      make_tag(:select, :name => iname:, :style => "width:#{opts[:filter_width]}") do
         if of.class.is_a?(String)
           concat(of)
         else
