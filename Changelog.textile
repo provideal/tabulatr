@@ -1,8 +1,9 @@
 h1. Changelog for tabulatr
 
-We now allow column presets:
-
-  <pre>  
+* Fixed <tt>:filter_width</tt> not working for <tt>select</tt> filters.
+* Giving a Hash as <tt>:format</tt> option gives the corresponding value.
+* We now allow column presets:
+  <pre>
   Tabulatr.config do |config|
     #...
     config.column_presets({
@@ -17,7 +18,7 @@ We now allow column presets:
     })
   end
   </pre>
-  
+
 Now, every column will check whether there is as entry corresponding to its name in this table and get the content as 'default' options.
 
   <pre>
@@ -28,14 +29,14 @@ Now, every column will check whether there is as entry corresponding to its name
     end %>
   </pre>
 
-so, the :id column has all the options defined above. The :action_column entry is used for 'action' columns. 
+so, the :id column has all the options defined above. The :action_column entry is used for 'action' columns.
 
 But even better, you can use arbitrary presets:
 
   <pre>
   t.column :foo, :preset => :moo
   </pre>
-  
+
 gets the :moo preset.
 
 h2. 0.4.2
