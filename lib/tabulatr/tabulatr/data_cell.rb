@@ -54,6 +54,7 @@ class Tabulatr
             if format.is_a?(Proc) then format.call(val)
             elsif format.is_a?(String) then h(format % val)
             elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
+            elsif format.is_a?(Hash) then format[val]
             else h(val.to_s)
           end)
         end # block_given?
