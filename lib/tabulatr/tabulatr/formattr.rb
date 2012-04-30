@@ -24,32 +24,32 @@
 module Tabulatr::Formattr
   ALLOWED_METHODS = [:euro, :dollar, :percent, :lamp]
   #include ActionView::TagHelpers
-  
+
   def self.format(nam, val)
     nam = nam.to_sym
     if ALLOWED_METHODS.member?(nam)
       self.send nam, val
     else
-      "[Requested unautorized format '#{nam}' for '#{val}'.]" 
+      "[Requested unautorized format '#{nam}' for '#{val}'.]"
     end
   end
-  
+
   def self.euro(x)
-    ("%.2f&thinsp;&euro;" % x).gsub(".", ",")
+    x ? ("%.2f&thinsp;&euro;" % x).gsub(".", ",") : '&mdash;'
   end
-  
+
   def self.dollar(x)
-    "$&thinsp;%.2f" % x
+    x ? ("$&thinsp;%.2f" % x) : '&mdash;'
   end
-  
+
   def self.percent(x)
     ("%.2f&thinspace;%%" % 100.0*x).gsub(".", ",")
   end
-  
+
   def self.lamp(x, mapping)
     s = mapping[x].to_s
     return "?" unless %w{g y r n}.member?(s)
     image_tag("tabulatr/#{s}state.gif").html_safe
   end
-  
+
 end
