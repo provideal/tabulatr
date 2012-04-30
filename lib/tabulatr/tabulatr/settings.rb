@@ -30,6 +30,7 @@ class Tabulatr
   TABLE_OPTIONS = WhinyHash.new({ # WhinyHash.new({
     :remote => false,                               # add data-remote="true" to form
 
+    :wrapper_class => 'tabulatr',                   # class of the wrapping div
     :form_class => 'tabulatr_form',                 # class of the overall form
     :table_class => 'tabulatr_table',               # class for the actual data table
     :sortable_class => 'sortable',                  # class for the header of a sortable column
@@ -85,6 +86,7 @@ class Tabulatr
     :sort_down_button => 'sort_arrow_down.gif',
     :sort_down_button_inactive => 'sort_arrow_down_off.gif',
 
+    :make_wrapper => true,             # whether or not to wrap the whole stuff in a div
     :make_form => true,                # whether or not to wrap the whole table (incl. controls) in a form
     :table_html => false,              # a hash with html attributes for the table
     :row_html => false,                # a hash with html attributes for the normal trs

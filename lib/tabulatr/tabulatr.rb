@@ -99,30 +99,33 @@ class Tabulatr
   # <tt>:filter</tt>:: if set to false, no filter row is output
   def build_table(&block)
     @val = []
-    make_tag(@table_options[:make_form] ? :form : nil,
-        :method => :get,
-        :class => @table_options[:form_class],
-        'data-remote' => (@table_options[:remote] ? "true" : nil)) do
-      # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
-      make_tag(:div,  :class => @table_options[:control_div_class_before]) do
-        @table_options[:before_table_controls].each do |element|
-          render_element(element)
+    make_tag(@table_options[:make_wrapper] ? :div : nil,
+      :class => @table_options[:wrapper_class]) do
+      make_tag(@table_options[:make_form] ? :form : nil,
+          :method => :get,
+          :class => @table_options[:form_class],
+          'data-remote' => (@table_options[:remote] ? "true" : nil)) do
+        # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
+        make_tag(:div,  :class => @table_options[:control_div_class_before]) do
+          @table_options[:before_table_controls].each do |element|
+            render_element(element)
+          end
+        end if @table_options[:before_table_controls].present? # </div>
+
+        @store_data.each do |k,v|
+          make_tag(:input, :type => :hidden, :name => k, :value => h(v))
         end
-      end if @table_options[:before_table_controls].present? # </div>
 
-      @store_data.each do |k,v|
-        make_tag(:input, :type => :hidden, :name => k, :value => h(v))
-      end
+        render_element(:table, &block)
 
-      render_element(:table, &block)
+        make_tag(:div,  :class => @table_options[:control_div_class_after]) do
+          @table_options[:after_table_controls].each do |element|
+            render_element(element)
+          end
+        end if @table_options[:after_table_controls].present? # </div>
 
-      make_tag(:div,  :class => @table_options[:control_div_class_after]) do
-        @table_options[:after_table_controls].each do |element|
-          render_element(element)
-        end
-      end if @table_options[:after_table_controls].present? # </div>
-
-    end # </form>
+      end # </form>
+    end # </div>
     @val.join("").html_safe
   end
 
@@ -271,11 +274,11 @@ private
       make_tag(:img, :src => psrc)
     end
   end
-  
+
   def self.config(&block)
     yield(self)
   end
-  
+
 end
 
 Dir[File.join(File.dirname(__FILE__), "tabulatr", "*.rb")].each do |file|
