@@ -123,9 +123,11 @@ class Tabulatr
     opts = normalize_column_options(:action_column, opts)
     make_tag(:td, opts[:td_html]) do
       if block_given?
-        concat(yield(@record))
+        r = yield(@record)
+        r = r.map(&:presence).compact.join(opts[:action_join_string]) if r.is_a? Array
+        concat(r)
       else
-        raise "Always give a block ino action columns"
+        raise "Always give a block into action columns"
       end # block_given?
     end # </td>
   end
