@@ -180,7 +180,7 @@ module Tabulatr::Finder
 
 
     # Now, actually find the stuff
-    found = adapter.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a
+    found = adapter.includes(includes).limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(:__filters) { filter_param }
