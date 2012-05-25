@@ -23,8 +23,8 @@ class Tabulatr::Adapter::MongoidAdapter < Tabulatr::Adapter
     assoc.to_s.tableize
   end
 
-  def order_for_query(sortparam, default)
-    context = order(sortparam, default)
+  def order_for_query(sortparam, default, maps={})
+    context = order(sortparam, default, maps)
     [context[:by], context[:direction]].map(&:to_s) if context
   end
 

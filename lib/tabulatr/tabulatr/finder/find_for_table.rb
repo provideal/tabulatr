@@ -116,7 +116,7 @@ module Tabulatr::Finder
 
     # firstly, get the conditions from the filters
     includes = []
-    maps = opts[:name_mapping] || {}
+    maps = opts[:name_mapping].with_indifferent_access || {}
     conditions = filter_param.each do |t|
       n, v = t
       next unless v.present?
@@ -157,8 +157,12 @@ module Tabulatr::Finder
       selected_ids = (selected_ids - all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
     end
 
+    puts ">>>> #{sortparam}"
+    puts ">>>> #{maps[sortparam]}"
+
+
     # secondly, find the order_by stuff
-    order = adapter.order_for_query(sortparam, opts[:default_order])
+    order = adapter.order_for_query(sortparam, opts[:default_order], maps)
 
     # thirdly, get the pagination data
     paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)

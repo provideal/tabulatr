@@ -26,8 +26,8 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
     @base.reflect_on_association(assoc).table_name
   end
 
-  def order_for_query(sortparam, default)
-    context = order(sortparam, default)
+  def order_for_query(sortparam, default, maps={})
+    context = order(sortparam, default, maps)
     "#{context[:by]} #{context[:direction]}" if context
   end
 

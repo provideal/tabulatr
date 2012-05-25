@@ -18,9 +18,9 @@ class Tabulatr::Adapter
     opts[:precondition].present? ? @base.where(opts[:precondition]) : @base
   end
 
-  def order(sortparam, default)
+  def order(sortparam, default, maps={})
     order_by, order_direction = sort_params(sortparam, default)
-    order_by ? { :by => order_by, :direction => order_direction } : nil
+    order_by ? { :by => maps[order_by] || order_by, :direction => order_direction } : nil
   end
 
   def sort_params(sortparam, default)
