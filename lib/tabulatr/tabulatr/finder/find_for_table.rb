@@ -116,7 +116,7 @@ module Tabulatr::Finder
 
     # firstly, get the conditions from the filters
     includes = []
-    maps = opts[:name_mapping].with_indifferent_access || {}
+    maps = opts[:name_mapping].try(:with_indifferent_access) || {}
     conditions = filter_param.each do |t|
       n, v = t
       next unless v.present?
