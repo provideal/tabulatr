@@ -157,10 +157,6 @@ module Tabulatr::Finder
       selected_ids = (selected_ids - all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
     end
 
-    puts ">>>> #{sortparam}"
-    puts ">>>> #{maps[sortparam]}"
-
-
     # secondly, find the order_by stuff
     order = adapter.order_for_query(sortparam, opts[:default_order], maps)
 
