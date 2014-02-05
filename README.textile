@@ -1,3 +1,9 @@
+<h2>DEPRECATION WARNING:</h2>
+<p>This gem is not maintained anymore, for a replacement look at <a href="https://github.com/provideal/tabulatr2">tabulatr2</a>
+</p>
+
+
+
 h1. Tabulatr - Index Tables made easy, finally
 
 <b>Notes:</b>
